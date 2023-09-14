@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="peajes.css"> 
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    <title>Búsqueda de sedes</title>
+</head>
+<body>
+
+
+    <form action="/sedes" method="POST">
+
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+
+    <div class="Titulo">
+    <h1>Administración de peajes</h1>
+    </div>
+    <div class="Datos">
+    <fieldset >
+        <legend><b>Administracion de peajes</b></legend>
+        
+        
+        <div id="tabla">
+            <h2>Listado general de peajes</h1>
+            <table id="tabla-peaje">
+                <thead>
+                <tr>
+                <th class="codigo" id="fila1">Código</th>
+                <th class="sede" id="fila2">Peaje</th>
+                <th class="sede" id="fila3">Monto</th>
+                <th class="sede" id="fila4">Tipo</th>
+                <th class="sede" id="fila5">Registro</th>
+                <th class="sede" id="fila6">Ultima modificación</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            </table>
+            <div class="btn-group">
+                <button>|<<</button>
+                <button><<</button>
+                <button>Refrescar</button>
+                <button>>></button>
+                <button>>>|</button>
+                </div>
+        </div>
+     
+        <fieldset class="ajustar1">
+            <legend><b>Datos</b></legend>
+            <table>
+                <tr>
+                    <th>  </th>
+                    <th>  </th>
+                </tr>
+                <tr>
+                    <td><label>Nro de peaje: </label></td>
+                    <td><input type="number" ></td>
+                </tr>
+                <tr>
+                    <td><label >Nombre del peaje </label></td>
+                    <td><input type="number" ></td>
+                </tr>
+
+                <tr>
+                    <td><label >Tipo de peaje: </label></td>
+                    <td>
+                    <select name="tipopeaje">
+                        <option value="" disable selected>Seleccione</option>
+                        <option value="1">Tradicional</option>
+                        <option value="2">Cobremex</option>
+
+                    </select></td>
+                    <tr>
+                        <td><label>Tipo de vehículo: </label></td>
+                        <td><input type="radio" id="huey" name="drone" value="huey"
+                            checked>
+                     <label for="huey">Huey</label>
+                   
+                    <br>
+                   
+                     <input type="radio" id="dewey" name="drone" value="dewey">
+                     <label for="dewey">Dewey</label>
+                    <br>
+               
+                     <input type="radio" id="louie" name="drone" value="Dongfeng">
+                     <label for="dewey">Dongfeng</label>
+                     <br>
+                     <input type="radio" id="louie" name="drone" value="louie">
+                     <label for="louie">Louie</label</td>
+                    </tr>
+                  
+                        
+                </tr>
+
+                <tr>
+                    <td><label>Monto: </label></td>
+                    <td><input type="number" ></td>
+                </tr>
+               
+
+            </table>
+           
+        </fieldset>
+        
+        <fieldset class="ajustar2">
+            <legend><b>Acciones</b></legend>
+            <button type="button" onclick="buscarSede()">Buscar</button>  
+            <button type="button" onclick="actualizarRegistro2()">Modificar</button>
+            <button type="reset" >Limpiar</button> 
+            <button type="button" id="anular">Anular</button>
+             <br>
+            <label for="">Reporte de peajes existentes</label>  
+            <button type="button" onclick="impresion()" class="imprimir">imprimir</button>
+    
+        </fieldset>
+    
+    </fieldset>
+    
+    </fieldset>
+
+   
+</form>
+
+    
+    <!-- <script>
+  
+        fetch('/sedes')
+            .then(response => response.json())
+            .then(data => {
+                const tabla = document.getElementById('tabla-sedes');
+                const tbody = tabla.querySelector('tbody');
+
+                data.forEach(registro => {
+
+                    const tr = document.createElement('tr');
+                    const tdcodigo = document.createElement('td');
+                    const tdsede = document.createElement('td');
+                  
+
+                    tdcodigo.textContent = registro.codigo;
+                    tdsede.textContent = registro.sede;
+                    
+
+                    tr.appendChild(tdcodigo);
+                    tr.appendChild(tdsede);
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Ocurrió un error al obtener el listado de sedes');
+            });
+
+
+    </script> -->
+
+    <script src="../menu-functions.js"></script>
+</body>
+</html>

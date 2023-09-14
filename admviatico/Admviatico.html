@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="Admviatico.css"> 
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    
+    <title>Viaticos</title>
+</head>
+<body>
+
+    <form  id="formulario">
+
+
+            <div id="menu-bar">
+                <div class="left" role="menu">
+                  <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+                  
+                </div>
+                <div class="right">
+                    <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+                    <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+                    <button  type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+        <h2 >Administración de viaticos</h2>
+        <div class="tab-menu" id="tab-menu">
+            <div class="tab active" data-tab="tab2">Registro de Viaticos</div>
+            <div class="tab" data-tab="tab1">Registro de Tasa</div>
+         </div>
+
+       
+       <div class="tab-content " id="tab1">
+
+        
+         <div class="Origen">
+       <fieldset>
+  
+        <label>Nueva tasa: </label>    
+        <input type="number" step=".01" name="Tasa" class="requerido2" >   
+        <label id="monto"  class="monto" style="margin-left: 20px;"> </label>
+        
+        
+        <button type="button" id="Guardar_tasa">Guardar</button>
+        <button type="reset" id="limpiar">Limpiar</button>
+    <br>
+        <label >Fecha: </label>
+        <input type="date" class="requerido2" id="Fecha" name="Fecha_tasa">
+       
+        
+        
+    </div>
+</fieldset>
+<div class="filtro">
+    <fieldset class="filtrofield"> <legend>Filtrar</legend>
+        <label>Fecha desde:</label>
+        <input type="date" class="filtro2" id="fechaDesde2" value="2000-01-01">
+        <br>
+        <label >Fecha hasta:</label>
+        <input type="date" class="filtro2" id="fechaHasta2" value="2999-12-31">
+      <br>
+
+    <button type="reset"  id="buscar">Buscar</button>
+    <button type="reset" id="imprimirTasa" class="imprimir" >Imprimir</button>
+</fieldset>
+     </div>
+
+
+  
+        <div class="tabla-tasa">
+                <h2 class="listado" >Historial de cambios</h2>
+            <table id="tabla-tasa" >
+                
+                <thead>
+                    <tr>
+                        <th class="fecha" id="fila1">Fecha</th>
+                        <th class="tasa"id='fila2'>Tasa</th>
+                        <!-- <th class ="usuario" id="fila3">Usuario</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody> 
+            </table> 
+        
+            <div class="btn-group">
+                <button type="button" id="firstPage2" class="paginas">|<<</button>
+                <button  type="button" id="previousPage2" class="paginas"><<</button>
+                <button class="paginas">Refrescar</button>
+                <button  type="button" id="nextPage2" class="paginas">>></button>
+                <button  type="button" id="lastPage2" class="paginas">>>|</button>
+            </div>
+        </div>
+
+        </div>
+
+
+<!-- Inicio segunda pestaña -->
+
+        <div class="tab-content active" id="tab2">
+      
+           
+        <fieldset>
+
+            <div class="Origen">
+
+                <label>Origen: </label>
+                <Select  id="Origen"  class="requerido" name="Origen"> </Select>
+                
+                <label id="monto">Monto USD: </label>
+                <input type="number" name="Viatico" id="Viatico">
+
+                <label id="Diaslbl" style="margin-left:  20px;">Días: </label>
+                <input type="number" name="Dias" id="Dias" class="requerido">
+                <label id="monto" class="monto2"> </label>
+
+            </div>
+
+        
+        <label>Destino: </label>
+        <Select name="Sedes" id="Sedes"  class="requerido">
+
+        <label id="fecha">Fecha: </label>
+        <input type="date" name="Fecha_req" id="Fecha" class="requerido">
+
+        <button  id="Guardar_Viatico" class="boton">Guardar</button>
+        <button type="reset" id="limpiar">Limpiar</button>
+        <button type="button" id="modificar">Modificar</button>
+            </fieldset> 
+            <div class="filtro" >
+                    
+                <fieldset class="filtrofield">
+                    <legend>Filtrar</legend>
+                    
+                    <label>Viatico USD menor a:</label>
+                    <input type="number" id="viatico1" class="abajo">
+                    <br>
+                    <label>Viatico USD mayor a:</label>
+                    <input type="number" id="viatico2" class="abajo">
+                    <br>
+                    <label>Fecha desde:</label>
+                    <input type="date" class="abajo" id="fechaDesde"   value="2000-01-01">
+                    <br>
+                    <label>Fecha hasta:</label>
+                    <input type="date" class="abajo" id="fechaHasta"  value="2999-12-31">
+                    <br>
+
+                <button type="button" class="boton" id="buscar">Buscar</button>
+                <button type="button" class="imprimir" id="imprimir_viatico">Imprimir</button>
+            </fieldset>
+            </div>
+
+                <div class="tabla-viatico">
+            <h2 class="listado">Listado de viaticos</h2>
+            
+                <table id="tabla-viaticos" >
+                
+                    <thead>
+                        <tr>
+                        <th class="origen"id='fila2'>Origen</th>
+                        <th class ="destino" id="fila3">Destino</th>
+                        <th class ="viatico" id="fila4">Viatico (Bs)</th>
+                        <th class ="viatico" id="fila5">Viatico (Usd)</th>
+                        <th class ="fecha" id="fila6">Dias</th>
+                        <th class ="fecha" id="fila7">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody> 
+                </table> 
+                
+                <div class="btn-group">
+                   <button type="button" id="firstPage" class="paginas">|<<</button>
+                    <button  type="button" id="previousPage" class="paginas"><<</button>
+                    <button class="paginas">Refrescar</button>
+                    <button  type="button" id="nextPage" class="paginas">>></button>
+                    <button  type="button" id="lastPage" class="paginas">>>|</button>
+                    </div>
+
+                </div>
+
+        </div>
+
+        </form>
+    <script>
+  
+
+        //    zona de pestañas
+
+        
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content')
+
+        tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+
+            const tabId = tab.dataset.tab;
+
+
+            tabContents.forEach(content => {
+            content.classList.remove('active');
+            });
+
+
+            tabs.forEach(tab => {
+            tab.classList.remove('active');
+            });
+
+
+            const tabContent = document.getElementById(tabId);
+            tabContent.classList.add('active');
+            tab.classList.add('active');
+        });
+        });
+
+
+
+    </script>
+    <script src="Admviatico.js"></script>
+    <script src="../menu-functions.js"></script>
+</body>
+</html>

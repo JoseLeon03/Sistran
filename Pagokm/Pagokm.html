@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="Pagokm.css"> 
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    <title>Viaticos</title>
+</head>
+<body>
+    <form  method="post">
+
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+
+        <h2  >Pago por Kilometraje</h2> 
+         <div class="Origen">
+       <fieldset>
+  
+        <label>Nuevo monto: </label>    
+        <input type="number" step=".01">   
+        <label id="monto" style="margin-left: 10px;">Monto actual: 0.1$ por Km </label>
+        
+        
+        <button type="submit" id="guardar">Guardar</button>
+        <button type="reset" id="limpiar">Limpiar</button>
+        <button type="button" id="modificar">Modificar</button>
+    <br>
+        <label >Fecha: </label>
+        <input type="date">
+       
+        
+        
+    </div>
+</fieldset>
+<div class="filtro">
+    <fieldset class="filtrofield"> <legend><b>Filtrar</b></legend>
+        <label>Fecha desde:</label>
+        <input type="date" class="filtro2">
+        <br>
+        <label >Fecha hasta:</label>
+        <input type="date" class="filtro2">
+      <br>
+
+    <button type="reset"  id="buscar">Buscar</button>
+    <button type="reset" id="imprimir" >Imprimir</button>
+</fieldset>
+     </div>
+
+
+  
+        <div class="tabla">
+                <h2 class="texto" >Historial de cambios</h2>
+            <table id="tabla-sedes" >
+                
+                <thead>
+                    <tr>
+                        <th class="fecha" id="fila1">Fecha</th>
+                        <th class="tasa"id='fila2'>Monto</th>
+                        <th class ="usuario" id="fila3">Usuario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody> 
+            </table> 
+        
+            <div class="btn-group">
+            <button>|<<</button>
+            <button><<</button>
+            <button>Refrescar</button>
+            <button>>></button>
+            <button>>>|</button>
+            </div>
+        </div>
+        </form>
+
+        <script src="../menu-functions.js"></script>
+    <script>
+  
+        fetch('/Tasa')
+            .then(response => response.json())
+            .then(data => {
+                const tabla = document.getElementById('tabla-sedes');
+                const tbody = tabla.querySelector('tbody');
+
+                data.forEach(registro => {
+                    const tr = document.createElement('tr');
+                    const tdfecha = document.createElement('td');
+                    const tdtasa = document.createElement('td');
+                    const tdusuario = document.createElement('td');
+                  
+                
+
+                    tdfecha.textContent = registro.fecha;
+                    tdtasa.textContent = registro.tasa;
+                    tdusuario.textContent = registro.usuario;
+                   
+
+
+                    tr.appendChild(tdfecha);
+                    tr.appendChild(tdtasa);
+                    tr.appendChild(tdusuario);
+                   
+                    tbody.appendChild(tr);
+                });
+
+            })
+           console.log(Date);
+    </script>
+</body>
+</html>

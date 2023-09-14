@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="listadoviajes.css"> 
+    <title>Listado de viajes</title>
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+</head>
+<body>
+    <form action=""> 
+
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+       
+        <h2 >Listado de viajes</h2>
+            
+        <fieldset>
+    <div class="Origen">
+        <label>Cedula:</label> <input type="number" name="" id="cedula" >
+       
+        <label id="Sede">Sede: </label>
+        <select name="Sedes" id="Sedes">
+          
+         
+     </select>
+        <label id="Ayudante" >Ayudante:</label><input type="text" name="" id="inp_ayudante">
+        
+        <label id="Estado" >Estado:</label>
+        <select name="Estados" id="selectEstados">
+            <option value="" disable selected>Viajes no terminados</option>
+            <option value="1">Chofer a destajo</option>
+            <option value="2">Chofer de patio</option>
+     </select>
+        
+   
+ </div>
+  <br>
+
+  <label>Vehículo:</label> <input type="text" name="" id="placaVehiculo">
+  <label>Remolque:</label> <input type="text" name="" id="placaRemolque">
+  <label>Cava:</label> <input type="text" name="" id="placaCava">
+  <label >Posterior a:</label> <input type="date" name="" id="fechaPosterior">
+  <label>Anterior a:</label> <input type="date" name="" id="fechaAnterior">
+ 
+    </fieldset> 
+  
+        
+<form >                                      
+
+            <div class="tabla">
+       
+       
+            <table id="listadoviajes">
+        <thead>
+            <tr>
+                
+                <th>Id</th>    
+                <th>Fecha de requerimiento</th>                           
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Estatus</th>
+                <th>Monto</th>
+                <th>Placa Vehiculo</th>
+                <th>Placa cava</th>
+                <th>Placa remolque</th>
+                <th>Cedula Chofer</th>
+                <th>Nombre Chofer</th>
+                <th>Apellido</th>
+                <th>Observación</th>
+                <th>Ayudante</th>
+                <th>Bultos</th>
+             
+
+                
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        </table>
+        <div class="botones">
+        <div class="btn-group">
+            <button type="button" id="firstPage" class="paginas">|<<</button>
+            <button  type="button" id="previousPage" class="paginas"><<</button>
+            <button class="paginas">Refrescar</button>
+            <button  type="button" id="nextPage" class="paginas">>></button>
+            <button  type="button" id="lastPage" class="paginas">>>|</button>
+            </div>
+            
+            <button type="button" class="boton" id="Imprimir">Imprimir</button>
+            <button type="button" class="boton" id="Salir" class="Salir">Salir</button>
+        </div>
+            </div>
+            <div id="response"></div>
+
+         <div id="ventana-emergente"></div>
+
+        
+          
+
+</form>
+    <script>
+        
+        // const tabs = document.querySelectorAll('.tab');
+        // const tabContents = document.querySelectorAll('.tab-content')
+
+        // tabs.forEach(tab => {
+        // tab.addEventListener('click', () => {
+
+        //     const tabId = tab.dataset.tab;
+
+
+        //     tabContents.forEach(content => {
+        //     content.classList.remove('active');
+        //     });
+
+
+        //     tabs.forEach(tab => {
+        //     tab.classList.remove('active');
+        //     });
+
+
+        //     const tabContent = document.getElementById(tabId);
+        //     tabContent.classList.add('active');
+        //     tab.classList.add('active');
+        // });
+        // });
+
+        //!Cargar fechas a los inputs tipo date
+        var currentDate = new Date();
+
+        // Crear una nueva fecha para la fecha de inicio restando 1 mes a la fecha actual
+        var startDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+
+        // Crear una nueva fecha para la fecha final sumando 1 mes a la fecha actual
+        var endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() , currentDate.getDate() +1);
+
+        // Formatear las fechas en el formato "YYYY-MM-DD"
+        var startDateFormatted = startDate.toISOString().split("T")[0];
+        var endDateFormatted = endDate.toISOString().split("T")[0];
+
+        // Establecer los valores de los inputs de fecha
+        document.getElementById("fechaPosterior").value = startDateFormatted;
+        document.getElementById("fechaAnterior").value = endDateFormatted;
+
+        
+        //fin de cargar fechas a los inputs tipo date
+    </script>
+     <script src="../menu-functions.js"></script>
+     <script src="listadoviajes.js"></script>
+</body>
+</html>

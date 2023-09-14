@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Empleados</title>
+    <link rel="stylesheet" type="text/css" href="Empleados.css"> 
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+</head>
+<body>
+    <!-- <div class="Empleados" > -->
+        <form  method="POST" id="formulario">
+
+            <div id="menu-bar">
+                <div class="left" role="menu">
+                  <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+                  
+                </div>
+                <div class="right">
+                  <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+                  <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+                  <button type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+
+    
+            <h1>Administración de empleados</h1>
+
+            <div class="tab-menu" id="tab-menu">
+                <div class="tab active" data-tab="tab1">Registrar empleados</div>
+                <div class="tab" data-tab="tab2">Consulta de empleados</div>
+            </div>
+        
+        <div class="tab-content active" id="tab1">
+            <fieldset id="Registro"> <legend><b>Registro de empleados</b></legend>
+
+                <div class="ordenar">
+                <div id="posicion"> 
+                    <label for="cedulaimg">Cédula:</label>      
+                    <input type="file"  id="cedulaimg" accept="image/jpg, image/jpeg" data-target=".cuadrocedula" onchange="mostrarImagen(this)">
+                    <div class="cuadrocedula"></div>  
+        
+                    <label for="licenciaimg">Licencia:</label>      
+                    <input type="file"  id="licenciaimg" accept="image/png, image/jpeg" data-target=".cuadrolic" onchange="mostrarImagen(this)">
+                    <div class="cuadrolic"></div>  
+                </div> 
+                <div class="certificadopos" >
+                    <label for="certificadoimg"style="margin-left: 20px">Certificado:</label>      
+                    <input type="file"  id="certificadoimg" accept="image/png, image/jpeg" data-target=".cuadrocertificado" onchange="mostrarImagen(this)"> 
+                    <div class="cuadrocertificado"></div> 
+                </div>
+            </div>
+
+                <fieldset class="field">
+                    <legend><b>Datos</b></legend>
+                <table >
+                   
+                    <tr>
+                        <td><label>Cedulaa:</label></td>
+                        <td><input type="number" name="Cedula" id="Cedula" class="requerido" ></td>
+                    </tr>
+                    <tr>
+                        <td><label >Nombre(S): </label></td>
+                        <td><input type="text" name="Nombre" id="Nombre" class="requerido"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Apellido(s): </label></td>
+                        <td><input type="text" name="Apellido" id="Apellido" class="requerido"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Fecha de nacimiento: </label></td>
+                        <td><input type="date" name="Fnacimiento" class="requerido" id="fecha"></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><label>Edad: </label></td>
+                        <td><input type="number" name="Edad" min="18" max="99"  class="requerido" id="Edad" ></td>
+                    
+                    </tr>
+                    <tr>
+                        <td><label>Telefono: </label></td>
+                        <td><input type="number"  name="Telefono" class="requerido" id="Telefono"></td><br>
+                    </tr>
+                    <tr>
+                        <td><label>Celular: </label></td>
+                        <td><input type="number"   name="Celular" id="Celular"></td>
+                    </tr>
+
+                    <tr>
+                        <td><label>Fecha de ingreso: </label></td>
+                        <td><input type="date"  name="Fingreso" class="requerido" id="fIngreso" ></td>    
+                    </tr>
+
+                    <tr>
+                        <td><label >Tipo de empleado: </label></td>
+                        <td>
+                        <select id="Templeados"class="requerido"  name="templeado">
+                        
+                      
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><label>Dirección: </label></td>
+                        <td><textarea maxlength="1000" name="Direccion" id="Direccion"></textarea></td>              
+                    </tr>
+
+                </table>
+                </fieldset>
+                <fieldset class="field">
+                    <legend><b>Acciones</b></legend>
+                    <button type="button" id="Guardar">Guardar</button>
+                    <button type="button" id="Modificar">Modificar</button>
+                    <button type="reset">Limpiar</button>
+                    <br></br>
+                    <button type="button" id="Anular">Anular</button>
+                </fieldset>
+            
+        
+        
+   
+     </fieldset>
+    
+    </div>
+
+
+            <div class="tab-content" id="tab2">           
+            <fieldset id="Registro" > 
+            <div class="tabla">
+                <h2  >Consulta de empleados</h2>
+                
+            <table id="tabla-empleados" >
+                
+                <thead>
+                    <tr>
+                        <th class="empleados" id="fila1" name="lista">Cedula</th>
+                        <th class="empleados" id='fila2' name="lista">Nombre</th>
+                        <th class ="empleados" id="fila3" name="lista">Apellido</th>
+                        <th class ="empleados" id="fila4" name="lista">Fecha de nacimiento</th>
+                        <th class ="empleados" id="fila5" name="lista">Edad</th>
+                        <th class ="empleados" id="fila6" name="lista">Fecha de ingreso</th>
+                        <th class ="empleados" id="fila6" name="lista">Tipo de empleado</th>
+                        <th class ="empleados" id="fila6" name="lista">Dirección</th>
+                        <th class ="empleados" id="fila6" name="lista">Estatus</th>
+
+                    </tr>
+
+                </thead>
+                <tbody class="empleados">
+                   
+                </tbody> 
+            </table> 
+
+            <div class="btn-group">
+                <button type="button" id="firstPage2" class="paginas">|<<</button>
+                <button  type="button" id="previousPage2" class="paginas"><<</button>
+                <button class="paginas">Refrescar</button>
+                <button  type="button" id="nextPage2" class="paginas">>></button>
+                <button  type="button" id="lastPage2" class="paginas">>>|</button>
+                </div>
+            </div>
+
+         <fieldset class="field">
+            
+            <legend><b>Criterios de busqueda</b></legend>
+        <table >
+        
+            <tr>
+                <td class="excluir"><label>Cedula: </label></td>
+                <td class="excluir"><input type="number" name = "usuario2"  id="cedulafilter"></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label >Nombre: </label></td>
+                <td class="excluir"><input type="text" name="password" id="nombrefilter" ></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label>Apellido: </label></td>
+                <td class="excluir"><input type="text" name="confirmarcontraseña" id="apellidofilter" ></td>
+            </tr>
+
+            <!-- <tr>
+                <td class="excluir"><label >F. Nacimiento: </label></td>
+                <td class="excluir"><input type="date" id="Fnacimientofilter" ></td>
+            </tr> -->
+         
+            <tr>
+                <td class="excluir"><label>Edad: </label></td>
+                <td class="excluir"><input type="number"  name="edad" id="edadfilter" ></td><br>
+            </tr>
+         
+          
+            <tr>
+                <td class="excluir"><label>Fecha Ingreso desde: </label></td>
+                <td class="excluir"><input type="date" name="fechaRegistro" id="fechaPosterior"   value="2000-01-01"></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label>Fecha Ingreso hasta: </label></td>
+                <td class="excluir"><input type="date" name="fechaRegistro" id="fechaAnterior" value="2999-12-31" ></td>
+            </tr>
+            <tr>
+                <td class="excluir"><label>Tipo Empleado: </label></td>
+                <td class="excluir"><Select id="templeadofilter"></Select></td>
+            </tr>
+               
+        </table>
+         </fieldset>
+
+         <fieldset class="field2">
+            <legend><b>Acciones</b></legend>
+            <!-- <button type="button">Buscar</button> -->
+            <button type="button" id="imprimir">Imprimir</button>
+            <button type="reset">Limpiar</button>
+            <!-- <button type="button" id="Salir">Salir</button> -->
+         </fieldset>
+
+        
+        </fieldset> 
+    </div>
+</form> 
+
+
+    <script>
+    function mostrarImagen(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var divSelector = input.getAttribute('data-target');
+            var div = document.querySelector(divSelector);
+            div.style.backgroundImage = "url('" + e.target.result + "')";
+            console.log("Imagen");
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      const tabs = document.querySelectorAll('.tab');
+const tabContents = document.querySelectorAll('.tab-content')
+
+tabs.forEach(tab => {
+tab.addEventListener('click', () => {
+
+    const tabId = tab.dataset.tab;
+
+
+    tabContents.forEach(content => {
+    content.classList.remove('active');
+    });
+
+
+    tabs.forEach(tab => {
+    tab.classList.remove('active');
+    });
+
+
+    const tabContent = document.getElementById(tabId);
+    tabContent.classList.add('active');
+    tab.classList.add('active');
+});
+});
+      </script>
+      <script src="Empleados.js"></script>
+      <script src="../menu-functions.js"></script>
+</body>
+</html>

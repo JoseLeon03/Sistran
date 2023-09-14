@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="AdmContenedores.css"> 
+    <title>Listado de viajes</title>
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+</head>
+<body>
+    <form action=""> 
+
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+       
+        <h2 >Autorización de Empleados</h2>
+            
+        <fieldset>
+    <div class="Origen">
+        <label>Expediente:</label> <input type="text" name="" id="">
+       
+        <label id="Sede">Contenedor: </label>
+        <input type="text">
+        <label id="Ayudante" >Naviera:</label><input type="text" name="" id="inp_ayudante">
+        
+        <label id="Estado" >Estatus:</label>
+        <select name="Estados">
+            <option value="" disable selected>Todos</option>
+            <option value="1">Patio Guacara</option>
+           
+     </select>
+     <button class="Reporte">Reporte Contenedores Cargados</button>
+   
+ </div>
+  <br>
+
+  <label>Fecha Desde:</label> <input type="date">
+  <label>Fecha Hasta:</label> <input type="date">
+  <label>Puerto:</label> <select name="Estados">
+    <option value="" disable selected>Todos</option>
+    <option value="1">Punto fijo</option>
+  
+</select>
+  <label >Propietario:</label> <select name="Estados">
+    <option value="" disable selected>Todos</option>
+    <option value="1">De terceros</option>
+
+</select>
+
+ <button class="Reporte">Reporte Filtro Contenedores</button>
+
+    </fieldset> 
+  
+        
+<form >                                      
+            <fieldset class="field"> <legend>Listado de contenedores</legend>
+            <div class="tabla">
+       
+       
+            <table class="listadoviajes">
+        <thead>
+            <tr>
+                
+                <th>Id</th>    
+                <th>Expediente</th>                           
+                <th>Contenedor</th>
+                <th>Mercancia</th>
+                <th>Capacidad</th>
+                <th>F. Requerimiento</th>
+                <th>F. Recepción</th>
+                <th>Entrada Alm.</th>
+                <th>F. Entrega lleno</th>
+                <th>Estatus</th>
+                <th>Puerto</th>
+                <th>Alquilado</th>
+                <th>Chofer alquilado</th>
+                <th>Importadora</th>
+                <th>Bultos</th>
+                <th>Naviera</th>
+                <th>Destino</th>
+                <th>Chofer de Recepción</th>
+                <th>F. Entrega vacio</th>
+                <th>Tienda</th>
+                <th>Embarque</th>
+
+             
+
+                
+            </tr>
+        </thead>
+        <tr>
+
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+  
+
+
+                
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+                
+        </tr>
+        <tr>
+       
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            
+        </tr>
+        <tr>
+     
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            
+        </tr>
+        <tr>
+       
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+ 
+                
+        </tr>
+        <tr>
+    
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            
+        </tr>
+        <tr>
+       
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            
+        </tr>
+        <tr>
+          
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+                
+        </tr>
+        <tr>
+        
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            
+        </tr>
+        <tr>
+           
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            
+        </tr>
+        <tr>
+           
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+                
+        </tr>
+        <tr>
+           
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+       
+                
+        </tr>
+        <tr>
+           
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+ 
+                
+        </tr>
+        <tr>
+           
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+         
+                
+        </tr>
+        <tr>
+           
+            <td>1</td>
+            <td>P-120149</td>
+            <td>ZCSU-855839-1</td>
+            <td>Ropa variada</td>
+            <td>40</td>
+            <td>10/07/2023</td>
+            <td>11/07/2023</td>
+            <td></td>
+            <td></td>
+            <td>12/07/2023</td>
+            <td>6</td>
+            <td>La Guaira</td>
+            <td>0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            
+                
+        </tr>
+        </table>
+ 
+        <div class="botones">
+        <div class="btn-group">
+            <button>|<<</button>
+            <button><<</button>
+            <button>Refrescar</button>
+            <button>>></button>
+            <button>>>|</button>
+            </div>
+            
+            <button class="boton" id="Imprimir">Imprimir</button>
+            <button class="boton" id="Salir">Salir</button>
+        </div>
+            </div>
+        </fieldset>
+
+         
+
+        
+          
+           
+
+</form>
+    <script>
+        
+        // const tabs = document.querySelectorAll('.tab');
+        // const tabContents = document.querySelectorAll('.tab-content')
+
+        // tabs.forEach(tab => {
+        // tab.addEventListener('click', () => {
+
+        //     const tabId = tab.dataset.tab;
+
+
+        //     tabContents.forEach(content => {
+        //     content.classList.remove('active');
+        //     });
+
+
+        //     tabs.forEach(tab => {
+        //     tab.classList.remove('active');
+        //     });
+
+
+        //     const tabContent = document.getElementById(tabId);
+        //     tabContent.classList.add('active');
+        //     tab.classList.add('active');
+        // });
+        // });
+
+    </script>
+     <script src="../menu-functions.js"></script>
+</body>
+</html>

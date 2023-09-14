@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="ReqContAlmacen.css">  
+     <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    <title>Requerimiento de contenedor a almacen</title>
+</head>
+<body>
+    <form action="">
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+    
+      
+        <h2 >Requerimiento de contenedor a almacen</h2>
+
+
+      
+
+            <div class="tab-content active" id="tab1">
+        <fieldset><legend>Opciones de listado</legend>
+    <div class="Origen">
+        <label>Contenedor: </label>
+        <input type="text">
+       
+        <label >Ubicación: </label>
+        <select name="Ubicacion">
+            <option value="" disable selected>Patio Guacara</option>
+            <option value="1">Chofer a destajo</option>
+            <option value="2">Chofer de patio</option>
+     </select>
+    
+         <button type="submit" id="Salir" class="boton">Salir</button> 
+    </div>
+
+
+
+
+
+ 
+ 
+    </fieldset> 
+  
+        
+<form >                                      
+
+
+        <fieldset class="listado">  <legend>Listado de contenedores</legend>
+        
+       
+            <table Id="Listadocontenedores">
+        <thead>
+            <tr>
+                
+                <th>Expediente</th>    
+                <th>Contenedor</th>                           
+                <th>Mercancia</th>
+                <th>Capacidad</th>
+                <th>Ubicación</th>
+                <th>Destino</th>
+                <th>Observación</th>
+                <th>Fecha de Requerimiento</th>
+            
+              
+
+                
+            </tr>
+        </thead>
+    
+            <tbody>
+            </tbody>
+
+        </table>
+        <div class="btn-group">
+            <button>|<<</button>
+            <button><<</button>
+            <button>Refrescar</button>
+            <button>>></button>
+            <button>>>|</button>
+            </div>
+         </fieldset>
+
+            </div>
+
+        </form>
+
+        <script src="../menu-functions.js"></script>
+        <script src="ReqContAlmacen.js"></script>
+    </body>
+    </html>

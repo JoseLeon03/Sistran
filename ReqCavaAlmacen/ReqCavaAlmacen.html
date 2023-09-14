@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="ReqCavaAlmacen.css">  
+     <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    <title>Requerimiento de cava a almacen</title>
+</head>
+<body>
+    <form action="">
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+      
+        <h2 >Requerimiento de cava a almacen</h2>
+     
+        <fieldset><legend>Opciones de listado</legend>
+    <div class="Origen">
+        <label>Placa cava: </label>
+        <input type="text" id="placa_cava">
+       
+        <label >Ubicación: </label>
+        <select name="Ubicacion" id="Ubicacion">
+           
+     </select>
+    
+    </div>
+
+    </fieldset> 
+  
+        
+<form >                                      
+
+
+        <fieldset class="listado">  <legend>Listado de contenedores</legend>
+        
+       
+            <table id="Listadocavas">
+        <thead>
+            <tr>
+                
+                <th>Placa</th>    
+                <!-- <th>Fecha</th>                            -->
+                <th>Tipo</th>
+                <th>Ubicación</th>
+                <th>Destino</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Estatus</th>
+                <th>Observaciones</th>
+
+                
+            </tr>
+        </thead>
+         
+        <tbody>
+        </tbody>
+
+        </table>
+        <div class="btn-group">
+            <button type="button" id="firstPage">|<<</button>
+        <button type="button" id="previousPage"><<</button>
+        <button>Refrescar</button>
+        <button type="button" id="nextPage">>></button>
+        <button type="button" id="lastPage">>>|</button>
+            </div>
+         </fieldset>
+
+            
+            <div id="ventana-emergente" ></div>
+
+
+        </form>
+        <script src="../menu-functions.js"></script>
+        <script src="ReqCavaAlmacen.js"></script>
+    </body>
+    </html>

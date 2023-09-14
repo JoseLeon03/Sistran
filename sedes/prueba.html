@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <script>
+        // Crear un elemento input de tipo file
+         var input = document.createElement('input'); input.type = 'file';
+    
+    // Añadir un evento onchange para leer el archivo seleccionado 
+    input.onchange = function(e) { // Obtener el primer archivo del input
+         var file = e.target.files[0];
+    
+    // Crear un objeto FileReader para leer el archivo 
+    var reader = new FileReader();
+    
+    // Añadir un evento onload para obtener el resultado de la lectura
+     reader.onload = function(e) { // Obtener el resultado de la lectura como una cadena en  base64
+    var base64 = e.target.result;
+    
+    // Mostrar el resultado en la consola o hacer lo que quieras con él
+    console.log(base64);
+    
+    };
+    
+    // Leer el archivo como una URL de datos 
+    reader.readAsDataURL(file); };
+    
+    // Añadir el input al documento 
+    document.body.appendChild(input);
+    </script>
+    
+</body>
+
+</html>
