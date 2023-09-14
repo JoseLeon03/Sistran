@@ -1,0 +1,101 @@
+body{
+    width: 700px;
+    padding: 10px 20px;
+}
+
+.centrado{
+    
+display: flex;
+
+}
+img{
+    margin-right: 10px;
+}
+.numeroFecha{
+    display: flex;
+    justify-content: space-between;
+}
+h1{
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+h3[class="titulo"]{
+    font-family: 'arial';
+    color: blue;
+    margin-top: 10px;
+    text-decoration: none;
+}
+h1,h3[class="titulo"]{
+    text-align: center;
+}
+
+h3{
+    
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+}
+
+fieldset{
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.datosConductor{
+    display: flex;
+    justify-content: space-between;
+    margin-right: 50px;
+}
+.destino{
+    display: flex;
+}
+.destino span{
+    margin-left: 5px;
+  margin-top: 22px;  
+  height: max-content;
+}
+td{
+    padding: 10px;
+}
+table label{
+    font-weight: bold;
+}
+label{
+    font-weight: bold;
+}
+
+fieldset + fieldset{
+    margin-top: 20px;
+}
+
+.tablas{
+    display: flex;
+    justify-content: space-between;
+}
+
+.datosAbajo{
+    margin-top: 60px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.precinto{
+    margin-right: 100px;
+}
+
+
+.observacionTexto{
+    width: 300px;
+    height: 100px;
+}
+hr{
+    width: 150px;
+   border: 1px solid black;
+
+}
+.firma{
+    margin-right: 50px;
+}
+.labelFirma{
+    text-align: center;
+}

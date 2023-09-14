@@ -1,0 +1,77 @@
+body{
+    width: 700px;
+    padding: 10px 20px;
+}
+.centrado{
+    
+    display: flex;
+    
+    }
+    img{
+        margin-right: 10px;
+    }
+    .numeroFecha{
+        display: flex;
+        justify-content: space-between;
+    }
+    h1{
+        font-family: 'Monotype corsiva';
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+    h3[class="titulo"]{
+        font-family: 'arial';
+        color: blue;
+        margin-top: 10px;
+        text-decoration: none;
+    }
+    h1,h3[class="titulo"]{
+        text-align: center;
+    }
+    
+    h3{
+        
+        text-decoration: underline;
+        text-decoration-thickness: 3px;
+    }
+.descripcion{
+    text-align: center;
+}    
+.tablas{
+    margin-top: 20px;
+    display: flex;
+    justify-content:space-around;
+}
+
+
+
+hr:not(.division){
+    margin-top: 50px;
+    border: 1px solid black;
+}
+
+.division{
+    margin: 35px 0px;
+    border: 1px dashed black
+}
+
+.observacion {
+    word-wrap:break-word;
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+}
+.caja, .caja2{
+    border: 1px solid black;
+    background-color: silver;
+    text-align: end;
+
+}
+.caja{
+   width: 120px;
+   height: 30px;
+ 
+}
+td:not(.caja, .caja2, .firma){
+padding:1px 10px ;
+}

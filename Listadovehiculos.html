@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Usuarios</title>
+    <link rel="stylesheet" type="text/css" href="Listadovehiculos.css"> 
+    
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+</head>
+<body>
+   
+    <form action="/usuarios" method="post">
+        
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+
+
+
+
+          
+
+        <fieldset >
+            <div class="tabla">
+                <h2>Consulta de Vehículos</h2>
+                
+            <table id="tabla-empleados" >
+                
+                <thead>
+                    <tr>
+                        <th class="usuario" id="fila1" name="lista">Placa</th>
+                        <th class="nivel" id='fila2' name="lista">Marca</th>
+                        <th class ="nombre" id="fila3" name="lista">Modelo</th>
+                        <th class ="apellido" id="fila4" name="lista">Tipo</th>
+                        <th class ="fecharegistro" id="fila5" name="lista">Año</th>
+                        <th class ="ultimasesion" id="fila6" name="lista">Poliza</th>
+                        <th class ="ultimasesion" id="fila6" name="lista">Propietario</th>
+                        <th class ="ultimasesion" id="fila6" name="lista">Fecha</th>
+                        <th class ="ultimasesion" id="fila6" name="lista">Observaciones</th>
+                        <th class ="ultimasesion" id="fila6" name="lista">Estatus</th>
+
+
+                    </tr>
+
+                </thead>
+                <tbody>
+
+                </tbody> 
+            </table> 
+
+            <div class="btn-group">
+                <button type="button">|<<</button>
+                <button type="button"><<</button>
+                <button type="button">Refrescar</button>
+                <button type="button">>></button>
+                <button type="button">>>|</button>
+                </div>
+            </div>
+
+         <fieldset class="ajustar">
+            
+            <legend><b>Criterios de busqueda</b></legend>
+        <table >
+        
+            <tr>
+                <td class="excluir"><label>Placa: </label></td>
+                <td class="excluir"><input type="text" name = "usuario2" required></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label >Marca: </label></td>
+                <td class="excluir"><Select><option value="" disable selected>Seleccione</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option></Select></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label>Modelo: </label></td>
+                <td class="excluir"><Select><option value="" disable selected>Seleccione</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option></Select></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label >Tipo: </label></td>
+                <td class="excluir"><Select><option value="" disable selected>Seleccione</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option></Select></td>
+            </tr>
+         
+            <tr>
+                <td class="excluir"><label>Año: </label></td>
+                <td class="excluir"><input type="number"  name="nombre" required></td><br>
+            </tr>
+         
+            <tr>
+                <td class="excluir"><label>Poliza: </label></td>
+                <td class="excluir"><input type="number"   name="apellido" required></td>
+            </tr>
+          
+            <tr>
+                <td class="excluir"><label>Cobertura desde: </label></td>
+                <td class="excluir"><input type="date" name="fechaRegistro" required></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label>Cobertura hasta: </label></td>
+                <td class="excluir"><input type="date" name="fechaRegistro" required></td>
+            </tr>
+            <tr>
+                <td class="excluir"><label>Estatus de control: </label></td>
+                <td class="excluir"><Select><option value="" disable selected>Seleccione</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option></Select></td>
+            </tr>
+            <tr>
+                <td class="excluir"><label>Propietario: </label></td>
+                <td class="excluir"><input type="text" name="" id=""></Select></td>
+            </tr>
+            <tr>
+                <td class="excluir"><label>Estatus general: </label></td>
+                <td class="excluir"><Select><option value="" disable selected>Seleccione</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option></Select></td>
+            </tr>
+               
+        </table>
+         </fieldset>
+
+         <fieldset class="Acciones">
+            <legend><b>Acciones</b></legend>
+            <button type="submit">Buscar</button>
+            <button type="submit">Imprimir</button>
+            <button type="reset">Limpiar</button>
+            <button type="button" id="Salir">Salir</button>
+         </fieldset>
+
+        
+        </fieldset>
+    </form>
+
+     <script src="../menu-functions.js"></script>
+     <script src="Empleados/Empleados.js"></script>
+</body>
+</html>

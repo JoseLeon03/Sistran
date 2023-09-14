@@ -1,0 +1,104 @@
+
+body{
+    width: 700px;
+    padding: 10px 20px;
+}
+.centrado{
+display: flex;
+}
+img{
+    margin-right: 10px;
+}
+.numeroFecha{
+    display: flex;
+    justify-content: space-between;
+}
+h1{
+
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+h3{
+    font-family: 'arial';
+    color: blue;
+    margin-top: 10px;
+}
+h1,h3{
+    text-align: center;
+}
+.cuadro{
+    margin-top: 10px;
+    border: 1px solid black;
+    width: 18.6cm;
+    height: 8.45cm;
+}
+table{
+    border-collapse: collapse;
+
+}
+ td, th{
+    border-bottom: 1px solid black;
+    padding: 4px;
+    text-align: center;
+}
+.borde{
+    height: 40px;
+    border-right: 1px solid black;
+}
+#nombreBeneficiario{
+    width: 400px;
+    border-right: 1px solid black;
+}
+#cedula{
+    border-right: 1px solid black;
+}
+#cedula, #monto{
+    width: 139px;
+}
+#concepto{
+    text-align: center;
+    width: 18.6cm;
+}
+
+
+#textoConcepto{
+    word-wrap:break-word;
+   padding: 0px 20px;
+    height: 86px;
+   
+}
+.autorizado{
+    border-top: 1px solid black ;
+    width: 9.3cm;
+    text-align: center;
+}
+
+#recibiConforme{
+    border-right: 1px solid black;
+}
+
+#fechaViaje{
+    float: right;
+}
+.autorizadoFoot{
+    display: flex;
+}
+
+#autorizadoPor, #recibi{
+   
+   width: 9.3cm;
+   padding: 35px 10px 15px;
+   text-align: center;
+}
+#autorizadoPor{
+    border-left: 1px solid black;
+}
+hr{
+    width: 200px;
+    border: 1px solid black;
+}
+.division{
+    width: 704px;
+    border: 1px dashed black;
+    margin: 40px 0px 30px;
+}

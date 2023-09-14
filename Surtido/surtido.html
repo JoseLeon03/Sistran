@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="surtido.css"> 
+    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    <title>Document</title>
+</head>
+<body>
+    <form action="">    
+
+        <div id="menu-bar">
+            <div class="left" role="menu">
+              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+              
+            </div>
+            <div class="right">
+              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+
+        <h2 >Surtido de Gasoil</h2>
+        <fieldset>
+    <div class="Origen">
+        <label>Cedula: </label>
+        <input type="text" name="" id="">
+        <label id="monto">Chofer: </label>
+        <input type="number" name="" id="">
+        <label id="monto" >Vehículo: </label>
+        <input type="text" name="" id="">
+        <label id="monto" >Cantidad: </label>
+        <input type="number">
+        
+    </div>
+
+  <br>
+  <label>Sede : </label>
+  <Select name="Sedes">
+  <option value="1">Dist.Guacara</option> </Select>
+
+  <label id="fecha">Fecha: </label>
+  <input type="date" name="" id="">
+
+  <button type="submit" id="guardar" class="boton">Surtir</button>
+  <button type="reset" class="boton" id="guardar">Limpiar</button>
+ 
+    </fieldset> 
+  
+        
+<form >                                      
+
+
+            <div class="tabla">
+            <h3>Surtido de Gasoil </h3>
+            <table class="tablagasoil">
+        <thead>
+            <tr>
+                
+                <th>Id</th>    
+                <th>Vehículo</th>                           
+                <th>Chofer</th>
+                <th>Cantidad</th>
+                <th>Lugar de surtido</th>
+                <th>Fecha</th>
+                
+            </tr>
+        </thead>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+                
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+                
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+            
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+            
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+                
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+            
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+            
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+                
+        </tr>
+        <tr>
+
+            <td>1</td>                            
+            <td>AA99CR1G</td>
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+            
+        </tr>
+        <tr>
+
+            <td>1</td>
+            <td>AA99CR1G</td>                           
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+            
+        </tr>
+        <tr>
+
+            <td>1</td>          
+            <td>AA99CR1G</td>                      
+            <td>Jose Leon</td>
+            <td>800L</td>
+            <td>San diego</td>
+            <td>14/06/2023</td>
+                
+        </tr>
+        </table>
+        <div class="btn-group">
+            <button>|<<</button>
+            <button><<</button>
+            <button>Refrescar</button>
+            <button>>></button>
+            <button>>>|</button>
+            </div>
+            </div>
+
+            
+    <div class="registro">
+        <fieldset>   
+
+            <legend><h2>Filtrar por</h2></legend>
+            <table>
+                <tr>
+                    <th>  </th>
+                    <th>  </th>
+                </tr>
+
+                <tr>
+                    <td><label >Cedula: </label></td>
+                    <td><input type="text" name="nombre"></td>
+                </tr>
+                <tr>
+                    <td><label>Chofer: </label></td>
+                    <td><input type="text" name="apellido"></td>
+                </tr>
+                <tr>
+                    <td><label>Vehiculo: </label></td>
+                    <td><input type="text" name = "Cedula"></td>
+                </tr>
+               
+            
+                <tr>
+                    <td><label >Sitio de surtido: </label></td>
+                    <td>
+                    <select name="niveles">
+                        <option value="" disable selected>Sedes</option>
+                        <option value="1">Chofer a destajo</option>
+                        <option value="2">Chofer de patio</option>
+                        <option value="3">Asistente de administración</option>
+                        <option value="4">Asistente de operaciones</option>
+                        <option value="5">Tec. de seguridad y salud laboral</option>
+                        <option value="6">Mantenimiento</option>
+                        <option value="7">Conductor de carga pesada</option>
+                        <option value="8">Gerente de transporte</option>
+                        <option value="9">Chofer de transporte personal</option>
+
+                    </select></td>
+                </tr>
+                <tr>
+                    <td><label>Cantidad: </label></td>
+                    <td><input type="number"></td>
+                    
+                </tr>
+                <tr>
+                    <td><label>Fecha desde: </label></td>
+                    <td><input type="date"></td>
+                    
+                </tr>
+
+                <tr>
+                    <td><label>Fecha hasta: </label></td>
+                    <td><input type="date"></td>
+                    
+                </tr>
+                
+
+            </table>
+            
+            <hr>
+            <button type="button" id="enviar">Guardar</button>
+            <button type="button" id="enviar">Imprimir</button>
+
+            </div>
+            
+            
+        </fieldset>
+                </div>
+</form>
+<script src="../menu-functions.js"></script>
+</body>
+</html>

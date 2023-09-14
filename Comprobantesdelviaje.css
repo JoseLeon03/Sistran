@@ -1,0 +1,477 @@
+body{
+    font-family: Arial, sans-serif;
+}
+h2, h4{
+    text-align: center;
+    margin-top: 0px;
+}
+h4{
+  margin-bottom: 5px;
+}
+.Tablas label , .Tablas label {
+    display: inline-block;
+ margin: 5px 5px 5px;
+}
+label{
+  font-weight: bold;
+}
+span{
+    margin-left: 5px;
+}
+
+.estadoViaje{
+
+  font-weight: bold;
+}
+ 
+
+
+#ventana-emergente {
+/* display: none; */
+background-color:  #aaa;
+position: absolute;
+top: 50%;
+left: 50%;
+width: 600px;
+ height: 535px; 
+ font-size: 15px; 
+
+transform: translate(-50%, -50%);
+border-radius: 6px;
+border: 1px solid black;
+padding: 0px 20px 20px 20px;
+}
+
+.Tablas{
+display: flex;
+justify-content: space-between;
+}
+
+
+
+p{
+    margin-top: 0px;
+    margin-left: 10px;
+    
+}
+fieldset{
+    border-radius: 6px;
+    background-color: #c9c6c6;
+}
+
+.fieldAbajo1{
+ max-width: 441px;
+}
+
+.fieldEmergente1{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/*Botones*/
+button[class="Modificar"] {
+    display: inline-block;
+    background-color: #2f6ffa;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 26px;
+}
+button[class="modificarViajes"] {
+    display: inline-block;
+    background-color: #2f6ffa;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-top: 0px;
+}
+
+
+button[class="normalButton"] {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 0px;
+  margin-left: auto;
+}
+
+button[class="redButton"] {
+    display: inline-block;
+    background-color: #d83434;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+#Imprimir{
+    padding: 10px 100px;
+    text-align: center;
+}
+.imprimirButton{
+   text-align: center;
+}
+button[class="normalButton"]:active {
+
+  background-color: #3e8e41;
+
+}
+.actualizarEstatus{
+    background-color: #2f6ffa;
+  }
+  .actualizarEstatus:active{
+    background-color: #145dfa;
+  }
+
+  
+button[class="redButton"]:active {
+    background-color: #ad2929;
+  }
+  /* button:hover{
+  
+  transition: 0.2s;
+    transform: scale(1.08, 1.08);
+    box-shadow: #000000 1px 1px 5px;
+  } */
+
+
+
+
+#Salir{
+   
+    background-color: #838383;
+    color: #fff;
+    padding: 10px 29px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+
+}
+
+
+
+/* 
+button:active {
+    background-color: #ce2f2f;
+  } */
+
+.Modificar:active, .modificarViajes:active  {
+  background-color: #145dfa ;
+}
+
+  button:hover{
+  
+  transition: 0.2s;
+    transform: scale(1.08, 1.08);
+    box-shadow: #000000 1px 1px 5px;
+  }
+
+#Salir:active{
+    background-color: #636363;
+}
+/*Fin de botones emergentes*/
+button[class="menubar-btn2"] {
+    display: flex;
+    height: 100%;
+    border: none;
+  justify-content: flex-end;
+  padding: 7.5px 15px;
+    margin-bottom: 5px;
+    margin-top: 0px;
+    background: transparent;
+    outline: none;
+    margin-left: auto;
+  
+  }
+  
+.Observacion{
+    display: block;
+    max-height: 50px;
+   width: 250px;
+   word-wrap:break-word;
+   overflow: auto;
+}
+
+textarea{
+    margin-top: 10px;
+    border: 1px solid black;
+    width: 400px;
+    height: 22px;
+    border-radius: 3px;
+    resize: none;
+
+}
+.textarea{
+  margin-top: 10px;
+  display: flex;
+}
+
+::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+    border: 3px solid #fff;
+    
+  }
+  ::-webkit-scrollbar-thumb {
+   
+    height: auto;
+   
+    background: #747474;
+    
+   
+  }
+  .Fecha{
+    color: black;
+    font-weight: bold;
+  }
+
+  #inputBultos{
+    height: 20px;
+  border-radius: 3px;
+  border: 1px solid #000000;
+
+  box-sizing: border-box;
+  max-width: 50px;
+
+  }
+  .divBultos{
+    float: right;
+  }
+
+  /*Selects*/
+
+  select{
+    width: 100px;
+    /* padding: 10px; */
+    border-radius: 3px;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    /* max-width: max-content; */
+
+}
+  /*Fin de selects*/
+
+
+.listadoEstadosviaje{
+  margin: 20px auto ;
+  height: max-content;
+  margin-right: auto;
+  max-width: 450px;
+  /* margin: 20px 0px; */
+}
+.listadoComprobantesviaje{
+    margin: 20px auto ;
+    height: max-content;
+    margin-right: auto;
+    /* width: 900px; */
+}
+
+
+.divEstadosfecha{
+  display: flex;
+}
+.divEstadosfecha fieldset{
+  font-size: 13px;
+ width: 315px;
+ height: 90px;
+}
+
+/*Tabla estados de viajes para la segunda pestaña emergente*/
+#listadoEstadosviajes{
+  display:inline-block;
+        border-collapse: collapse;
+        text-align: center;
+          width: 450px;  
+          height: 144px;
+        white-space: nowrap;
+        border: 0.1px solid black;
+    border-radius: 6px;
+        overflow: auto;
+        background-color: #e0e0e0;
+}
+
+
+
+      
+#listadoEstadosviajes td {
+	font-size: 12px;
+	/* width: 100px; */
+	
+	padding: 4px;
+	border: 1px solid #000000;
+  }
+  
+  #listadoEstadosviajes th {
+	background-color: #aaa;
+  width: 103px;
+	color: black;
+	border: 1px solid black;
+	font-size: 15px;
+	padding: 4px;
+
+	
+  }
+  #listadoEstadosviajes tr:hover {
+	background-color: #c5c5c5;
+  }
+
+  #listadoEstadosviajes tr:hover {
+    background-color: #c5c5c5;
+  }
+  
+  /* Fin Tabla estados de viajes para la segunda pestaña emergente*/
+
+/*Tabla comprobantes de viajes para la tercera pestaña emergente*/
+
+  #listadoComprobantesviaje{
+    display:inline-block;
+    border-collapse: collapse;
+    text-align: center;
+    /* width: 450px;   */
+    height: 200px;
+    white-space: nowrap;
+    border: 0.1px solid black;
+    border-radius: 6px;
+    overflow: auto;
+    background-color: #e0e0e0;
+  }
+  
+        
+  #listadoComprobantesviaje td {
+      font-size: 12px;
+      /* width: 100px; */
+      
+      padding: 4px;
+      border: 1px solid #000000;
+    }
+    
+    #listadoComprobantesviaje th {
+      background-color: #aaa;
+    width: 103px;
+      color: black;
+      border: 1px solid black;
+      font-size: 15px;
+      padding: 4px;
+  
+      
+    }
+    #listadoComprobantesviaje tr:hover {
+      background-color: #c5c5c5;
+    }
+  
+    #listadoComprobantesviaje tr:hover {
+      background-color: #c5c5c5;
+    }
+
+/* Fin Tabla comprobantes de viajes para la tercera pestaña emergente*/
+
+
+
+  .fechaEstado{
+    margin-bottom: 5px;
+    font-weight: bold;
+    display: inline-block;
+  }
+ .divNuevafecha{
+  margin-top: 05px;
+    width: 100px;
+  } 
+  .Modificar{
+    float: right;
+  }
+  
+  /*Inicio tab menu*/
+
+  .tab-menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    border-radius: 0px;
+    overflow: hidden;
+
+    }
+
+    .tab {
+      padding: 5px;
+      width: 225px;
+      white-space: nowrap;
+      background-color: #aaa;
+      cursor: pointer;
+      border-radius: 10px 10px 0 0;
+      border: 1px solid black;
+    }
+
+    .tab.active {
+      background-color:  #757575;
+      
+      }
+      
+    .tab-content {
+      display: none;
+      /* padding: 30px; */
+      border-top: none;
+      border-radius: 0px 10px 10px 10px;
+      
+      }
+      
+      .tab-content.active {
+       display: block;
+       
+      }
+/*Fin de tab  menu*/
+.derechaComprobante{
+    float: right;
+}
+
+.fieldModificarviajes{
+    margin:0px auto;
+    width: 475px;
+    margin-top: 10px;
+}
+.fieldModificarviajes button{
+    margin-right: 1px;
+}
+
+.emergente_btn3{
+    background-color: #c9c6c6 ;
+    border: 1px solid  #7e7e7e;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    margin-top: 15px;
+}
+
+#ventana-actualizarestatus {
+    /* display: none; */
+    background-color:  #aaa;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+     height: 300px; 
+    transform: translate(-50%, -50%);
+    border-radius: 6px;
+    border: 1px solid black;
+    padding: 0px 20px 20px 20px;
+    }
+
+#reprogramarCondicion td{
+
+    padding: 5px;
+    border: 1px border black;
+
+}
+
+#
