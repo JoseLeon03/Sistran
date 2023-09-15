@@ -134,7 +134,7 @@ ipcMain.on('Asignacion', (event, data) => {
     }
   })
 
-  // childWindow.webContents.openDevTools()
+  childWindow.webContents.openDevTools()
   childWindow.loadFile(path.join(__dirname, 'Asignacion/Asignacion.html'))
 
   
@@ -195,9 +195,9 @@ ipcMain.on('Empleados', (event, data) => {
     }
   })
 
-  // childWindow.webContents.openDevTools()
+  childWindow.webContents.openDevTools()
 
-  childWindow.loadFile(path.join(__dirname, 'Empleados/Empleados.html'))
+  childWindow.loadFile(path.join(__dirname, 'Empleados/empleados.html'))
 
 } )/*Fin Administracion de empleados*/
 
@@ -257,7 +257,7 @@ ipcMain.on('Usuarios', (event, data) => {
   })
   // childWindow.webContents.openDevTools()
 
-  childWindow.loadFile(path.join(__dirname, 'Usuarios/Usuarios.html'))
+  childWindow.loadFile(path.join(__dirname, 'Usuarios/usuarios.html'))
 
   
 
@@ -361,7 +361,7 @@ ipcMain.on('ReqCavaAlmacen', (event, data) => {
       enableRemoteModule: true
     }
   })
-  // childWindow.webContents.openDevTools()
+  childWindow.webContents.openDevTools()
 
   childWindow.loadFile(path.join(__dirname, 'ReqCavaAlmacen/ReqCavaAlmacen.html'))
 
@@ -423,7 +423,7 @@ ipcMain.on('ListadoViajes', (event, data) => {
       enableRemoteModule: true
     }
   })
-  // childWindow.webContents.openDevTools()
+   childWindow.webContents.openDevTools()
 
   childWindow.loadFile(path.join(__dirname, 'Listadoviajes/Listadoviajes.html'))
 })/*Fin Listado de viajes*/
@@ -469,7 +469,7 @@ ipcMain.on('PagoKm', (event, data) => {
       }
     })
   
-// childWindow.webContents.openDevTools()
+childWindow.webContents.openDevTools()
       
         childWindow.loadFile(path.join(__dirname, 'admviatico/Admviatico.html'))
         

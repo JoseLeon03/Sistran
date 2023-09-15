@@ -15,20 +15,29 @@
   },
   "devDependencies": {
     "electron": "^25.4.0",
-    "electron-builder": "^24.6.4"
+    "electron-builder": "^24.6.4",
+    "eslint": "^8.49.0"
   },
   "build": {
     "appId": "com.electron.app",
-    "productName": "Mi Aplicación",
+    "productName": "Sistran",
     "npmRebuild": true,
     "win": {
-      "target": "nsis",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     }
+   
   },
   "name": "main.js",
   "version": "1.0.0",
@@ -38,7 +47,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "install": "prebuild-install || node-gyp rebuild",
+    "postinstall": "electron-builder install-app-deps"
   },
   "author": "",
   "license": "ISC"

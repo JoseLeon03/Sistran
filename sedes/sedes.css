@@ -1,7 +1,7 @@
 
 body{
   overflow: hidden;
- 
+  font-family: Arial, sans-serif;
 }
 
 
@@ -156,7 +156,7 @@ input::-webkit-inner-spin-button {
 
 
 select{
-  margin-left: 35px;
+  margin-left: 43px;
 
 }
 input[type="number"]{
