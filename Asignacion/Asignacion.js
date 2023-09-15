@@ -32,11 +32,20 @@ const obtenerAsignaciones = (conexion) => {
  
  //Codigo para usar si la consulta esta en un archivo diferente
  // const obtenerSedes = require('./')
+
+ let currentPage = 0;
+ const rowsPerPage = 25;
  
- consultar.connect().then(() => {
-   obtenerAsignaciones(consultar).then((asignados) => {
-     const tableBody = document.querySelector('#tabla-asignados tbody')
-     asignados.forEach((column) => {
+ const renderAsignacionesTable = (asignados) => {
+   const tableBody = document.querySelector('#tabla-asignados  tbody');
+   tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
+   const start = currentPage * rowsPerPage;
+   const end = start + rowsPerPage;
+   const currentAsignados = asignados.slice(start, end);
+ 
+ 
+
+     currentAsignados.forEach((column) => {
  
      const rowElement = document.createElement('tr')
      const IdCell = document.createElement('td')
@@ -52,9 +61,6 @@ const obtenerAsignaciones = (conexion) => {
      const PropietarioCell = document.createElement('td')
 
 
-
-
-  
  
      IdCell.textContent = column.Id_a
      CedulaCell.textContent = column.Cedula_a
@@ -69,9 +75,6 @@ const obtenerAsignaciones = (conexion) => {
      PropietarioCell.textContent = column.Propietario_a
 
 
-
-   
-
       rowElement.appendChild(IdCell)
       rowElement.appendChild(CedulaCell)
       rowElement.appendChild(NombreCell)
@@ -84,8 +87,52 @@ const obtenerAsignaciones = (conexion) => {
       rowElement.appendChild(AñoCell)
       rowElement.appendChild(PropietarioCell)
        tableBody.appendChild(rowElement)
-     })
-   
+
+
+
+     });
+    
+    };  
+    consultar.connect().then(() => {
+   obtenerAsignaciones(consultar).then((asignados) => {
+      renderAsignacionesTable(asignados)
+
+
+      
+        // Agregar controladores de eventos al botón de siguiente página
+        const nextPageButton1 = document.querySelector('#nextPage');
+        nextPageButton1.addEventListener('click', () => {
+          const maxPages = Math.ceil(asignados.length / rowsPerPage);
+          if (currentPage < maxPages - 1) {
+            currentPage++;
+            renderAsignacionesTable(asignados);
+          }
+        });
+    
+        // Agregar controladores de eventos al botón de página anterior
+        const previousPageButton1 = document.querySelector('#previousPage');
+        previousPageButton1.addEventListener('click', () => {
+          if (currentPage > 0) {
+            currentPage--;
+            renderAsignacionesTable(asignados);
+          }
+        });
+    
+        // Agregar controladores de eventos al botón de primera página
+        const firstPageButton1 = document.querySelector('#firstPage');
+        firstPageButton1.addEventListener('click', () => {
+          currentPage = 0;
+          renderAsignacionesTable(asignados);
+        });
+    
+        // Agregar controladores de eventos al botón de última página
+        const lastPageButton1 = document.querySelector('#lastPage');
+        lastPageButton1.addEventListener('click', () => {
+          currentPage = Math.floor(asignados.length / rowsPerPage) ;
+          renderAsignacionesTable(asignados);
+        });
+
+
      const filasTabla = document.querySelectorAll('#tabla-asignados tbody tr');
 
 

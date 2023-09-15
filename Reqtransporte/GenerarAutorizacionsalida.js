@@ -52,7 +52,7 @@ const generarSalida = async ({id_viaje}) => {
   <body>
     <div class="centrado">
     <img src="data:image/jpeg;base64,${
-        readFileSync('ConsorcioLogo.png').toString('base64')
+        readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')
       }" alt="alt text" / id="camion">
   
   <h1>Consorcio Transporte Los Pinos</h1>
@@ -201,7 +201,7 @@ const generarSalida = async ({id_viaje}) => {
   // Carga tu plantilla HTML
   await page.setContent(html);  
 
-  await page.addStyleTag({path: './PlantillaAutorizacionsalida.css'});  
+  await page.addStyleTag({path: '//10.50.1.36/Sistran/css/PlantillaAutorizacionsalida.css'});  
 
   // Genera el PDF
   const pdfPath = 'Salida.pdf';

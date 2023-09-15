@@ -18,7 +18,7 @@ const generarAutorizacion = async ({ Fecha, Cedula, Nombre, Apellido, Placa, Mar
     <div class="centrar">
     <div class="container">
     <img src="data:image/jpeg;base64,${
-        readFileSync('camionhdhd.png').toString('base64')
+        readFileSync('//10.50.1.36/Sistran/camionhdhd.jpg').toString('base64')
       }" alt="alt text" / id="camion">
   <div class="centrado"><H1 id="h1">TRANSPORTE 00-04 C.A</H1></div>
   </div>
@@ -101,7 +101,7 @@ const generarAutorizacion = async ({ Fecha, Cedula, Nombre, Apellido, Placa, Mar
   // Carga tu plantilla HTML
   await page.setContent(html);  
 
-  await page.addStyleTag({path: './AutorizacionParaconducir.css'});  
+  await page.addStyleTag({path: '//10.50.1.36/Sistran/css/AutorizacionParaconducir.css'});  
 
   // Genera el PDF
   const pdfPath = 'Salida.pdf';

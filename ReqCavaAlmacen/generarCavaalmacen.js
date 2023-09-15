@@ -54,7 +54,7 @@ const generarCavaalmacen = async (Placa) => {
   
       <div class="centrado">
       <img src="data:image/jpeg;base64,${
-        readFileSync('ConsorcioLogo.png').toString('base64')
+        readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')
       }" alt="alt text" / id="camion">          
           <h1>Consorcio Transporte Los Pinos</h1>
           
@@ -64,8 +64,7 @@ const generarCavaalmacen = async (Placa) => {
           <h3 class="titulo">ORIGINAL AUTORIZACION PARA CARGAR CAVA</h3>
            
          
-          <label for="">Numero:</label>
-          <span>43.639</span>
+   
           <br>
           <br>
           <label for="">Fecha</label>
@@ -135,7 +134,7 @@ const generarCavaalmacen = async (Placa) => {
            
       <div class="centrado">
       <img src="data:image/jpeg;base64,${
-        readFileSync('ConsorcioLogo.png').toString('base64')
+        readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')
       }" alt="alt text" / id="camion">          
           <h1>Consorcio Transporte Los Pinos</h1>
           
@@ -147,12 +146,11 @@ const generarCavaalmacen = async (Placa) => {
         
               
          
-          <label for="">Numero:</label>
-          <span>43.639</span>
+  
           <br>
           <br>
           <label for="">Fecha</label>
-          <span>17/07/2023</span>
+          <span>${now}</span>
           
           <div class="descripcion">
           <p >Por medio de la presente se Autoriza cargar cava con la siguiente descripción:</p>
@@ -225,7 +223,7 @@ const generarCavaalmacen = async (Placa) => {
   // Carga tu plantilla HTML
   await page.setContent(html);  
 
-  await page.addStyleTag({path: './PlantillaAutorizacioncava.css'});  
+  await page.addStyleTag({path: '//10.50.1.36/Sistran/css/PlantillaAutorizacioncava.css'});  
 
   // Genera el PDF
   const pdfPath = 'Salida.pdf';

@@ -72,7 +72,7 @@ function modificarEstatusfunc(estatusEmergente,modificarEstatus, estatus, id_via
       
           await sql.connect(config);
       
-          const result = await sql.query('SELECT Id_estatus, Nombre FROM Estatusviaje');
+          const result = await sql.query('SELECT Id_estatus, Nombre FROM Estatusviaje where Id_estatus != 5');
       
           await sql.close();
       
@@ -118,14 +118,22 @@ function modificarEstatusfunc(estatusEmergente,modificarEstatus, estatus, id_via
       //fin generar estatus
 
 // Función para obtener las sedes según el tipo de sede
-async function obtenerSedesTipo(tipoSede) {
+async function obtenerSedesTipo(tipoSede, excluirTipo) {
   try {
       const pool = await sql.connect(config); // Establecer la conexión
 
       // Realizar la consulta a la base de datos aquí y retornar el resultado
-      const resultadoConsulta = await pool.request()
-          .input('tipo', sql.Int, tipoSede)
-          .query('SELECT Codigo, Sede FROM Sedes WHERE Tiposede = @tipo');
+      let resultadoConsulta;
+      if (excluirTipo) {
+          resultadoConsulta = await pool.request()
+              .input('tipo', sql.Int, tipoSede)
+              .input('excluirTipo', sql.Int, excluirTipo)
+              .query('SELECT Codigo, Sede FROM Sedes WHERE Tiposede = @tipo AND Tiposede != @excluirTipo and Tiposede !=5');
+      } else {
+          resultadoConsulta = await pool.request()
+              .input('tipo', sql.Int, tipoSede)
+              .query('SELECT Codigo, Sede FROM Sedes WHERE Tiposede = @tipo');
+      }
 
       await pool.close(); // Cerrar la conexión
       return resultadoConsulta.recordset;
@@ -136,9 +144,13 @@ async function obtenerSedesTipo(tipoSede) {
 }
 
 // Función para cargar las sedes según el tipo de estado seleccionado
-async function cargarSedesPorTipoEstado(tipoSede) {
+async function cargarSedesPorTipoEstado(tiposSede, excluirTipo) {
   try {
-      const sedes = await obtenerSedesTipo(tipoSede);
+      let sedes = [];
+      for (let i = 0; i < tiposSede.length; i++) {
+          const sedesTipo = await obtenerSedesTipo(tiposSede[i], excluirTipo);
+          sedes = [...sedes, ...sedesTipo];
+      }
 
       let optionsHtml = '<option value="" disabled selected>Seleccione</option>';
       sedes.forEach((sede) => {
@@ -151,9 +163,6 @@ async function cargarSedesPorTipoEstado(tipoSede) {
   }
 }
 
-
-const selectResultados = document.getElementById('selectResultados'); 
-
 document.getElementById('selectEstatusViaje').addEventListener('change', async (event) => {
   const idEstadoSeleccionado = event.target.value;
 
@@ -162,17 +171,21 @@ document.getElementById('selectEstatusViaje').addEventListener('change', async (
       selectResultados.innerHTML = ''; 
   } else {
     selectResultados.disabled = false;
-    
-   
-    if (idEstadoSeleccionado === '1' || idEstadoSeleccionado === '3') {
-        await cargarSedesPorTipoEstado (1);
-    } else if (idEstadoSeleccionado === '2' || idEstadoSeleccionado === '4') {
-        await cargarSedesPorTipoEstado(2); 
-    } else if (idEstadoSeleccionado === '5') {
-        await cargarSedesPorTipoEstado(4); 
-    }
+
+    if (idEstadoSeleccionado === '1') {
+        await cargarSedesPorTipoEstado([1, 2], 4);
+    } else if (idEstadoSeleccionado === '2') {
+        await cargarSedesPorTipoEstado([1]); 
+      } 
+      else if (idEstadoSeleccionado === '3') {
+        await cargarSedesPorTipoEstado([2]); 
+    } 
+    else if (idEstadoSeleccionado === '4') {
+      await cargarSedesPorTipoEstado([4]); 
+  } 
   }
 });
+
 
 // Agregar evento click al botón "Guardar" dentro de la ventana emergente
 document.getElementById('estatus-emergente').addEventListener('click', async (event) => {
@@ -225,7 +238,85 @@ document.getElementById('estatus-emergente').addEventListener('click', async (ev
         else{
 
     try {
-      const pool = await sql.connect(config);
+      
+    const pool = await sql.connect(config);
+    
+    
+    const result = await pool.request()
+
+    .input('idViaje', sql.Int, idViaje)
+    .query(`SELECT 
+    FORMAT(Fecha, 'yyyy-MM-dd') as FechaFormateada,
+    Cod_Destino 
+  FROM Viajes 
+  WHERE Id_viaje = @idViaje`);
+
+  let fechaInicio = result.recordset[0].FechaFormateada;
+  const codDestino = result.recordset[0].Cod_Destino;
+
+    const fecharequerimiento = new Date (fechaInicio);
+    const fechacambioestatus = new Date (registroFecha);
+
+  console.log('Fecha de requerimiento ' + fechaInicio); // Verifica la fecha de inicio
+  
+    // Obtén la duración esperada del viaje
+    const result2 = await pool.request()
+      .input('codDestino', sql.Int, codDestino)
+      .query(`SELECT Dias FROM Tabladeviaticos WHERE Destino = @codDestino`);
+  
+    let diasEsperados = result2.recordset[0].Dias;
+  
+    console.log(diasEsperados); // Verifica diasEsperados
+  
+    // Si diasEsperados es un string, conviértelo a un número
+    if (typeof diasEsperados === 'string') {
+      diasEsperados = parseInt(diasEsperados);
+    }
+    
+    console.log( registroFecha); // Verifica registroFecha
+  
+    // Calcula la diferencia de días
+        
+
+  // Ahora puedes restar las fechas
+  const diffDias = fechacambioestatus.getTime() - fecharequerimiento.getTime();
+
+  let diasTotal = Math.ceil(diffDias / (1000 * 3600 * 24)) + 1;
+
+    console.log('dias restantes ' + diasTotal)
+    
+
+    const diasExtra = diasTotal - diasEsperados;
+  
+    console.log('los dias extras son' + diasExtra)
+
+
+const result3 = await pool.request()
+  .input('idViaje', sql.Int, idViaje)
+  .query(`SELECT TOP 1 * FROM Comprobante_viajes WHERE Codigo_viaje = @idViaje ORDER BY Num_comprobante`);
+
+let primerComprobante = result3.recordset[0];
+const comprobante123 = primerComprobante.Num_comprobante;
+const Fecha123 = primerComprobante.Fecha
+const cod_Destino123 = primerComprobante.Origen
+const codigoViaje = primerComprobante.Codigo_viaje
+
+console.log('Primer comprabante ' + comprobante123)
+console.log('primer fecha es ' + Fecha123)
+console.log('el codigo de dedstino es ' + cod_Destino123)
+console.log('codigo de viaje  es ' + codigoViaje)
+
+
+for(let i = 0; i < diasExtra ; i++) {
+  console.log('el valor de i es ' + i)
+  await pool.request()
+    .input('Codigo_viaje', sql.Int, codigoViaje)
+    .input('Fecha', sql.DateTime, Fecha123)
+    .input('Origen', sql.Int, cod_Destino123)
+    .query(`INSERT INTO Comprobante_viajes (Codigo_viaje, Fecha, Origen, Descripcion) VALUES (@Codigo_viaje, @Fecha, @Origen, CONCAT('Gastos rembolsables viaje a ', @Origen))`);
+  console.log('insert');
+}
+
 
       // Realizar el update en la tabla Viajes
       await pool.request()

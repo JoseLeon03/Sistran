@@ -38,7 +38,7 @@ const generarComprobante = async ({ numeroComprobante}) => {
   <body>
     <div class="centrado">
     <img src="data:image/jpeg;base64,${
-      readFileSync('ConsorcioLogo.png').toString('base64')
+      readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')
     }" alt="alt text" / id="camion">
   
   
@@ -108,7 +108,7 @@ const generarComprobante = async ({ numeroComprobante}) => {
   
   <div class="centrado">
   <img src="data:image/jpeg;base64,${
-      readFileSync('ConsorcioLogo.png').toString('base64')
+      readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')
     }" alt="alt text" / id="camion">
       
       <h1>Consorcio Transporte Los Pinos</h1>
@@ -183,7 +183,7 @@ const generarComprobante = async ({ numeroComprobante}) => {
   // Carga tu plantilla HTML
   await page.setContent(html);  
 
-  await page.addStyleTag({path: './Plantillacomprobante.css'});  
+  await page.addStyleTag({path: '//10.50.1.36/Sistran/css/Plantillacomprobante.css'});  
 
   const fecha = '28/08/2023'
   // Genera el PDF

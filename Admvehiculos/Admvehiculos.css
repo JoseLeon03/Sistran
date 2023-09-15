@@ -104,7 +104,7 @@ select{
     border-radius: 5px;
     border: none;
     cursor: pointer;
-    margin-right: 10px;
+    /* margin-right: 10px; */
 
 }
 
@@ -251,9 +251,6 @@ td:not(.excluir) {
  
 }
  
-
-
-
 
   .titlebar{
     color: blue;

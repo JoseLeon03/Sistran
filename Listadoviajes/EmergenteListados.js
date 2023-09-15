@@ -106,7 +106,7 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 
 <div class="tab-content" id="tab2">
 
-<fieldset><legend>Estados del viaje</legend>
+<fieldset>
 <h2>${estatus} </h2>
 <h4>15/08/2023</h4>
 </fieldset>
@@ -158,25 +158,27 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 
 <div class="tab-content" id="tab3">
 
-<fieldset><legend>Comprobante inicial del viaje</legend>
-    <label>Numero: </label>
-    <span>123456</span>
+<fieldset style="width: max-content; margin-bottom: 5px"><label>Comprobante inicial del viaje</label></fieldset>
 
-    <span class="derechaComprobante">16/08/2023</span>
+<fieldset>
+    <label>Numero: </label>
+    <span></span>
+
+    <span class="derechaComprobante"></span>
     <label class="derechaComprobante" >Fecha: </label>
 
     <br>
     <label>Descripción: </label>
-    <span>50% Gastos reembolsables viaje a Acarigua</span>
+    <span></span>
 
 
-    <span  class="derechaComprobante"> 600bs</span>
+    <span  class="derechaComprobante"></span>
     <label class="derechaComprobante">Monto:</label>
   
 
 </fieldset>
 
-<fieldset class="listadoComprobantesviaje"><legend>Comprobantes de viaje</legend>
+<fieldset class="listadoComprobantesviaje">
 <table id="listadoComprobantesviaje">
     <thead>
         <th>Numero</th>

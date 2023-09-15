@@ -122,7 +122,7 @@ htmlContent += `</body>
   displayHeaderFooter: true,
   headerTemplate: ` <div class="centrado" style="display: flex; background-color: blue; ">
 
-  <img src="data:image/jpeg;base64,${readFileSync('ConsorcioLogo.png').toString('base64')   }" alt="alt text" / id="camion" style="margin: 0px 10px"">
+  <img src="data:image/jpeg;base64,${readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')   }" alt="alt text" / id="camion" style="margin: 0px 10px"">
   <div style="display:block">
   <h1  style=" font-size: 26px; margin-bottom: 20px" >Consorcio Transporte Los Pinos</h1>
 

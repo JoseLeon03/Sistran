@@ -292,7 +292,7 @@ const formulario = document.querySelector('#formulario');
 
 element.addEventListener('click', async (evento) => {
     evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-    const { readFileSync } = require('fs');
+    // const { readFileSync } = require('fs');
     const Cedula = document.querySelector('input[name="Cedula"]').value;
     const nombre = document.querySelector('input[name="Nombre"]').value;
     const apellido = document.querySelector('input[name="Apellido"]').value;
@@ -306,8 +306,8 @@ element.addEventListener('click', async (evento) => {
 
 
  
-    const imagen =  readFileSync('ConsorcioLogo.png').toString('base64')
-    console.log(imagen)
+    // const imagen =  readFileSync('ConsorcioLogo.png').toString('base64')
+    // console.log(imagen)
     // const option = templeado.value;
     //  const nivelSeleccionado = nivel.options[nivel.selectedIndex].value;
 

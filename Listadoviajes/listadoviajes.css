@@ -28,7 +28,7 @@ form {
   background-color: #4CAF50; /* Green background */
   border: 1px solid #3d8d40 ; /* Green border */
   color: rgb(255, 255, 255); /* White text */
-  padding: 10px 40px; /* Some padding */
+  padding: 10px 50px; /* Some padding */
   cursor: pointer; /* Pointer/hand icon */
   float: left; /* Float the buttons side by side */
   margin-bottom: 5px;
@@ -38,6 +38,7 @@ form {
   content: "";
   clear: both;
   display: table;
+  
 }
 
 .btn-group button:not(:last-child) {
@@ -736,6 +737,7 @@ overflow: hidden;
   white-space: nowrap;
   background-color: #aaa;
   cursor: pointer;
+  margin-right: 1px ;
   border-radius: 10px 10px 0 0;
   border: 1px solid black;
 }
