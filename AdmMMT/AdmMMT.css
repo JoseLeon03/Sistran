@@ -3,7 +3,7 @@ body{
 }
 
 form {
-  background-color: #c9c6c6;
+  background-color: #aaa;
 
     /* background-color: #aaa; */
     border: 1px solid #000000;
@@ -121,11 +121,11 @@ button[class="modificar"] {
   background-color: #2f6ffa;
 
 }
-
+/* 
 button[class="limpiar"]{
-  /* background-color: rgb(238, 86, 30); */
+
   background-color: rgb(199, 199, 25);
-}
+} */
 
 
 .btn-group button[class="paginas"] {
@@ -228,7 +228,7 @@ input::-webkit-inner-spin-button {
       padding: 5px;
       width: 900px;
       /* background-color: #aaa; */
-      background-color: #c9c6c6;
+      background-color: #aaa;
 
       cursor: pointer;
       border-radius: 10px 10px 0 0;
@@ -263,7 +263,7 @@ input::-webkit-inner-spin-button {
     align-items: center;
     height: 30px;
     /* background: #aaa; */
-    background-color: #c9c6c6;
+    background-color: #aaa;
 
     -webkit-app-region: drag;
   }
