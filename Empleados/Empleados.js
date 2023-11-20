@@ -75,6 +75,9 @@ const obtenerEmpleados = (conexion) => {
        rowElement.appendChild(EstatusCell)
         tableBody.appendChild(rowElement)
       }) 
+      const maxPages = Math.ceil(empleado.length / rowsPerPage);
+      const paginationInfoDiv = document.querySelector('#pagina-empleados');
+      paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
       
     }   
       
@@ -127,6 +130,7 @@ const obtenerEmpleados = (conexion) => {
     //  let fingresFilterValue = '';
      let edadFilterValue = '';
      let templeadoFilterValue = 'Todos';
+     let  estatusEmpleadoFilterValue = 'Activo';
 
           const fechaPosteriorInput = document.querySelector('#fechaPosterior');
       const fechaAnteriorInput = document.querySelector('#fechaAnterior');
@@ -150,6 +154,14 @@ const updateFilteredListados = () => {
     return String(listado.Nombre_e).toLowerCase().startsWith(nombreFilterValue);
   }).filter((listado) => {
     return String(listado.Cedula_e).startsWith(cedulaFilterValue);
+  }).filter((listado) => {
+    if (estatusEmpleadoFilterValue === 'Todos') {
+      // Si el valor del filtro es 'Todos', incluir todos los listados
+      return true;
+    } else {
+      // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
+      return listado.Estatus_e.trim() === estatusEmpleadoFilterValue.trim();
+    }
   }).filter((listado) => {
     if (templeadoFilterValue === 'Todos') {
       // Si el valor del filtro es 'Todos', incluir todos los listados
@@ -210,6 +222,12 @@ const updateFilteredListados = () => {
      const templeadoFilterInput = document.querySelector('#templeadofilter');
      templeadoFilterInput.addEventListener('change', (event) => {
        templeadoFilterValue = event.target.value;
+       updateFilteredListados();
+     });
+
+     const estatusEmpleadoFilterInput = document.querySelector('#estatusEmpleado');
+     estatusEmpleadoFilterInput.addEventListener('change', (event) => {
+       estatusEmpleadoFilterValue = event.target.value;
        updateFilteredListados();
      });
 
@@ -287,11 +305,13 @@ const updateFilteredListados = () => {
   })
   
 
-const element = document.getElementById("Guardar");
-const formulario = document.querySelector('#formulario');
+    const element = document.getElementById("Guardar");
+    const formulario = document.querySelector('#formulario');
 
-element.addEventListener('click', async (evento) => {
+    element.addEventListener('click', async (evento) => {
     evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+    
+    element.disabled = true
     // const { readFileSync } = require('fs');
     const Cedula = document.querySelector('input[name="Cedula"]').value;
     const nombre = document.querySelector('input[name="Nombre"]').value;
@@ -351,16 +371,26 @@ element.addEventListener('click', async (evento) => {
         if (camposVacios.length > 0) {
             // Envía un mensaje al proceso principal con la lista de campos vacíos
             ipcRenderer.send('campos-vacios', camposVacios);
+
+            setTimeout(() =>{
+              element.disabled = false
+                 }, 2500)
             
         }
         else if (count > 0) {
           
           await  ipcRenderer.send('empleadoexistente', Cedula)
+          setTimeout(() =>{
+            element.disabled = false
+               }, 2500)
         } 
 
           else if ( edad >99 ) {
 
             ipcRenderer.send('edad')
+            setTimeout(() =>{
+              element.disabled = false
+                 }, 2500)
           }
 
         
@@ -376,15 +406,17 @@ element.addEventListener('click', async (evento) => {
       
           if (index === 1) {
             // El usuario hizo clic en "no"
+            element.disabled = false
           }
           else{
 
-
+            element.disabled = false
         // Utiliza los valores en tus consultas SQL
         await agregarEmpleado({ nombre, Cedula,  apellido, f_nacimiento, edad, f_ingreso, direccion, telefono, Celular, templeado});
-        ipcRenderer.send('registroExitoso');
         // Limpia los campos del formulario
-        location.reload()
+        setTimeout(() =>{
+          location.reload()
+             }, 1000)
 }}
 });
 
@@ -394,6 +426,7 @@ async function agregarEmpleado(datos) {
         const sqlQuery = `INSERT INTO Empleados (Cedula, Nombre, Apellido, Fechanacimiento, Edad, Fechaingreso, Direccion, Telefono, Celular, Tipoempleado, Activo, Estatus ) VALUES ( ${datos.Cedula}, '${datos.nombre}', '${datos.apellido}', '${datos.f_nacimiento}' , ${datos.edad}, '${datos.f_ingreso}' ,'${datos.direccion}' ,'${datos.telefono}' ,'${datos.Celular || '' }','${datos.templeado}' ,1,1)`;
         const result = await pool.request().query(sqlQuery);
         console.log('Registro agregado a la base de datos:', result);
+        ipcRenderer.send('registroExitoso');
     } catch (error) {
       ipcRenderer.send('error', error);
       console.log(error)
@@ -723,5 +756,28 @@ modificar.addEventListener('click', async (evento) => {
     }
 }
 
+});
+
+//!Edad :3
+
+
+
+const inputFechaNacimiento = document.querySelector('#fecha');
+const inputEdad = document.querySelector('#Edad');
+
+
+inputFechaNacimiento.addEventListener('change', () => {
+
+  const fechaNacimiento = new Date(inputFechaNacimiento.value);
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+  const diferenciaMeses = hoy.getMonth() - fechaNacimiento.getMonth();
+
+
+  if (diferenciaMeses < 0 || (diferenciaMeses === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+    edad--;
+  }
+
+  inputEdad.value = edad;
 });
 

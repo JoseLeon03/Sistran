@@ -227,7 +227,7 @@ const generarCavaalmacen = async (Placa) => {
 
   // Genera el PDF
   const pdfPath = 'Salida.pdf';
-  await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
+  await page.pdf({ path: pdfPath, format: 'Letter', printBackground: true });
 
   await browser.close();
 

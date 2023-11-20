@@ -41,6 +41,10 @@ const renderMarcasTable = (marcas) => {
     
     tableBody.appendChild(rowElement);
   });
+
+  const maxPages = Math.ceil(marcas.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-marca');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 consultar.connect().then(() => {
@@ -130,6 +134,10 @@ const renderModelosTable = (modelos) => {
     
     tableBody.appendChild(rowElement);
   });
+
+  const maxPages = Math.ceil(modelos.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-modelo');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 consultar.connect().then(() => {
@@ -213,6 +221,9 @@ const renderTiposTable = (tipos) => {
     
     tableBody.appendChild(rowElement);
   });
+  const maxPages = Math.ceil(tipos.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-tipo');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 consultar.connect().then(() => {
@@ -265,6 +276,8 @@ const formulario2 = document.querySelector('#formulario');
 Guardar_modelos.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
+        Guardar_modelos.disabled = true
+
         const modelo = document.querySelector('input[name="nombre-modelo"]').value;
         const marca = document.querySelector('#selectMarca').value;
    
@@ -277,16 +290,27 @@ Guardar_modelos.addEventListener('click', async (evento) => {
       if( modelo == ""){
       
           ipcRenderer.send('Dialogomodelo')
+          setTimeout(() =>{
+            Guardar_modelos.disabled = false
+               }, 2500)
+       
         }  
 
        else if (marca == "")
        {  
         await
           ipcRenderer.send('Dialogo') 
+          setTimeout(() =>{
+            Guardar_modelos.disabled = false
+               }, 2500)
+        
           }
           else if( count >0){
 
             ipcRenderer.send('modeloExistente', modelo)
+            setTimeout(() =>{
+              Guardar_modelos.disabled = false
+                 }, 2500)
         }
 
   
@@ -299,17 +323,20 @@ Guardar_modelos.addEventListener('click', async (evento) => {
           })
 
             if (index === 1) {
+              Guardar_modelos.disabled = false
               // El usuario hizo clic en "no"
             }
             else{
-
+              Guardar_modelos.disabled = false
         // Utiliza los valores en tus consultas SQL
         await agregarModelos({ modelo, marca});
-        ipcRenderer.send('registroExitoso')
 
         // Limpia los campos del formulario
         formulario2.reset();
-        location.reload();
+
+        setTimeout(() =>{
+          location.reload();
+             }, 1000)
     }}
     });
 
@@ -320,8 +347,9 @@ Guardar_modelos.addEventListener('click', async (evento) => {
           const sqlQuery = `INSERT INTO Modelo (Modelo, Marca) VALUES ('${datos.modelo}', ${datos.marca})`;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
+          ipcRenderer.send('registroExitoso')
       } catch (error) {
-          console.log('Error al agregar el registro:', error);
+        ipcRenderer.send('error', error);
       }
   
   }
@@ -340,7 +368,9 @@ const formulario = document.querySelector('#formulario');
      
 Guardar_marcas.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
+
+      Guardar_marcas.disabled = true
+
         // Solo envía el formulario si el nombre de marca es válido
          const marca = document.querySelector('input[name="nombre_marca"]').value;
 
@@ -354,15 +384,21 @@ Guardar_marcas.addEventListener('click', async (evento) => {
        {   
         await
           ipcRenderer.send('Dialogo') 
+          setTimeout(() =>{
+            Guardar_marcas.disabled = false
+               }, 2500)
           } 
 
           else if( count >0){
 
             ipcRenderer.send('marcaExistente', marca)
+
+            setTimeout(() =>{
+              Guardar_marcas.disabled = false
+                 }, 2500)
           }
           else {
       
-
             ipcRenderer.send('show-confirm-dialog')
             const index = await new Promise((resolve) => {
               ipcRenderer.once('confirm-dialog-result', (event, index) => {
@@ -371,17 +407,19 @@ Guardar_marcas.addEventListener('click', async (evento) => {
             })
         
             if (index === 1) {
+              Guardar_marcas.disabled = false
               // El usuario hizo clic en "no"
             }
             
             else{
+              Guardar_marcas.disabled = false
           
           // Utiliza los valores en tus consultas SQL await
            agregarMarcas({marca});
-           // Limpia los campos del formulario
-           ipcRenderer.send('registroExitoso')
-            formulario.reset();
-            location.reload();
+     
+            setTimeout(() =>{
+             location.reload();
+                 }, 1000)
 
           }}
         });
@@ -391,9 +429,11 @@ Guardar_marcas.addEventListener('click', async (evento) => {
           const pool = await consultar;
           const sqlQuery = `INSERT INTO Marca (Marca) VALUES ('${datos.marca}')`;
           const result = await pool.request().query(sqlQuery);
+          ipcRenderer.send('registroExitoso')
+
           console.log('Registro agregado a la base de datos:', result);
       } catch (error) {
-          console.log('Error al agregar el registro:', error);
+        ipcRenderer.send('error', error);
       }
   
   }
@@ -411,6 +451,8 @@ const formulario3 = document.querySelector('#formulario');
 Guardar_tipos.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
+      Guardar_marcas.disabled = true
+
         const tipo = document.querySelector('input[name="nombre-tipo"]').value;
 
         const ConsultaMarcas = `SELECT count(*) as count FROM tipovehiculo where tipo = '${tipo}'`;
@@ -421,10 +463,16 @@ Guardar_tipos.addEventListener('click', async (evento) => {
         if( tipo ==""){
           await
           ipcRenderer.send('Dialogotipo')
+          setTimeout(() =>{
+            Guardar_marcas.disabled = false
+                }, 1000)
         }
         else if( count >0){
 
           ipcRenderer.send('tipovehiculoExistente', tipo)
+          setTimeout(() =>{
+          Guardar_marcas.disabled = false
+                }, 1000)
         }
 
         else{
@@ -437,17 +485,18 @@ Guardar_tipos.addEventListener('click', async (evento) => {
           })
       
           if (index === 1) {
-            // El usuario hizo clic en "no"
+            Guardar_marcas.disabled = false  // El usuario hizo clic en "no"
           }
           else{
 
-   
-      // Utiliza los valores en tus consultas SQL
-       await agregarTipos({tipo});
-      // Limpia los campos del formulario
-      formulario3.reset();
-      location.reload();
-      }}
+            Guardar_marcas.disabled = false
+            // Utiliza los valores en tus consultas SQL
+            await agregarTipos({tipo});
+            // Limpia los campos del formulario
+              setTimeout(() =>{
+              location.reload();
+                }, 1000)
+            }}
   });
   
   async function agregarTipos(datos) {
@@ -456,8 +505,9 @@ Guardar_tipos.addEventListener('click', async (evento) => {
           const sqlQuery = `INSERT INTO Tipovehiculo (Tipo) VALUES ('${datos.tipo}')`;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
+          ipcRenderer.send('registroExitoso')
       } catch (error) {
-          console.log('Error al agregar el registro:', error);
+        ipcRenderer.send('error', error);
       }
   
   }
@@ -474,12 +524,11 @@ async function obtenerMarcass() {
     await sql.connect(config);
 
 
-    const result = await sql.query('SELECT Id,Marca FROM Marca');
+    const result = await sql.query('SELECT Id,Marca FROM Marca order by Marca');
 
     
 
 
-    await sql.close();
 
     return result.recordset;
   } catch (error) {
@@ -527,9 +576,8 @@ generarSelectMarcass()
 async function obtenerNombresedeMarca(codigo) {
   try {
     await sql.connect(config);
-    const query = `SELECT  Marca FROM Marca WHERE Id= '${codigo}'`;
+    const query = `SELECT  Marca FROM Marca WHERE Id= '${codigo}' `;
     const result = await sql.query(query);
-    await sql.close();
     return result.recordset[0] || {Marca: 'Codigo no existente',};
   } catch (error) {
     console.error('Error al consultar la base de datos:', error);
@@ -554,7 +602,6 @@ async function actualizarSede(codigo, nuevaMarca) {
     await sql.connect(config);
     const query = `UPDATE Marca SET Marca = '${nuevaMarca}' WHERE Id = '${codigo}'`;
     await sql.query(query);
-    await sql.close();
   } catch (error) {
     console.error('Error al actualizar la base de datos:', error);
     throw error;
@@ -622,7 +669,6 @@ async function obtenerNombremodelo(codigo) {
     await sql.connect(config);
     const query = `SELECT Marca, Modelo FROM Modelo WHERE Id= '${codigo}'`;
     const result = await sql.query(query);
-    await sql.close();
     return result.recordset[0] || {Marca: 'Codigo no existente', Modelo: 'Codigo no existente'};
   } catch (error) {
     console.error('Error al consultar la base de datos:', error);
@@ -648,7 +694,6 @@ async function actualizarmodelo(codigo, nuevoModelo) {
     await sql.connect(config);
     const query = `UPDATE Modelo SET Modelo = '${nuevoModelo}' WHERE Id = '${codigo}'`;
     await sql.query(query);
-    await sql.close();
   } catch (error) {
     console.error('Error al actualizar la base de datos:', error);
     throw error;
@@ -660,7 +705,6 @@ async function actualizarmarcamodelo(codigo, nuevaMarca) {
     await sql.connect(config);
     const query = `UPDATE Modelo SET Marca = '${nuevaMarca}' WHERE Id = '${codigo}'`;
     await sql.query(query);
-    await sql.close();
   } catch (error) {
     console.error('Error al actualizar la base de datos:', error);
     throw error;
@@ -731,7 +775,6 @@ async function obtenerNombresTipo(codigo) {
     await sql.connect(config);
     const query = `SELECT  Tipo FROM Tipovehiculo WHERE Id= '${codigo}'`;
     const result = await sql.query(query);
-    await sql.close();
     return result.recordset[0] || {Tipo: 'Codigo no existente'};
   } catch (error) {
     console.error('Error al consultar la base de datos:', error);
@@ -756,7 +799,6 @@ async function actualizarTipo(codigo, nuevoTipo) {
     await sql.connect(config);
     const query = `UPDATE Tipovehiculo SET Tipo = '${nuevoTipo}' WHERE Id = '${codigo}'`;
     await sql.query(query);
-    await sql.close();
   } catch (error) {
     console.error('Error al actualizar la base de datos:', error);
     throw error;
@@ -809,6 +851,10 @@ document.getElementById('modificar3').addEventListener('click', async function()
   location.reload();
   } 
 }});
+
+
+
+
 //?fin de codigo para traer tipos y modificarlos
 
 
@@ -834,53 +880,131 @@ if (selectedTabIndex !== null) {
   tabMenu.children[selectedTabIndex].click();
 }
 
+const Eliminar_marcas = document.getElementById("eliminarMarcas");
 
-// Obtener el elemento del botón para salir de la interfaz
-// var exitButton = document.querySelector("#exit-button");
+Eliminar_marcas.addEventListener('click', async (evento) => {
+  evento.preventDefault()
 
-// // Agregar un controlador de eventos para el evento "click" en el botón para salir de la interfaz
-// exitButton.addEventListener("click", function() {
-//   // Restablecer la pestaña seleccionada a la pestaña 1
-//   tabMenu.children[0].click();
-// });
-
-//fin de las pruebas del refrescar
+ const marca = document.querySelector('input[name="nombre_marca"]').value;
 
 
-//Codigo para que al refrescar se quede en la misma pestaña
-var tabMenu = document.querySelector("#tab-menu");
+ ipcRenderer.send('elimination-confirm-dialog')
+ const index = await new Promise((resolve) => {
+   ipcRenderer.once('elimination-dialog-result', (event, index) => {
+     resolve(index)
+   })
+ })
 
-// Agregar un controlador de eventos para el evento "click" en el menú de pestañas
-tabMenu.addEventListener("click", function(event) {
-  // Obtener el índice de la pestaña seleccionada
-  var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
+ if (index === 1) {
+   // El usuario hizo clic en "no"
+ }
+ else{
 
-  // Guardar el índice de la pestaña seleccionada en localStorage
-  localStorage.setItem("selectedTabIndex", selectedIndex);
-});
+        await eliminarTipos({marca});
+        ipcRenderer.send('datosEliminados')
+        location.reload()
 
-// Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
-var selectedTabIndex = localStorage.getItem("selectedTabIndex");
+ }
 
-// Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
-if (selectedTabIndex !== null) {
-  tabMenu.children[selectedTabIndex].click();
+})
+
+
+async function eliminarTipos(datos) {
+  try {
+      const pool = await consultar;
+      const sqlQuery = `Delete from Marca where Marca = '${datos.marca}' `;
+      const result = await pool.request().query(sqlQuery);
+      console.log('Registro agregado a la base de datos:', result);
+  } catch (error) {
+    ipcRenderer.send('error', error);
+  }
+
 }
 
 
-// Obtener el elemento del botón para salir de la interfaz
-// var exitButton = document.querySelector("#exit-button");
 
-// // Agregar un controlador de eventos para el evento "click" en el botón para salir de la interfaz
-// exitButton.addEventListener("click", function() {
-//   // Restablecer la pestaña seleccionada a la pestaña 1
-//   tabMenu.children[0].click();
-// });
+const Eliminar_modelo = document.getElementById("eliminarModelo");
 
-//fin de las pruebas del refrescar
+  Eliminar_modelo.addEventListener('click', async (evento) => {
+    evento.preventDefault()
+
+  const modelo = document.querySelector('input[name="nombre-modelo"]').value;
 
 
+  ipcRenderer.send('elimination-confirm-dialog')
+  const index = await new Promise((resolve) => {
+    ipcRenderer.once('elimination-dialog-result', (event, index) => {
+      resolve(index)
+    })
+  })
 
+  if (index === 1) {
+    // El usuario hizo clic en "no"
+  }
+  else{
+
+          await eliminarModelo({modelo});
+          ipcRenderer.send('datosEliminados')
+          location.reload()
+
+  }
+
+  })
+
+
+async function eliminarModelo(datos) {
+  try {
+      const pool = await consultar;
+      const sqlQuery = `Delete from Modelo where Modelo = '${datos.modelo}' `;
+      const result = await pool.request().query(sqlQuery);
+      console.log('Registro agregado a la base de datos:', result);
+  } catch (error) {
+    ipcRenderer.send('error', error);
+  }
+
+}
+
+
+const Eliminar_tipo = document.getElementById("eliminarTipo");
+
+Eliminar_tipo.addEventListener('click', async (evento) => {
+    evento.preventDefault()
+
+  const tipo = document.querySelector('input[name="nombre-tipo"]').value;
+
+
+  ipcRenderer.send('elimination-confirm-dialog')
+  const index = await new Promise((resolve) => {
+    ipcRenderer.once('elimination-dialog-result', (event, index) => {
+      resolve(index)
+    })
+  })
+
+  if (index === 1) {
+    // El usuario hizo clic en "no"
+  }
+  else{
+
+          await eliminarTipo({tipo});
+          ipcRenderer.send('datosEliminados')
+          location.reload()
+
+  }
+
+  })
+
+
+async function eliminarTipo(datos) {
+  try {
+      const pool = await consultar;
+      const sqlQuery = `Delete from Tipovehiculo where Tipo = '${datos.tipo}' `;
+      const result = await pool.request().query(sqlQuery);
+      console.log('Registro agregado a la base de datos:', result);
+  } catch (error) {
+    ipcRenderer.send('error', error);
+  }
+
+}
 
 
 

@@ -65,6 +65,7 @@
                 <button class="paginas">Refrescar</button>
                 <button  type="button" id="nextPage" class="paginas">>></button>
                 <button  type="button" id="lastPage" class="paginas">>>|</button>
+                <div id="pagina-marca"></div>
                 </div>
         </div>
      
@@ -91,12 +92,13 @@
 
 
             <button type="button" id="Guardar_marcas">Guardar</button>
-            <button type="button" id="modificar" class="modificar">Modificar</button>
-           
+           <button type="reset" class="limpiar">Limpiar</button>
+           <button type="button" id="modificar" class="modificar">Modificar</button>
+
              <br> 
-             <button type="button" onclick="impresion()" class="imprimir">Imprimir</button>
-             <button type="button" id="anular">Eliminar</button>
-             <button type="reset" class="limpiar">Limpiar</button>
+             <!-- <button type="button" onclick="impresion()" class="imprimir">Imprimir</button> -->
+             
+             <button type="button" id="eliminarMarcas" class="anular">Eliminar</button>
 
     
         </fieldset>
@@ -135,6 +137,7 @@
                         <button class="paginas">Refrescar</button>
                         <button  type="button" id="nextPage2" class="paginas">>></button>
                         <button  type="button" id="lastPage2" class="paginas">>>|</button>
+                        <div id="pagina-modelo"></div>
                         </div>
                 </div>
       
@@ -169,12 +172,11 @@
                 <fieldset class="ajustar2">
                     <legend>Acciones</legend>
                     <button type="button" id="Guardar_modelos" >Guardar</button>
-                    <button type="button" id="modificar2" class="modificar">Modificar</button>
                     <button type="reset" class="limpiar" >Limpiar</button>
-                   
+                     <button type="button" id="modificar2" class="modificar">Modificar</button>
                      <br>
-                     <button type="button" id="anular">Eliminar</button>
-                    <button type="button" onclick="impresion()" class="imprimir">Imprimir</button>
+                     <button type="button" id="eliminarModelo" class="anular">Eliminar</button>
+                    <!-- <button type="button" onclick="impresion()" class="imprimir">Imprimir</button> -->
             
                 </fieldset>
             
@@ -212,6 +214,7 @@
                 <button class="paginas">Refrescar</button>
                 <button  type="button" id="nextPage3" class="paginas">>></button>
                 <button  type="button" id="lastPage3" class="paginas">>>|</button>
+                <div id="pagina-tipo"></div>
                         </div>
                 </div>
              
@@ -237,12 +240,13 @@
                 <fieldset class="ajustar2">
                     <legend>Acciones</legend>
                     <button type="button" id="Guardar_tipos" >Guardar</button>
+                    <button type="reset"  class="limpiar" >Limpiar</button>
                     <button type="button" id="modificar3" class="modificar">Modificar</button>
-                    <button type="reset"  class="limpiar">Limpiar</button>
+
                    
                      <br>
-                     <button type="button" id="anular">Eliminar</button>
-                    <button type="button" onclick="impresion()" class="imprimir">Imprimir</button>
+                     <button type="button" id="eliminarTipo" class="anular">Eliminar</button>
+                    <!-- <button type="button" onclick="impresion()" class="imprimir">Imprimir</button> -->
             
                 </fieldset>
             

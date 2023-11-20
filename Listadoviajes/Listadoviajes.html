@@ -15,9 +15,9 @@
               
             </div>
             <div class="right">
-              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
-              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
-              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+                <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+                <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+                <button type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
             </div>
           </div>
        
@@ -68,7 +68,7 @@
                 <th>Origen</th>
                 <th>Destino</th>
                 <th>Estatus</th>
-                <th>Monto</th>
+                <th>Monto Bs</th>
                 <th>Placa Vehiculo</th>
                 <th>Placa cava</th>
                 <th>Placa remolque</th>
@@ -77,6 +77,7 @@
                 <th>Apellido</th>
                 <th>Observación</th>
                 <th>Ayudante</th>
+                <th>Contenedor</th>
                 <th>Bultos</th>
              
 
@@ -94,7 +95,7 @@
             <button  type="button" id="nextPage" class="paginas">>></button>
             <button  type="button" id="lastPage" class="paginas">>>|</button>
             </div>
-            
+            <div id="pagina-listado" style="margin: auto ; margin-left: 15px;"></div>
             <button type="button" class="boton" id="Imprimir">Imprimir</button>
             <!-- <button type="button" class="boton" id="Salir" class="Salir">Salir</button> -->
         </div>
@@ -156,5 +157,6 @@
     </script>
      <script src="../menu-functions.js"></script>
      <script src="Listadoviajes.js"></script>
+
 </body>
 </html>

@@ -29,24 +29,34 @@ form {
   background-color: #4CAF50; /* Green background */
   border: 1px solid #3d8d40 ; /* Green border */
   color: rgb(255, 255, 255); /* White text */
-  padding: 10px 51.5px; /* Some padding */
+  padding: 10px 37px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+  /* margin-bottom: 5px; */
+}
+
+.btn-group2 button {
+  background-color: #4CAF50; /* Green background */
+  border: 1px solid #3d8d40 ; /* Green border */
+  color: rgb(255, 255, 255); /* White text */
+  padding: 10px 36.7px; /* Some padding */
   cursor: pointer; /* Pointer/hand icon */
   float: left; /* Float the buttons side by side */
   margin-bottom: 5px;
 }
 
-.btn-group:after {
+.btn-group:after,.btn-group2:after{
   content: "";
   clear: both;
   display: table;
 }
 
-.btn-group button:not(:last-child) {
+.btn-group button:not(:last-child),.btn-group2 button:not(:last-child) {
   border-right: none; /* Prevent double borders */
 }    
 
 
-button[class ="boton"]:not(.paginasm .menubar-btn){
+button[class ="boton"]:not(.paginas .menubar-btn){
 
 border-radius: 5px;
 
@@ -63,11 +73,18 @@ border-radius: 5px;
 
 
 
+.tabla fieldset {
+  /* max-width: max-content; */
+  border-radius: 6px;
+}
 
-fieldset{
-/* max-width: max-content; */
-border-radius: 6px;
 
+#fieldsetEmergente{
+  width: 350px;
+  height: 300px;
+  overflow: auto;
+  /* max-width: max-content; */
+  border-radius: 6px;
 }
 
 
@@ -77,6 +94,7 @@ border-radius: 6px;
 display:inline-block;
 border-collapse: collapse;
 text-align: center;
+white-space: nowrap;
 /* max-width: 480px; */
 border: 1px solid black;
   width: 650px;
@@ -216,9 +234,6 @@ font-size: 16px;
 
 
 
-
-
-
 .registro{
 margin-left: 20px;
 margin-top: 20px;
@@ -275,7 +290,7 @@ input::-webkit-inner-spin-button {
 }
 
 .listado{
-  margin-top: 20px;
+  margin-top: 10px;
 }
  
 .botones{
@@ -290,6 +305,7 @@ input::-webkit-inner-spin-button {
      border: 1px solid #5e5e5e;
   }
 #Imprimir{
+  
   margin-left: 18px;
 }
 #Imprimir:active{
@@ -345,16 +361,20 @@ input::-webkit-inner-spin-button {
 .ventana-choferes, .ventana-vehiculos{
   display: none;
   position: fixed;
-  top: 50%;
+  border-radius: 6px;
+  background-color: #aaa;
+  border: 1px solid black;
+  white-space: nowrap ;
+  border-collapse: collapse;
+  overflow: auto;
+  top: 50%;  
+  transform: translate(-50%, -50%);
   left: 50%;
   width: 500px;
   height: 400px;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+  padding: 0px 10px 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  }
 
 .ventana-choferes, .ventana-vehiculos{
   margin: 0;
@@ -390,10 +410,10 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
 }
 
-.choferes tbody td:first-child, .placas tbody td:first-child {
+/* .choferes tbody td:first-child, .placas tbody td:first-child {
 
   color: #cc00ff; 
-}
+} */
 
 .right2{
   float: right;
@@ -422,6 +442,10 @@ input::-webkit-inner-spin-button {
  font-weight: bold;
 }
 .Tablas{
+  
+  width: 470px ;
+  height: 240px; 
+  overflow: auto;
   display: flex;
   justify-content: space-between;
   }
@@ -479,3 +503,25 @@ button[class="menubar-btn2"] {
 button:hover[class="menubar-btn2"]{
   background: rgba(221, 221, 221, 0.2);
 }
+
+.choferes, .placas{
+
+  width: 100%;
+  max-height: 300px;
+  border-collapse: collapse;
+  background-color: #e0e0e0;
+  overflow: auto;
+}
+
+.alinear-input{
+  display: flex;
+}
+.tabla-placa{
+
+  border: 1px solid black;
+  height: 300px;
+  overflow: auto;
+  background-color: #e0e0e0 ;
+  margin: 3px 0px;
+}
+

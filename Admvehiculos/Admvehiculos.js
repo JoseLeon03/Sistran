@@ -31,7 +31,7 @@
     // const obtenerSedes = require('./')
     
     let currentPage = 0;
-    const rowsPerPage = 25;
+    const rowsPerPage = 15;
     
     const renderVehiculosTable = (vehiculos) => {
       const tableBody = document.querySelector('#tabla-vehiculos tbody');
@@ -77,6 +77,10 @@
         
         tableBody.appendChild(rowElement);
       });
+
+      const maxPages = Math.ceil(vehiculos.length / rowsPerPage);
+      const paginationInfoDiv = document.querySelector('#pagination-info');
+      paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
     };
     
     consultar.connect().then(() => {
@@ -89,7 +93,7 @@
           const maxPages = Math.ceil(vehiculos.length / rowsPerPage);
           if (currentPage < maxPages - 1) {
             currentPage++;
-            renderVehiculosTable(vehiculos);
+            renderVehiculosTable(filteredListados);
           }
         });
     
@@ -98,7 +102,7 @@
         previousPageButton1.addEventListener('click', () => {
           if (currentPage > 0) {
             currentPage--;
-            renderVehiculosTable(vehiculos);
+            renderVehiculosTable(filteredListados);
           }
         });
     
@@ -106,14 +110,14 @@
         const firstPageButton1 = document.querySelector('#firstPage');
         firstPageButton1.addEventListener('click', () => {
           currentPage = 0;
-          renderVehiculosTable(vehiculos);
+          renderVehiculosTable(filteredListados);
         });
     
         // Agregar controladores de eventos al botón de última página
         const lastPageButton1 = document.querySelector('#lastPage');
         lastPageButton1.addEventListener('click', () => {
           currentPage = Math.floor(vehiculos.length / rowsPerPage) ;
-          renderVehiculosTable(vehiculos);
+          renderVehiculosTable(filteredListados);
         });
 
 
@@ -301,7 +305,7 @@
             await sql.connect(config);
       
       
-            const result = await sql.query('SELECT Id,Tipo FROM Tipovehiculo');
+            const result = await sql.query('SELECT Id,Tipo FROM Tipovehiculo order by Tipo');
       
       
       
@@ -351,7 +355,7 @@
 
       await sql.connect(config);
 
-      const result = await sql.query('SELECT Modelo FROM Modelo');
+      const result = await sql.query('SELECT Modelo FROM Modelo order by Modelo');
 
 
 
@@ -403,7 +407,7 @@
 
       await sql.connect(config);
 
-      const result = await sql.query('SELECT Id,Marca FROM Marca');
+      const result = await sql.query('SELECT Id,Marca FROM Marca order by Marca');
 
 
 
@@ -513,22 +517,16 @@
     });
 
    
-    
 
-  //   Para validar si la placa ya existe en la base de datos, puedes usar la consulta que ya tienes definida:
-
-  // const ConsultaPlaca = SELECT count(*) as count FROM Vehiculos where placa = ‘${placa}’``
-
-  // Luego, puedes ejecutar esta consulta usando el método query del pool y obtener el resultado como un objeto. El objeto tendrá una propiedad count que indica el número de filas que coinciden con la placa. Si el valor de count es mayor que cero, significa que la placa ya existe y puedes mostrar un mensaje en la consola. Si el valor de count es cero, significa que la placa no existe y puedes proceder a guardar el vehículo.
-
-  // Aquí tienes un ejemplo de cómo podrías hacerlo:
 
   // Crear Vehiculos
 
   const Guardar_vehiculos = document.getElementById("Guardar");
-selectUbicacion
+
   Guardar_vehiculos.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+
+      Guardar_vehiculos.disabled = true
 
       const f_registro = document.querySelector('input[name="fecharegistro"]').value;
       const sap = document.querySelector('input[name="Codigosap"]').value;
@@ -599,6 +597,9 @@ selectUbicacion
           if (camposVacios.length > 0) {
               // Envía un mensaje al proceso principal con la lista de campos vacíos
               ipcRenderer.send('campos-vacios', camposVacios);
+              setTimeout(() =>{
+                Guardar_vehiculos.disabled = false
+                   }, 2500)
               
           }
 
@@ -606,19 +607,27 @@ selectUbicacion
         else if (count > 0) {
         
         await  ipcRenderer.send('vehiculoexistente', placa)
+        setTimeout(() =>{
+          Guardar_vehiculos.disabled = false
+             }, 2500)
         // console.log(`La placa ${placa} ya existe en la base de datos`);
       } 
         else if( count2 >0 ){
           await ipcRenderer.send('sap' , sap);
+          setTimeout(() =>{
+            Guardar_vehiculos.disabled = false
+               }, 2500)
         }
       else {
           // Si count es cero, la placa no existe
 
           // Utiliza los valores en tus consultas SQL
           await agregarVehiculos({sap, placa, marca, modelo,tipo , año, poliza, Propietario,  observaciones, f_registro, C_desde, C_hasta, ejes, ubicacion,econtrol});
-          ipcRenderer.send('registroExitoso');
+         
           // Limpia los campos del formulario
-          location.reload();
+          setTimeout(() =>{
+            location.reload();
+          }, 1000)
         }
   });
 
@@ -628,14 +637,12 @@ selectUbicacion
           const sqlQuery = `INSERT INTO Vehiculos (Codigosap , Placa, Marca, Modelo, Tipovehiculo, Año, Poliza, Propietario, Observacion, Fechacreacion, Coberturadesde, Coberturahasta, Ejes, Ubicacion, Estadocontrol) VALUES ( ${datos.sap} , '${datos.placa}', ${datos.marca}, ${datos.modelo} , ${datos.tipo}, ${datos.año} ,${datos.poliza}, '${datos.Propietario}','${datos.observaciones}', '${datos.f_registro}', '${datos.C_desde}', '${datos.C_hasta}', ${datos.ejes}, ${datos.ubicacion}, ${datos.econtrol})`;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
+          ipcRenderer.send('registroExitoso');
       } catch (error) {
         ipcRenderer.send('error', error)
       }
 
   }
-
-
-
 
 
   const anularVehiculosbtn = document.getElementById("Anular");
@@ -715,7 +722,7 @@ selectUbicacion
 
       await sql.connect(config);
 
-      const result = await sql.query('SELECT Id,Marca FROM Marca');
+      const result = await sql.query('SELECT Id,Marca FROM Marca order by Marca');
 
 
 
@@ -778,7 +785,7 @@ selectUbicacion
     try {
       await sql.connect(config);
 
-      const query = `SELECT Id, Modelo FROM Modelo WHERE Marca = '${marca}'`;
+      const query = `SELECT Id, Modelo FROM Modelo WHERE Marca = '${marca}' order by Modelo`;
       const result = await sql.query(query);
 
 
@@ -805,7 +812,7 @@ selectUbicacion
     try {
       await sql.connect(config);
 
-      const result = await sql.query('SELECT Id, Marca FROM Marca');
+      const result = await sql.query('SELECT Id, Marca FROM Marca order by Marca');
 
 
       let selectOptions = '<option value="" disabled selected>Seleccione</option>';
@@ -891,7 +898,7 @@ selectUbicacion
       await sql.connect(config);
 
 
-      const result = await sql.query('SELECT Id,Tipo FROM Tipovehiculo');
+      const result = await sql.query('SELECT Id,Tipo FROM Tipovehiculo order by Tipo');
 
 
 
@@ -1263,3 +1270,23 @@ selectUbicacion
   }
 
   });
+
+
+  var tabMenu = document.querySelector("#tab-menu");
+
+// Agregar un controlador de eventos para el evento "click" en el menú de pestañas
+tabMenu.addEventListener("click", function(event) {
+  // Obtener el índice de la pestaña seleccionada
+  var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
+
+  // Guardar el índice de la pestaña seleccionada en localStorage
+  localStorage.setItem("selectedTabIndex", selectedIndex);
+});
+
+// Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
+var selectedTabIndex = localStorage.getItem("selectedTabIndex");
+
+// Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
+if (selectedTabIndex !== null) {
+  tabMenu.children[selectedTabIndex].click();
+}

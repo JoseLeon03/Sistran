@@ -18,16 +18,16 @@
             </div>
 
             <div class="right">
-              <button class="menubar-btn" id="minimizar"><i class="fas fa-window-minimize"></i></button>
-              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
-              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+                <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+                <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+                <button type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
             </div>
 
         </div>
 
         <h2>Registro de contenedores</h2>
 
-        <div class="tab-menu">
+        <div class="tab-menu" id="tab-menu">
 
             <div class="tab active" data-tab="tab1">Registro de contenedores</div>
             <div class="tab" data-tab="tab2">Listado de contenedores</div>
@@ -99,13 +99,17 @@
             <tr>
             </tr>
             <tr>
-                <td class="excluir"><label>Tienda: </label></td>
+                <td class="excluir"><label>Agente aduanal: </label></td>
                 <td class="excluir"><input type="text"   id="tienda" ></td>
             </tr>
             <tr>
             <tr>
-                <td class="excluir"><label>Chofer: </label></td>
+                <td class="excluir"><label>Chofer de busqueda: </label></td>
                 <td class="excluir"><input type="text" id="chofer" ></td>
+            </tr>
+            <tr>
+                <td class="excluir"><label>Chofer de entrega: </label></td>
+                <td class="excluir"><input type="text" id="choferEntrega" ></td>
             </tr>
             <tr>
                 <td><label >Observacion:</label></td>
@@ -133,14 +137,9 @@
     <tr>
         <td class="excluir"><label >Destino: </label></td>
         <td class="excluir">
-        <select id="destinos" name="destino">
-            <option value="" disable selected>Seleccione</option>
-            <option value="1a">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select></td>
+        <input id="destinos" name="destino" type="text" class="requerido">
+         
+        </input></td>
     </tr>
     <!-- <tr>
 
@@ -164,7 +163,7 @@
     <tr>
 
         <td class="excluir"><label >Importadora: </label></td>
-        <td class="excluir"> <input type="text" id="importadoras"></td>
+        <td class="excluir"> <input type="text" id="importadoras" name="importadora" class="requerido"></td>
         
     </tr>
 
@@ -183,7 +182,7 @@
     <legend><b>Acciones</b></legend>
     <button type="button" id="Guardar_cont">Guardar</button>
     <button type="reset">Limpiar</button>
-    <button type="button" id="Salir">Salir</button>
+    <!-- <button type="button" id="Salir">Salir</button> -->
  </fieldset>
 </div>
 </div>
@@ -233,6 +232,8 @@
             <th>Puerto</th>
             <th>Fecha requerimiento</th>
             <th>Fecha de recepción</th>
+            <th>Fecha de entrega lleno</th>
+            <th>Fecha de entrega vacio</th>
             <th>Estatus</th>
             <th>Capacidad</th>
             <th>Bultos</th>
@@ -249,6 +250,7 @@
             <button class="paginas">Refrescar</button>
             <button  type="button" id="nextPage" class="paginas">>></button>
             <button  type="button" id="lastPage" class="paginas">>>|</button>
+            <div id="pagina-contenedores"></div>
         </div>
      </fieldset>
 

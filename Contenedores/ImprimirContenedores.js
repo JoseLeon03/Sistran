@@ -50,7 +50,11 @@ async function generarContenedoresPDF(Contenedores) {
             <th>Contenedor</th>
             <th>F.Req</th>
             <th>F.Recepción</th>
+            <th>F.Entrega Lleno</th>
             <th>F.Entrega Vacio</th>
+            <th>Importadora</th>
+            <th>Destino</th>
+            <th>Agente Aduanal</th>
             <th>Puerto origen</th>
 
 
@@ -60,12 +64,16 @@ async function generarContenedoresPDF(Contenedores) {
   for (let Contenedor of Contenedores) {
     htmlContent += `
       <tr>
-        <td>${Contenedor.Chofer_c}</td>
+        <td>${Contenedor.Chofer_c} / ${Contenedor.Chofer2_c}</td>
         <td>${Contenedor.Expediente_c}</td>
         <td>${Contenedor.Contenedor_c}</td>
         <td>${Contenedor.Fecha_c}</td>
         <td>${Contenedor.Fecharecepcion_c}</td>
+        <td>${Contenedor.Fechadesc_c}</td>
         <td>${Contenedor.Fechafin_c}</td>
+        <td>${Contenedor.Importadora_c}</td>
+        <td>${Contenedor.Destino_c}</td>
+        <td>${Contenedor.Agente_c}</td>
         <td>${Contenedor.Sede_c}</td>
 
 
@@ -83,16 +91,16 @@ async function generarContenedoresPDF(Contenedores) {
   await page.setContent(htmlContent);
 
   // Genera el PDF
-  await page.pdf({ path: 'contenedores.pdf', format: 'A4', 
+  await page.pdf({ path: 'contenedores.pdf', format: 'Letter', landscape: true,
   printBackground: true,
   displayHeaderFooter: true,
   headerTemplate: ` <div class="centrado" style="display: flex; background-color: blue; ">
 
   <img src="data:image/jpeg;base64,${readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')   }" alt="alt text" / id="camion" style="margin: 0px 10px"">
   <div style="display:block">
-  <h1  style=" font-size: 26px; margin-bottom: 20px" >Consorcio Transporte Los Pinos</h1>
+  <h1  style=" font-size: 28px; margin-bottom: 20px" >Consorcio Transporte Los Pinos</h1>
 
-  <h2 style="text-align: center; font-size: 22px; color:blue">Listado de contenedores</h2>
+  <h2 style="text-align: center; font-size: 32px; color:blue">Listado de contenedores</h2>
   </div>
   </div>
   `,

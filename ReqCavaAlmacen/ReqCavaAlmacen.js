@@ -10,7 +10,7 @@ const obtenerCavas = (conexion) => {
   return request.query(`Select Placa , Format (Fechacreacion , 'dd/MM/yyyy') as Fechacreacion ,  tipovehiculo.Tipo , estatusvehiculo.Estatusvehiculo , (SELECT Sede FROM Sedes where Codigo=Vehiculos.Destino) AS Destino , marca.Marca , modelo.Modelo , estadocontrol.Estadocontrol , Observacion  
   From Vehiculos, marca, modelo, tipovehiculo, estatusvehiculo, estadocontrol
   Where Vehiculos.marca = marca.Id And Vehiculos.modelo = modelo.Id And Vehiculos.tipovehiculo = tipovehiculo.Id
-  AND (Vehiculos.tipovehiculo=2 OR Vehiculos.tipovehiculo=3) and Vehiculos.ubicacion=Estatusvehiculo.Id AND Vehiculos.Estadocontrol = estadocontrol.Id and Vehiculos.Estadocontrol = 1`).then((result) => {
+  AND (Vehiculos.tipovehiculo=2 OR Vehiculos.tipovehiculo=3) and Vehiculos.ubicacion=Estatusvehiculo.Id AND Vehiculos.Estadocontrol = estadocontrol.Id and Vehiculos.Estadocontrol = 1 and Vehiculos.Ubicacion = 1`).then((result) => {
     const Cavas = result.recordset.map((row) => ({
 
       Placa_c: row.Placa,
@@ -74,14 +74,25 @@ const rowsPerPage = 15;
       rowElement.appendChild(PlacaCell)
       // rowElement.appendChild(FechacreacionCell)
       rowElement.appendChild(TipoCell)
+
       rowElement.appendChild(EstatusvehiculoCell)
+
       rowElement.appendChild(DestinoCell)
+
       rowElement.appendChild(MarcaCell)
+
       rowElement.appendChild(ModeloCell)
+
       rowElement.appendChild(EstadocontrolCell)
+
       rowElement.appendChild(ObservacionCell)
+
       tableBody.appendChild(rowElement)
     })
+    const maxPages = Math.ceil(Cavas.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagina-cava');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
+
   }
           consultar.connect().then(() => {
         obtenerCavas(consultar).then((Cavas) => {

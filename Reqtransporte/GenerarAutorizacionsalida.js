@@ -31,7 +31,7 @@ const generarSalida = async ({id_viaje}) => {
   const result3 = await pool.request().query(` Select Nombre+ ' '  + Apellido as Nombre from Empleados where cedula = ${Cedula_chofer}`);
   const empleado = result3.recordset[0];
 
-  Nombre = empleado.Nombre
+  const Nombre = empleado.Nombre
 
 
   const Vehiculo = result2.recordset[0];
@@ -157,13 +157,13 @@ const generarSalida = async ({id_viaje}) => {
   
   
   <div class="datosAbajo">
-      <div>
-          <label for="">Nombre y apellido:</label>
-          <span></span> 
-          <br><br>
-          <label for="">Cedula:</label>
-          <span></span>
-      </div>
+        <div>
+        <span>Hector Chacón: 0414-898-57-90</span>
+        <br>
+        <span>Maiden Guerra: 0424-948-10-38</span>
+        <br>
+        <span>Lilibeth Figueroa: 0414-769-24-08</span>
+        </div>
   
       <div class="firma">
          <hr>
@@ -181,11 +181,6 @@ const generarSalida = async ({id_viaje}) => {
       <span>En caso de emergencia comunicarse con los siguientes telefonos</span>
       </div>
   
-      <div>
-          <span>Maiden Guerra: 0414-185-72-90</span>
-          <br><br>
-          <span>Hector Chacón: 0414-898-57-90</span>
-      </div>
   </div>
   
   
@@ -205,7 +200,7 @@ const generarSalida = async ({id_viaje}) => {
 
   // Genera el PDF
   const pdfPath = 'Salida.pdf';
-  await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
+  await page.pdf({ path: pdfPath, format: 'Letter', printBackground: true });
 
   await browser.close();
 

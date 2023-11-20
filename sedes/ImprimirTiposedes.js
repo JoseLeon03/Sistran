@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const { shell } = require('electron');
 
 const {obtenertipos}= require('./sedes.js');
-
+// const {executablePath} = require('puppeteer')
 async function generarTiposPDF() {
   const { readFileSync } = require('fs');
 
@@ -62,22 +62,22 @@ async function generarTiposPDF() {
       </body>
     </html>`;
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: 'new'});
   const page = await browser.newPage();
   // Carga tu contenido HTML en la página
   await page.setContent(htmlContent);
 
   // Genera el PDF
-  await page.pdf({ path: 'Tiposede.pdf', format: 'A4', 
+  await page.pdf({ path: 'Tiposede.pdf', format: 'Letter', 
   printBackground: true,
   displayHeaderFooter: true,
   headerTemplate: ` <div class="centrado" style="display: flex; background-color: blue; ">
 
   <img src="data:image/jpeg;base64,${readFileSync('//10.50.1.36/Sistran/ConsorcioLogo.png').toString('base64')   }" alt="alt text" / id="camion" style="margin: 0px 10px"">
   <div style="display:block">
-  <h1  style=" font-size: 26px; margin-bottom: 20px" >Consorcio Transporte Los Pinos</h1>
+  <h1  style=" font-size: 32px; margin-bottom: 20px" >Consorcio Transporte Los Pinos</h1>
 
-  <h2 style="text-align: center; font-size: 22px; color:blue">Listado de tipos de sedes</h2>
+  <h2 style="text-align: center; font-size: 28px; color:blue">Listado de tipos de sedes</h2>
   </div>
   </div>
   `,

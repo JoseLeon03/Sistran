@@ -74,6 +74,8 @@
             <div class="tabla">
            
               <fieldset class="listado"> <legend>Listado de asignación de vehículos a choferes</legend>
+                <label for="inpCedula">Cedula: </label>
+                <input type="text" name="" id="inpCedula">
             <table id="tabla-asignados">
         <thead>
             <tr>
@@ -106,6 +108,8 @@
             <button  type="button" id="nextPage" class="paginas">>></button>
             <button  type="button" id="lastPage" class="paginas">>>|</button>
                 </div>
+                <div id="pagina-asignacion" style="margin: auto ; margin-left: 15px;"></div>
+
 <!--                 
                 <button  class="boton" id="mprimir">Imprimir</button>
                 <button class="boton" id="Salir">Salir</button> -->
@@ -115,24 +119,63 @@
     </div>
 
     <div class="ventana-choferes" id="ventana-choferes">
-        <span class="cerrar" onclick="cerrarVentanachoferes()">&times;</span>
-        <table id="choferes" class="choferes">
-         <thead>
-            <tr>
-                    
-                 <th>Cedula</th>     
-                <th>Nombres</th>   
-                <th>Apellidos</th>   
-                <th>Telefono</th>   
-          
-            </tr>
-        </thead>
-       <tbody></tbody>
-     </table>
+        <div id="menu-bar">
+            <div class="left" role="menu">
+
+            </div>
+            <div class="right">
+   
+              <button type="button" class="menubar-btn" id="cerrar" onclick="cerrarVentanachoferes()"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <div class="alinear-input">
+            <label for="cedula">Cedula:</label>
+
+            <input type="text" id="cedula" style="width: 100px;">
+            <div id="pagina-empleados" style="margin: auto;"></div>
+
+            </div>
+            <div class="tabla-placa">
+                
+                <table id="choferes" class="choferes">
+                <thead>
+                    <tr>
+                            
+                        <th>Cedula</th>     
+                        <th>Nombres</th>   
+                        <th>Apellidos</th>   
+                        <th>Telefono</th>   
+                
+                    </tr>
+                </thead>
+            <tbody></tbody>
+            </table>
+            </div>
+     <div class="btn-group2">
+        <button type="button" id="firstPage2" class="paginas">|<<</button>
+        <button  type="button" id="previousPage2" class="paginas"><<</button>
+        <button class="paginas">Refrescar</button>
+        <button  type="button" id="nextPage2" class="paginas">>></button>
+        <button  type="button" id="lastPage2" class="paginas">>>|</button>
+        </div>
     </div>
 
     <div class="ventana-vehiculos" id="ventana-vehiculos">
-        <span class="cerrar" onclick="cerrarVentanavehiculos()">&times;</span>
+        <div id="menu-bar">
+            <div class="left" role="menu">
+            </div>
+            <div class="right">
+            <button type="button" class="menubar-btn" id="cerrar" onclick="cerrarVentanavehiculos()"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <div class="alinear-input">
+            <label for="cedula">Placa:</label>
+
+        <input type="text" id="placa" style="width: 100px;">
+        <div id="pagina-vehiculo" style="margin: auto;"></div>
+
+        </div>
+        <div class="tabla-placa">
         <table id="placas" class="placas">
          <thead>
             <tr>
@@ -146,6 +189,14 @@
         </thead>
        <tbody></tbody>
      </table>
+     </div>
+     <div class="btn-group2">
+        <button type="button" id="firstPage3" class="paginas">|<<</button>
+        <button  type="button" id="previousPage3" class="paginas"><<</button>
+        <button class="paginas">Refrescar</button>
+        <button  type="button" id="nextPage3" class="paginas">>></button>
+        <button  type="button" id="lastPage3" class="paginas">>>|</button>
+        </div>
     </div>
 
     <div id="ventana-emergente"></div>

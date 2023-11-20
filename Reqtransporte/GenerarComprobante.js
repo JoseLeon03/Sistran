@@ -11,12 +11,13 @@ const generarComprobante = async ({ numeroComprobante}) => {
 
   const result = await pool.request().query(`SELECT * , Format (Fecha , 'dd/MM/yyyy') as Fecha_ FROM comprobante_viajes where num_comprobante = ${numeroComprobante}`);
 
-  const comprobante = result.recordset[0];
-  const Fecha = comprobante.Fecha_;
-  const Descripcion = comprobante.Descripcion
-  const Nombre = comprobante.Beneficiario;
+    console.log(numeroComprobante);
+  const comprobante   = result.recordset[0];
+  const Fecha         = comprobante.Fecha_;
+  const Descripcion   = comprobante.Descripcion
+  const Nombre        = comprobante.Beneficiario;
   const Cedula_chofer = comprobante.Cedula;
-  const Viatico = comprobante.Monto;
+  const Viatico       = comprobante.Monto;
 
 
 
@@ -187,8 +188,8 @@ const generarComprobante = async ({ numeroComprobante}) => {
 
   const fecha = '28/08/2023'
   // Genera el PDF
-  const pdfPath = 'Comprobanteas.pdf';
-  await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
+  const pdfPath = 'Comprobantes.pdf';
+  await page.pdf({ path: pdfPath, format: 'Letter', printBackground: true });
 
   await browser.close();
 

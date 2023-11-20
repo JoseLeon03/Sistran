@@ -4,7 +4,7 @@ const {consultar, config} = require ('../Promise')
 const obtenerAsignaciones = (conexion) => {
    const request = new sql.Request(conexion)
    // return request.query(`SELECT Format (Fecha_asignacion , 'dd/MM/yyyy') as Fecha_asignacion, Cedula, Placa , Id  FROM Asignacion_vehiculos order by Cedula`).then((result) => {
-       return request.query(`select a.Id ,Año , format (Fecha_asignacion , 'dd/MM/yyyy') as Fecha_asignacion , a.Cedula  , Nombre ,Propietario,Apellido , a.Placa, k.Marca as Marca, m.Modelo as Modelo, t.Tipo from Asignacion_vehiculos as a, Empleados as e, Vehiculos as v, Marca as k, Modelo as m, Tipovehiculo as t where a.Cedula = e.Cedula and a.Placa = v.Placa and v.Marca = k.Id and v.Modelo = m.Id and v.Tipovehiculo = t.Id and a.Estatus = '1' order by a.Id desc`).then((result) => {
+       return request.query(`select a.Id ,Año , format (Fecha_asignacion , 'dd/MM/yyyy') as Fecha_asignacion , a.Cedula  , Nombre ,Propietario,Apellido , a.Placa, k.Marca as Marca, m.Modelo as Modelo, t.Tipo from Asignacion_vehiculos as a, Empleados as e, Vehiculos as v, Marca as k, Modelo as m, Tipovehiculo as t where a.Cedula = e.Cedula and a.Placa = v.Placa and v.Marca = k.Id and v.Modelo = m.Id and v.Tipovehiculo = t.Id and a.Estatus = 1 order by a.Id desc`).then((result) => {
      const asignados = result.recordset.map((row) => ({
 
        Id_a: row.Id,
@@ -34,9 +34,9 @@ const obtenerAsignaciones = (conexion) => {
  // const obtenerSedes = require('./')
 
  let currentPage = 0;
- const rowsPerPage = 25;
+ const rowsPerPage = 15;
  
- const renderAsignacionesTable = (asignados) => {
+   const renderAsignacionesTable = (asignados) => {
    const tableBody = document.querySelector('#tabla-asignados  tbody');
    tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
    const start = currentPage * rowsPerPage;
@@ -91,6 +91,9 @@ const obtenerAsignaciones = (conexion) => {
 
 
      });
+     const maxPages = Math.ceil(asignados.length / rowsPerPage);
+     const paginationInfoDiv = document.querySelector('#pagina-asignacion');
+     paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
     
     };  
     consultar.connect().then(() => {
@@ -129,8 +132,31 @@ const obtenerAsignaciones = (conexion) => {
         const lastPageButton1 = document.querySelector('#lastPage');
         lastPageButton1.addEventListener('click', () => {
           currentPage = Math.floor(asignados.length / rowsPerPage) ;
-          renderAsignacionesTable(asignados);
+          renderAsignacionesTable(filteredListados);
         });
+
+        let filteredListados = asignados;
+        let cedula2FilterValue = '';
+   
+        
+        const updateFilteredListados = () => {
+   
+         filteredListados = asignados.filter((listado) => {
+   
+               return String(listado.Cedula_a).toLowerCase().startsWith(cedula2FilterValue);
+         })
+         renderAsignacionesTable(filteredListados);
+       };
+   
+         updateFilteredListados();
+   
+         const cedulaFiltro2 = document.querySelector('#inpCedula');
+         cedulaFiltro2.addEventListener('input', (event) => {
+           cedula2FilterValue = event.target.value;
+           updateFilteredListados();
+         });
+   
+   
 
 
      const filasTabla = document.querySelectorAll('#tabla-asignados tbody tr');
@@ -157,11 +183,12 @@ filasTabla.forEach(fila => {
 
     const element = document.getElementById("asignar");
 
- element.addEventListener('click', async (evento) => {
+       element.addEventListener('click', async (evento) => {
  
-  evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
 
-        console.log('Hola')
+       element.disabled = true
+
         const Cedula = document.querySelector('input[name="Cedula"]').value;
         const Vehiculo = document.querySelector('input[name="Vehiculo"]').value;
         const Fecha = document.querySelector('input[name="Fecha"]').value;
@@ -180,9 +207,6 @@ filasTabla.forEach(fila => {
           const count2 = result2.recordset[0].counts;
           const count3 = result3.recordset[0].count3;
 
-
-          console.log(count)
-          console.log(count2)
 
         let nombresMostrados = {
         'Fecha': 'Por favor, ingrese la fecha de hoy ',
@@ -213,6 +237,9 @@ filasTabla.forEach(fila => {
         if (camposVacios.length > 0) {
             // Envía un mensaje al proceso principal con la lista de campos vacíos
             ipcRenderer.send('campos-vacios', camposVacios); 
+            setTimeout(() =>{
+              element.disabled = false
+                 }, 2500)
         } 
 
 
@@ -235,6 +262,7 @@ filasTabla.forEach(fila => {
 
         if (count3 > 0) {
           ipcRenderer.send('asignacionExistente', Cedula, Vehiculo);
+          element.disabled = false
         } else if (count > 0) {
           ipcRenderer.send('empleadoAsignado', Cedula);
           const index = await new Promise((resolve) => {
@@ -243,8 +271,10 @@ filasTabla.forEach(fila => {
             });
           });
           if (index === 0) {
+            element.disabled = false
             // El usuario hizo clic en "sí"
           if (count2 > 0) {
+            element.disabled = false
               ipcRenderer.send('vehiculoAsignado', Vehiculo);
               const index2 = await new Promise((resolve) => {
                 ipcRenderer.once('vehiculoResultado', (event, index2) => {
@@ -252,25 +282,37 @@ filasTabla.forEach(fila => {
                 });
               });
               if (index2 === 0) { // El usuario hizo clic en "sí"
+                element.disabled = false
                 await paraAsignar(Cedula, Vehiculo, Fecha , Nombre, Apellido, Placa, Marca, Modelo, Tipo, Año, Propietario);
               }
             } else {
+              element.disabled = false
               await paraAsignar(Cedula, Vehiculo, Fecha , Nombre, Apellido, Placa, Marca, Modelo, Tipo, Año, Propietario )  
             }
           }
         } else if (count2 > 0) {
+          element.disabled = false
           ipcRenderer.send('vehiculoAsignado', Vehiculo);
+
           const index2 = await new Promise((resolve) => {
             ipcRenderer.once('vehiculoResultado', (event, index2) => {
               resolve(index2);
             });
           });
+
           if (index2 === 0) { // El usuario hizo clic en "sí"
+            element.disabled = false
             await paraAsignar(Cedula, Vehiculo, Fecha , Nombre, Apellido, Placa, Marca, Modelo, Tipo, Año, Propietario);
           }
+          
         } else {
+          element.disabled = false
           await paraAsignar(Cedula, Vehiculo, Fecha , Nombre, Apellido, Placa, Marca, Modelo, Tipo, Año, Propietario )  
         }
+
+        // setTimeout(() =>{
+        //   location.reload()
+        //      }, 1000)
       }) 
   
   async function Asignarvehiculos(datos) {
@@ -332,11 +374,15 @@ filasTabla.forEach(fila => {
   // fin consulta de la tabla para los superempleados
 
   //traer tablas de la consulta a la tabla de la ventana emergente
+
+  const renderEmpleadosTable = (chofer) => {
+    const tableBody = document.querySelector('#choferes tbody');
+    tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
+    const start = currentPage * rowsPerPage;
+    const end = start + rowsPerPage;
+    const currentListados = chofer.slice(start, end);
   
-  consultar.connect().then(() => {
-    obtenerempleados(consultar).then((chofer) => {
-      const tableBody = document.querySelector('#choferes tbody')
-      chofer.forEach((chofer) => {
+      currentListados.forEach((chofer) => {
   
       const rowElement = document.createElement('tr')
       const cedulaCell = document.createElement('td')
@@ -355,12 +401,77 @@ filasTabla.forEach(fila => {
         rowElement.appendChild(telefonoCell)
         tableBody.appendChild(rowElement)
       })
-    }).catch((err) => {
-      console.error(err)
-    })
+      const maxPages = Math.ceil(chofer.length / rowsPerPage);
+      const paginationInfoDiv = document.querySelector('#pagina-empleados');
+      paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
+    }
+
+    
+     consultar.connect().then(() => {
+    obtenerempleados(consultar).then((chofer) => {
+      renderEmpleadosTable(chofer)
+
+
+
+      
+       // Agregar controladores de eventos al botón de siguiente página
+     const nextPageButton1 = document.querySelector('#nextPage2');
+     nextPageButton1.addEventListener('click', () => {
+       const maxPages1= Math.ceil(chofer.length / rowsPerPage);
+       if (currentPage < maxPages1 - 1) {
+         currentPage++;
+         renderEmpleadosTable(filteredListados);
+       }
+     });
+  
+     // Agregar controladores de eventos al botón de página anterior
+     const previousPageButton1= document.querySelector('#previousPage2');
+     previousPageButton1.addEventListener('click', () => {
+       if (currentPage > 0) {
+         currentPage--;
+         renderEmpleadosTable(filteredListados);
+       }
+     });
+  
+     // Agregar controladores de eventos al botón de primera página
+     const firstPageButton1= document.querySelector('#firstPage2');
+     firstPageButton1.addEventListener('click', () => {
+       currentPage= 0;
+       renderEmpleadosTable(filteredListados);
+     });
+  
+     // Agregar controladores de eventos al botón de última página
+     const lastPageButton1= document.querySelector('#lastPage2');
+     lastPageButton1.addEventListener('click', () => {
+       currentPage= Math.floor(chofer.length / rowsPerPage) ;
+       renderEmpleadosTable(filteredListados);
+     });
+
+     let filteredListados = chofer;
+     let cedulaFilterValue = '';
+
+     
+     const updateFilteredListados = () => {
+
+      filteredListados = chofer.filter((listado) => {
+
+            return String(listado.Cedula).toLowerCase().startsWith(cedulaFilterValue);
+      })
+      renderEmpleadosTable(filteredListados);
+    };
+
+      updateFilteredListados();
+
+      const cedulaFiltro = document.querySelector('#cedula');
+      cedulaFiltro.addEventListener('input', (event) => {
+        cedulaFilterValue = event.target.value;
+        updateFilteredListados();
+      });
+
+
+
   })
-
-
+})
 //fin de la tabla de los super empleados
 
 
@@ -392,14 +503,13 @@ tablachoferes.addEventListener("dblclick", function(event) {
 //consulta para los vehiculos
 const obtenerplaca = (conexion) => {
   const request = new sql.Request(conexion)
-  return request.query(`select Placa , k.Marca, m.Modelo , t.Tipo, Año ,Poliza ,e.Estadocontrol, Propietario ,Format (Fechacreacion , 'dd/MM/yyyy') as   Fechacreacion , Observacion from Vehiculos as v ,  marca as k, modelo as m, Estadocontrol as e ,tipovehiculo as t where v.marca=k.id and v.modelo=m.id and v.tipovehiculo=t.id  and v.Estadocontrol=e.Id and Tipovehiculo not in (2,5,6) AND v.Estadocontrol = 1`).then((result) => {
+  return request.query(`Select Placa,  m.Modelo, k.Marca, t.Tipo, Año ,Poliza ,e.Estadocontrol, Propietario ,Format (Fechacreacion , 'dd/MM/yyyy') as   Fechacreacion , Observacion from Vehiculos as v ,  marca as k, modelo as m, Estadocontrol as e ,tipovehiculo as t where v.marca=k.id and v.modelo=m.id and v.tipovehiculo=t.id  and v.Estadocontrol=e.Id AND v.Estadocontrol = 1`).then((result) => {
     const placa = result.recordset.map((row) => ({
   
       placa_p: row.Placa,
       Marca_p: row.Marca,
       Modelo_p: row.Modelo,
       tipo_t: row.Tipo
-
 
     }))
     return placa
@@ -409,10 +519,15 @@ const obtenerplaca = (conexion) => {
 
 //Treae tabla de vehiculos a la ventana emergente
 
-consultar.connect().then(() => {
-  obtenerplaca(consultar).then((marca) => {
-    const tableBody = document.querySelector('#placas tbody')
-    marca.forEach((marca) => {
+
+const renderVehiculosTable = (marca) => {
+  const tableBody = document.querySelector('#placas tbody');
+  tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
+  const start = currentPage * rowsPerPage;
+  const end = start + rowsPerPage;
+  const currentListados = marca.slice(start, end);
+
+    currentListados.forEach((marca) => {
 
     const rowElement = document.createElement('tr')
     const placaCell = document.createElement('td')
@@ -420,8 +535,6 @@ consultar.connect().then(() => {
     const ModeloCell = document.createElement('td')
     const TipoCell = document.createElement('td')
     
-
-
 
     placaCell.textContent = marca.placa_p
     MarcaCell.textContent = marca.Marca_p
@@ -433,10 +546,83 @@ consultar.connect().then(() => {
       rowElement.appendChild(ModeloCell)
       rowElement.appendChild(TipoCell)
       tableBody.appendChild(rowElement)
-    })
-  }).catch((err) => {
-    console.error(err)
-  })
+    });
+
+    const maxPages = Math.ceil(marca.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagina-vehiculo');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
+    }
+    
+    
+        consultar.connect().then(() => {
+        obtenerplaca(consultar).then((marca) => {
+
+          renderVehiculosTable(marca)
+
+
+
+      
+       // Agregar controladores de eventos al botón de siguiente página
+     const nextPageButton1 = document.querySelector('#nextPage2');
+     nextPageButton1.addEventListener('click', () => {
+       const maxPages1= Math.ceil(marca.length / rowsPerPage);
+       if (currentPage < maxPages1 - 1) {
+         currentPage++;
+         renderVehiculosTable(filteredListados);
+       }
+     });
+  
+     // Agregar controladores de eventos al botón de página anterior
+     const previousPageButton1= document.querySelector('#previousPage2');
+     previousPageButton1.addEventListener('click', () => {
+       if (currentPage > 0) {
+         currentPage--;
+         renderVehiculosTable(filteredListados);
+       }
+     });
+  
+     // Agregar controladores de eventos al botón de primera página
+     const firstPageButton1= document.querySelector('#firstPage2');
+     firstPageButton1.addEventListener('click', () => {
+       currentPage= 0;
+       renderVehiculosTable(filteredListados);
+     });
+  
+     // Agregar controladores de eventos al botón de última página
+     const lastPageButton1= document.querySelector('#lastPage2');
+     lastPageButton1.addEventListener('click', () => {
+       currentPage= Math.floor(marca.length / rowsPerPage) ;
+       renderVehiculosTable(filteredListados);
+     });
+
+
+     let filteredListados = marca;
+     let placaFilterValue = '';
+
+     
+     const updateFilteredListados = () => {
+
+      filteredListados = marca.filter((listado) => {
+
+            return String(listado.placa_p).toLowerCase().startsWith(placaFilterValue);
+      })
+      renderVehiculosTable(filteredListados);
+    };
+
+      updateFilteredListados();
+
+      const placaFiltro = document.querySelector('#placa');
+      placaFiltro.addEventListener('input', (event) => {
+        placaFilterValue = event.target.value.toLowerCase();
+        updateFilteredListados();
+      });
+
+
+
+
+
+
+      })
 })
 //Fin
 
@@ -498,7 +684,7 @@ fila.addEventListener('click', () => {
          
             </div>
         <h2 class="Titulo">Detalles Asignacion</h2>
-        <fieldset>
+        <fieldset id="fieldsetEmergente">
         <div class="Tablas">
 
             <Div class="Izquierda">
@@ -511,9 +697,7 @@ fila.addEventListener('click', () => {
         <label >Nombre:</label>
         <span>${Nombre} ${Apellido}</span>
         <br>
-      
-     
-       
+   
         </Div>
         <div class="Derecha">
         <label >Placa:</label>

@@ -59,7 +59,7 @@ table{
 #tabla{
     float: right;
     margin-right: 15px;
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
    padding: 10px;
     border-radius: 6px;
     border: 1px solid black;
@@ -96,6 +96,10 @@ th, td, tr {
     border: 1px solid black;
     white-space: nowrap;
   }
+
+  #tabla-sedes td, #tabla-tipos td{
+    font-size: 12px;
+  }
    #tabla-sedes tr:hover, #tabla-tipos tr:hover {
     background-color: #c5c5c5;
     cursor: pointer;
@@ -114,7 +118,7 @@ th, td, tr {
     }
   
 
-button[type="Button"], [type="Reset"], [type ="Submit"] {
+button[type="Button"]:not(.modificar, .menubar-btn, .paginas), [type="Reset"], [type ="Submit"] {
 
     display: inline-block;
     background-color: #4CAF50;
@@ -157,7 +161,7 @@ input::-webkit-inner-spin-button {
 
 select{
   margin-left: 43px;
-
+  width: 100px;
 }
 input[type="number"]{
     border-radius: 5px;
@@ -350,3 +354,24 @@ button i {
    display: block;
   
   } 
+
+
+  .modificar {
+    background-color: #2f6ffa; 
+    display: inline-block;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+ 
+}
+
+
+.modificar:active {
+  background-color: #145dfa;
+  
+
+
+}

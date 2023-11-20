@@ -158,27 +158,27 @@ const obtenerGasoilBomba = (conexion) => {
       const tableBody = document.querySelector('.tablalistado tbody')
       gasoil.forEach((compra) => {
   
-        const rowElement = document.createElement('tr')
-        const ProveedorCell = document.createElement('td')
-        const ChoferCell = document.createElement('td')
-        const CedulaCell = document.createElement('td')
-        const PlacaCell = document.createElement('td')
-        const CantidadCell = document.createElement('td')
-        const MontoCell = document.createElement('td')
+        const rowElement       = document.createElement('tr')
+        const ProveedorCell    = document.createElement('td')
+        const ChoferCell       = document.createElement('td')
+        const CedulaCell       = document.createElement('td')
+        const PlacaCell        = document.createElement('td')
+        const CantidadCell     = document.createElement('td')
+        const MontoCell        = document.createElement('td')
         const SitioentregaCell = document.createElement('td')
-        const FechaCell = document.createElement('td')
-        const TipocompraCell = document.createElement('td')
+        const FechaCell        = document.createElement('td')
+        const TipocompraCell   = document.createElement('td')
 
 
-        ProveedorCell.textContent = compra.Proveedor_l
-        ChoferCell.textContent = compra.Chofer_l
-        CedulaCell.textContent = compra.Cedula_l
-        PlacaCell.textContent = compra.Placa_l
-        CantidadCell.textContent = compra.Cantidad_l
-        MontoCell.textContent = compra.Monto_l
+        ProveedorCell.textContent    = compra.Proveedor_l
+        ChoferCell.textContent       = compra.Chofer_l
+        CedulaCell.textContent       = compra.Cedula_l
+        PlacaCell.textContent        = compra.Placa_l
+        CantidadCell.textContent     = compra.Cantidad_l
+        MontoCell.textContent        = compra.Monto_l
         SitioentregaCell.textContent = compra.Sitioentrega_l
-        FechaCell.textContent = compra.Fecha_l
-        TipocompraCell.textContent = compra.Tipocompra_l
+        FechaCell.textContent        = compra.Fecha_l
+        TipocompraCell.textContent   = compra.Tipocompra_l
   
     
         rowElement.appendChild(ProveedorCell)
@@ -198,15 +198,15 @@ const ventanaEmergente = document.getElementById('ventana-emergente');
 
 filasTabla.forEach(fila => {
   fila.addEventListener('click', () => {    
-    const proveedor = fila.querySelector('td:nth-child(1)').textContent;
-    const chofer = fila.querySelector('td:nth-child(2)').textContent;
-    const cedula = fila.querySelector('td:nth-child(3)').textContent;
-    const placa = fila.querySelector('td:nth-child(4)').textContent;
-    const cantidad = fila.querySelector('td:nth-child(5)').textContent;
-    const monto = fila.querySelector('td:nth-child(6)').textContent;
+    const proveedor    = fila.querySelector('td:nth-child(1)').textContent;
+    const chofer       = fila.querySelector('td:nth-child(2)').textContent;
+    const cedula       = fila.querySelector('td:nth-child(3)').textContent;
+    const placa        = fila.querySelector('td:nth-child(4)').textContent;
+    const cantidad     = fila.querySelector('td:nth-child(5)').textContent;
+    const monto        = fila.querySelector('td:nth-child(6)').textContent;
     const sitioentrega = fila.querySelector('td:nth-child(7)').textContent;
-    const fecha = fila.querySelector('td:nth-child(8)').textContent;
-    const tipocompra = fila.querySelector('td:nth-child(9)').textContent; 
+    const fecha        = fila.querySelector('td:nth-child(8)').textContent;
+    const tipocompra   = fila.querySelector('td:nth-child(9)').textContent; 
    // const imagenhd = fila.querySelector('tdnth-child(10').textContent;
     
     const contenidoVentana = `
@@ -267,3 +267,5 @@ filasTabla.forEach(fila => {
     })
   })
   
+
+

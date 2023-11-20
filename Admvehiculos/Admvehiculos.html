@@ -16,15 +16,15 @@
               
             </div>
             <div class="right">
-                <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
-                <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
-                <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+                <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+                <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+                <button type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
             </div>
           </div>
 
         <h2>Administración de vehículos</h2>
 
-        <div class="tab-menu">
+        <div class="tab-menu" id="tab-menu">
             <div class="tab active" data-tab="tab1">Registro de vehículos</div>
             <div class="tab" data-tab="tab2">Consultas de vehículos</div>
         </div>
@@ -113,10 +113,15 @@
         <td class="excluir"> 
              <select id="Ejes" name="ejes" class="requerido" >
             <option value="" disable selected>Seleccione</option>
+            <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+
         </select></td>
     </tr>
     <tr>
@@ -148,9 +153,10 @@
   <fieldset class="acciones">
     <legend><b>Acciones</b></legend>
     <button type="button" id="Guardar">Guardar</button>
-    <button type="button" id="Modificar">Modificar</button>
     <!-- <button type="submit" id="Buscar">Buscar</button> -->
     <button type="reset">Limpiar</button>
+    <button type="button" id="Modificar">Modificar</button>
+
     <button type="button" id="Anular">Anular</button>
     <!-- <button type="button" id="Salir">Salir</button> -->
  </fieldset>
@@ -256,6 +262,8 @@
         <button class="paginas">Refrescar</button>
         <button  type="button" id="nextPage" class="paginas">>></button>
         <button  type="button" id="lastPage" class="paginas">>>|</button>
+        <div id="pagination-info"></div>
+
      </div>
     </div>
     </div>

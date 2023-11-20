@@ -20,7 +20,7 @@ const generarAutorizacion = async ({ Fecha, Cedula, Nombre, Apellido, Placa, Mar
     <img src="data:image/jpeg;base64,${
         readFileSync('//10.50.1.36/Sistran/camionhdhd.jpg').toString('base64')
       }" alt="alt text" / id="camion">
-  <div class="centrado"><H1 id="h1">TRANSPORTE 00-04 C.A</H1></div>
+  <div class="centrado"><H1 id="h1">${Propietario}</H1></div>
   </div>
   
   
@@ -104,8 +104,8 @@ const generarAutorizacion = async ({ Fecha, Cedula, Nombre, Apellido, Placa, Mar
   await page.addStyleTag({path: '//10.50.1.36/Sistran/css/AutorizacionParaconducir.css'});  
 
   // Genera el PDF
-  const pdfPath = 'Salida.pdf';
-  await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
+  const pdfPath = 'Autorizacion.pdf';
+  await page.pdf({ path: pdfPath, format: 'Letter', printBackground: true });
 
   await browser.close();
 

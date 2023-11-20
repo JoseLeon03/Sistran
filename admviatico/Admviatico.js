@@ -6,7 +6,7 @@ const {consultar, config} = require ('../Promise')
 const obtenerViaticos = (conexion) => {
   const request = new sql.Request(conexion)
   return request.query(`SELECT sede1.Sede as Origen , sede2.Sede as Destino , Viatico_Bs ,Viatico_Usd, Format (Fecha , 'dd/MM/yyyy') as Fecha, Dias from Tabladeviaticos , Sedes as sede1, Sedes as sede2
-  where Tabladeviaticos.Origen = sede1.Codigo and Tabladeviaticos.Destino = Sede2.Codigo order by sede2.Codigo`).then((result) => {
+  where Tabladeviaticos.Origen = sede1.Codigo and Tabladeviaticos.Destino = Sede2.Codigo order by Destino`).then((result) => {
     const Viaticos = result.recordset.map((row) => ({
       Origen_v: row.Origen,
       Destino_v: row.Destino,
@@ -25,7 +25,7 @@ const obtenerViaticos = (conexion) => {
 //Codigo para usar si la consulta esta en un archivo diferente
 // const obtenerSedes = require('./')
 let currentPage = 0;
-const rowsPerPage = 12;
+const rowsPerPage = 15;
 
 const renderViaticosTable = (viaticos) => {
   const tableBody = document.querySelector('#tabla-viaticos tbody');
@@ -59,6 +59,9 @@ const renderViaticosTable = (viaticos) => {
     
     tableBody.appendChild(rowElement);
   });
+  const maxPages = Math.ceil(viaticos.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-viatico');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 consultar.connect().then(() => {
@@ -211,6 +214,10 @@ const renderTasaTable = (tasas) => {
     
     tableBody.appendChild(rowElement);
   });
+
+  const maxPages = Math.ceil(tasas.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-tasa');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 consultar.connect().then(() => {
@@ -313,9 +320,11 @@ const formulario = document.querySelector('#formulario');
 
 
 
-Guardar_viatico.addEventListener('click', async (evento) => {
+      Guardar_viatico.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
+      Guardar_viatico.disabled = true
+
         // Solo envía el formulario si el nombre de marca es válido
          const Viatico = document.querySelector('input[name="Viatico"]').value;
          const Sede = document.querySelector('#Sedes').value;
@@ -364,11 +373,17 @@ Guardar_viatico.addEventListener('click', async (evento) => {
             if (camposVacios.length > 0) {
                 // Envía un mensaje al proceso principal con la lista de campos vacíos
                 ipcRenderer.send('campos-vacios', camposVacios);
+                setTimeout(() =>{
+                  Guardar_viatico.disabled = false
+                     }, 1000)
                 
             }
            else if(count >0){
 
               ipcRenderer.send('viaticoExistente')
+              setTimeout(() =>{
+                Guardar_viatico.disabled = false
+                   }, 1000)
             }
 
             else{
@@ -382,43 +397,48 @@ Guardar_viatico.addEventListener('click', async (evento) => {
             
               if (index === 1) {
                 // El usuario hizo clic en "no"
+                Guardar_viatico.disabled = false
               }
 
 
 
               else{
-
+                Guardar_viatico.disabled = false
+                const viaticoReal = Viatico / 2
              const Tasa =   await obtenerUltimatasa({});  
-            const Viatico_Bs = Viatico * Tasa;
+            const Viatico_Bs = viaticoReal  * Tasa;
           
           // Utiliza los valores en tus consultas SQL await
-          await agregarViatico({Viatico_Bs, Sede, Origen, Fecha, Viatico, Dias});
+          await agregarViatico({Viatico_Bs, Sede, Origen, Fecha, viaticoReal, Dias});
           
            // Limpia los campos del formulario
-           ipcRenderer.send('registroExitoso')
+           setTimeout(() =>{
             location.reload();
+               }, 1000)
+  
            }}
           });
 
-           async function obtenerUltimatasa(){
+          async function obtenerUltimatasa(){
             const pool = await consultar.connect();
-           const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
+          const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
           const result2 = await pool.request().query(sqlQuery2)
           const Tasa = result2.recordset[0].Tasa;
 
           document.querySelector('label[class="monto"]').innerHTML = `Tasa Actual : ` + Tasa+ ' Bs';
-            document.querySelector('label[class="monto2"]').innerHTML = `Tasa Actual : ` + Tasa +' Bs';
+          document.querySelector('label[class="monto2"]').innerHTML = `Tasa Actual : ` + Tasa +' Bs';
 
-          console.log ('Ultima tasa ', Tasa)
           return Tasa;
-           }obtenerUltimatasa()
+          }obtenerUltimatasa()
+           
   
   async function agregarViatico(datos) {
       try {
           const pool = await consultar.connect();
-          const sqlQuery = `Update Tabladeviaticos set INTO Tabladeviaticos (Origen, Destino, Viatico_Bs, Fecha, Viatico_Usd, Dias) VALUES (${datos.Origen}, ${datos.Sede}, ${datos.Viatico_Bs}, '${datos.Fecha}', ${datos.Viatico}, ${datos.Dias})`;
+          const sqlQuery = `Insert INTO Tabladeviaticos (Origen, Destino, Viatico_Bs, Fecha, Viatico_Usd, Dias) VALUES (${datos.Origen}, ${datos.Sede}, ${datos.Viatico_Bs}, '${datos.Fecha}', ${datos.viaticoReal}, ${datos.Dias})`;
           const result = await pool.request().query(sqlQuery);
-          
+
+          ipcRenderer.send('registroExitoso')  
           console.log('Registro agregado a la base de datos:', result);
          return Tasa;
       } catch (error) {
@@ -432,15 +452,15 @@ const modificar_viatico = document.getElementById("modificar");
 
 
 
-modificar_viatico.addEventListener('click', async (evento) => {
+      modificar_viatico.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
         // Solo envía el formulario si el nombre de marca es válido
          const Viatico = document.querySelector('input[name="Viatico"]').value;
-         const Sede = document.querySelector('#Sedes').value;
-         const Origen = document.querySelector('#Origen').value;
-         const Fecha = document.querySelector('input[name="Fecha_req"]').value;
-         const Dias = document.querySelector('input[name="Dias"]').value;
+         const Sede    = document.querySelector('#Sedes').value;
+         const Origen  = document.querySelector('#Origen').value;
+         const Fecha   = document.querySelector('input[name="Fecha_req"]').value;
+         const Dias    = document.querySelector('input[name="Dias"]').value;
 
           console.log(Viatico, Sede, Origen, Fecha, Dias)
 
@@ -497,25 +517,25 @@ modificar_viatico.addEventListener('click', async (evento) => {
             
 
               else{
-
-             const Tasa =   await obtenerUltimatasa({});  
-            const Viatico_Bs = Viatico * Tasa;
+                const viaticoReal = Viatico / 2
+                const Tasa =   await obtenerUltimatasa({});  
+                const Viatico_Bs =  viaticoReal * Tasa;
           
-          // Utiliza los valores en tus consultas SQL await
-          await modificarViatico({Viatico_Bs, Sede, Fecha, Viatico, Dias});
-                ipcRenderer.send('datosModificados')
-           // Limpia los campos del formulario
-            location.reload();
+                // Utiliza los valores en tus consultas SQL await
+                await modificarViatico({Viatico_Bs, Sede, Fecha, viaticoReal, Dias});
+                 // Limpia los campos del formulario
+                 location.reload();
            }}
           });
   
           async function modificarViatico(datos) {
             try {
                 const pool = await consultar.connect();
-                const sqlQuery = `Update Tabladeviaticos set Viatico_usd = ${datos.Viatico} , Viatico_Bs = ${datos.Viatico_Bs} , Fecha = '${datos.Fecha}' , Dias = ${datos.Dias} where Destino = ${datos.Sede} `;
+                const sqlQuery = `Update Tabladeviaticos set Viatico_usd = ${datos.viaticoReal} , Viatico_Bs = ${datos.Viatico_Bs} , Fecha = '${datos.Fecha}' , Dias = ${datos.Dias} where Destino = ${datos.Sede} `;
                 const result = await pool.request().query(sqlQuery);
                 
                 console.log('Registro agregado a la base de datos:', result);
+                ipcRenderer.send('datosModificados')
             } catch (error) {
                 console.log('Error al agregar el registro:', error);
             }
@@ -530,16 +550,10 @@ const Guardar_tasa = document.getElementById("Guardar_tasa");
 const formulario2 = document.querySelector('#formulario');
 
 
-Guardar_tasa.addEventListener('click', async (evento) => {
+  Guardar_tasa.addEventListener('click', async (evento) => {
       evento.preventDefault();
        // Evita que el formulario se envíe automáticamente
-      // const {datosUsuario = require ('../Menuprincipal/Menuprincipal.js')
-      
-      // await userData(datosUsuario)
-
-   
-      
-      // console.log(datosUsuario)
+       Guardar_tasa.disabled = true
      
         // Solo envía el formulario si el nombre de marca es válido
          const Tasa = document.querySelector('input[name="Tasa"]').value;
@@ -573,7 +587,9 @@ Guardar_tasa.addEventListener('click', async (evento) => {
             if (camposVacios.length > 0) {
                 // Envía un mensaje al proceso principal con la lista de campos vacíos
                 ipcRenderer.send('campos-vacios', camposVacios);
-                
+                setTimeout(() =>{
+                  Guardar_tasa.disabled = false
+                     }, 2500)
             }
 
             else{
@@ -587,28 +603,31 @@ Guardar_tasa.addEventListener('click', async (evento) => {
             
               if (index === 1) {
                 // El usuario hizo clic en "no"
+                Guardar_tasa.disabled = false
               }
 
               else{
                 
-
+                Guardar_tasa.disabled = false
           // Utiliza los valores en tus consultas SQL await
            agregarTasa({Tasa, Fecha_tasa});
             actualizarViaticosBolivar(Tasa);
            // Limpia los campos del formulario
          
-          ipcRenderer.send('registroExitoso') 
-          //  location.reload()
+        
+          setTimeout(() =>{
+             location.reload()
+                }, 1000)
         }}
       });
   
   async function agregarTasa(datos) {
       try {
           const pool = await consultar.connect();
-          const sqlQuery = `INSERT INTO Historial_tasa (Fecha, Tasa) VALUES ('${datos.Fecha_tasa}', ${datos.Tasa}')`;
+          const sqlQuery = `INSERT INTO Historial_tasa (Fecha, Tasa) VALUES ('${datos.Fecha_tasa}', '${datos.Tasa}')`;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
-          pool.close();
+          ipcRenderer.send('registroExitoso') 
       } catch (error) {
           console.log('Error al agregar el registro:', error);
       }
@@ -619,7 +638,6 @@ Guardar_tasa.addEventListener('click', async (evento) => {
         const sqlQuery = `UPDATE Tabladeviaticos SET Viatico_Bs = viatico_usd * ${Tasa}`;
         const result = await pool.request().query(sqlQuery);
         console.log('Viáticos en bolívares actualizados:', result);
-        pool.close();
     } catch (error) {
         console.log('Error al actualizar los viáticos:', error);
     }
@@ -686,7 +704,7 @@ generarSelectOrigen()
 
     await sql.connect(config);
 
-    const result = await sql.query(`SELECT Codigo, Sede  FROM Sedes, Tiposede where Tiposede.Id = Sedes.Tiposede and Tiposede.Tiposede not in ('Distribuidora', 'Anulada')`);
+    const result = await sql.query(`SELECT Codigo, Sede  FROM Sedes, Tiposede where Tiposede.Id = Sedes.Tiposede and Tiposede.Tiposede not in ('Distribuidora', 'Anulada') order by Sede`);
 
 
     return result.recordset;
@@ -749,7 +767,7 @@ if (selectedTabIndex !== null) {
 }
 /*Fin select de destino*/
 
-module.exports = {obtenerViaticos, obtenerTasa}
+module.exports = {obtenerViaticos, obtenerTasa, obtenerUltimatasa}
 
 
 

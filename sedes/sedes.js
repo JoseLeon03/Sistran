@@ -48,6 +48,10 @@ let currentPage = 0;
       rowElement.appendChild(TiposedeCell);
       tableBody.appendChild(rowElement);
     });
+
+    const maxPages = Math.ceil(sedes.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagination-info');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
   };
 
   consultar.connect().then(() => {
@@ -130,6 +134,9 @@ const renderTiposedes = (tipos) => {
     rowElement.appendChild(TiposedeCell);
     tableBody.appendChild(rowElement);
   });
+  const maxPages = Math.ceil(tipos.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagination-tipos');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 consultar.connect().then(() => {
@@ -174,10 +181,10 @@ consultar.connect().then(() => {
 });
 
 /**********************************Crear sedes***************************************** */ 
-const Guardar = document.getElementById("Guardar");
-const formulario = document.querySelector('#formulario');
+      const Guardar = document.getElementById("Guardar");
+      const formulario = document.querySelector('#formulario');
 
-Guardar.addEventListener('click', async (evento) => {
+      Guardar.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
         const Nombre = document.querySelector('input[name="nombre_sede"]').value;
@@ -271,7 +278,8 @@ const formulario2 = document.querySelector('#formulario');
 
 Guardar2.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
+      Guardar2.disabled = true 
+
         const Nombre_Tipo = document.querySelector('input[name="nombre_tipo"]').value;
 
         let nombresMostrados = {
@@ -307,11 +315,15 @@ Guardar2.addEventListener('click', async (evento) => {
             if (camposVacios.length > 0) {
                 // Envía un mensaje al proceso principal con la lista de campos vacíos
                 ipcRenderer.send('campos-vacios', camposVacios);
+                setTimeout(() =>{ Guardar2.disabled = false }, 2500)
+
                 
             } 
              else if( count >0){
 
                 ipcRenderer.send('tiposedeExistente', Nombre_Tipo)
+                setTimeout(() =>{ Guardar2.disabled = false }, 2500)
+
             }
             else{
 
@@ -324,13 +336,14 @@ Guardar2.addEventListener('click', async (evento) => {
             
               if (index === 1) {
                 // El usuario hizo clic en "no"
+                Guardar2.disabled = false
               }
                else {
                 // El usuario hizo clic en "si"
+                Guardar2.disabled = false
               
       // Utiliza los valores en tus consultas SQL
             await agregarTipos({ Nombre_Tipo});
-            ipcRenderer.send('registroExitoso');
 
             // Limpia los campos del formulario
             location.reload();
@@ -344,6 +357,7 @@ Guardar2.addEventListener('click', async (evento) => {
           const sqlQuery = `INSERT INTO Tiposede (Tiposede) VALUES ('${datos.Nombre_Tipo}')`;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
+          ipcRenderer.send('registroExitoso');
       } catch (error) {
           console.log('Error al agregar el registro:', error);
       }
@@ -354,7 +368,7 @@ Guardar2.addEventListener('click', async (evento) => {
   /*********************Select para escoger un tipo de sede***************************/
 
   /*Select de Tipo de viaje*/
-async function obtenerTiposede() {
+  async function obtenerTiposede() {
   try {
 
     await sql.connect(config);
@@ -454,11 +468,17 @@ async function actualizarTipoSede(codigo, nuevoTipo) {
   }
 }
 
-document.getElementById('modificar').addEventListener('click', async function() {
+const modificar = document.getElementById('modificar')
+modificar.addEventListener('click', async function() {
+
+    modificar.disabled = true
+
   const formulario = document.querySelector('#formulario');
   const codigo = document.getElementById('codigodesede').value;
   const nuevaSede = document.getElementById('nombre_sede').value;
   const nuevoTipo = document.getElementById('tiposede').value;  
+
+
 
   let nombresMostrados = {
     'nombre_sede': 'Por favor, ingrese un nombre para la sede ',
@@ -495,15 +515,13 @@ document.getElementById('modificar').addEventListener('click', async function() 
       if (camposVacios.length > 0) {
           // Envía un mensaje al proceso principal con la lista de campos vacíos
           ipcRenderer.send('campos-vacios', camposVacios);
-          
+        
+          setTimeout(() =>{ modificar.disabled = false }, 2500)
       } 
-      //  else if( count >0){
+ 
+     
 
-      //     ipcRenderer.send('sedeExistente', nuevaSede)
-      // }
-      
-
-          else{
+         else{
 
             ipcRenderer.send('modification-confirm-dialog')
             const index = await new Promise((resolve) => {
@@ -513,12 +531,13 @@ document.getElementById('modificar').addEventListener('click', async function() 
             })
           
             if (index === 1) {
+              modificar.disabled = false
               // El usuario hizo clic en "no"
             }
              else {
-              // El us
+              // El usuario hizo clic en "si"
 
-
+              modificar.disabled = false
     try {
       await actualizarSede(codigo, nuevaSede);
       await actualizarTipoSede(codigo, nuevoTipo);
@@ -820,15 +839,20 @@ document.getElementById('modificar2').addEventListener('click', async function()
         
         }
 
-        module.exports = {obtenerSedes, obtenertipos}
+     
 
         const printButton = document.querySelector('#Imprimir');
         printButton.addEventListener('click', () => {
 
-          const generarPDF = require('./ImprimirSedes')
 
-          generarPDF();
+          const generarSedesPDF = require('./ImprimirSedes')
+
+          generarSedesPDF();
+
+          // ipcRenderer.send('imprimir-sedes')
+          //
         });
+
 
         const printTipoButton = document.querySelector('#imprimirTipo');
         printTipoButton.addEventListener('click', () => {
@@ -846,7 +870,6 @@ var tabMenu = document.querySelector("#tab-menu");
 tabMenu.addEventListener("click", function(event) {
   // Obtener el índice de la pestaña seleccionada
   var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
-
   // Guardar el índice de la pestaña seleccionada en localStorage
   localStorage.setItem("selectedTabIndex", selectedIndex);
 });
@@ -859,3 +882,4 @@ if (selectedTabIndex !== null) {
   tabMenu.children[selectedTabIndex].click();
 }
 
+module.exports = {obtenerSedes, obtenertipos}

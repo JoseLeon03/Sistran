@@ -14,19 +14,21 @@
               
             </div>
             <div class="right">
-              <button class="menubar-btn" id="minimizar"><i class="fas fa-window-minimize"></i></button>
-              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
-              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+              <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
             </div>
           </div>
           
             <h2>Requerimiento de transporte</h2>
-    <fieldset >
+          <fieldset >
                    
                 <legend><b>Datos para la solicitud de requerimiento de vehículo</b></legend>
                 <div class="fecha">
                 <label >Fecha de requerimiento:</label> 
                 <input type="date" name="Fecha_req" id="Fecha" class="requerido" >
+      
+                <button  id="actualizar" style="margin-left: 500px;">Refrescar</button>
                </div>
         <div class="tablas">
                 
@@ -124,6 +126,16 @@
                         <td class="excluir"><label>Cant. Bultos</label></td>
                         <td class="excluir"><input type="number" style="width: 30%;" name="Bultos" class="requerido" ></td>
                       </tr>
+
+          
+                        <tr>
+                            
+                            <td class="excluir"><label >Mercancia: </label></td>
+                            <td class="excluir"><input type="text" name="Mercancia" id="Mercancia" class="requerido" ></td>
+                            
+                        </tr>
+                
+                   
                     </table>
            </fieldset>
                   <div id="none">
@@ -239,6 +251,14 @@
                 <td class="excluir"><input type="number" name="Viatico" id="Viaticos" class="requerido" ></td>
                 
             </tr>
+
+            <tr>
+
+              <td class="excluir"><label >Peaje(Bs): </label></td>
+              <td class="excluir"><input type="number" id="Peaje" name="Peaje" class="requerido"></td>
+              
+          
+          </tr>
            <!-- <tr>
 
                 <td class="excluir"><label >Peaje(Bs): </label></td>
@@ -257,6 +277,10 @@
        
     </table> 
     </fieldset>
+
+       
+
+
     <fieldset class="viaticos"><legend>Datos Ayudante</legend>
     
         <table >
@@ -317,6 +341,7 @@
               <div class="alinear-input">
               <label for="placa">Placa:</label>
               <input type="text" id="placa" style="width: 100px;">
+              <div id="pagina-vehiculos" style="margin: auto;"></div>
               </div>
 
               <div class="tabla-placa">
@@ -341,6 +366,8 @@
           <button class="paginas">Refrescar</button>
           <button  type="button" id="nextPage" class="paginas">>></button>
           <button  type="button" id="lastPage" class="paginas">>>|</button>
+   
+
           </div>
     
         </div>
@@ -359,6 +386,8 @@
           <div class="alinear-input">
             <label for="cedula">Cedula:</label>
             <input type="text" id="cedula" style="width: 100px;">
+            <div id="pagina-empleado" style="margin: auto;"></div>
+
             </div>
           <div class="tabla-placa">
 
@@ -404,6 +433,8 @@
               <div class="alinear-input">
                 <label for="placa_cava">Placa:</label>
                 <input type="text" id="placa_cava" style="width: 100px;">
+                <div id="pagina-cava" style="margin: auto;"></div>
+
                 </div>
               <div class="tabla-placa">
                 <table id="cavas" class="cavas">
@@ -414,7 +445,7 @@
                     <th>Marca</th>   
                     <th>Modelo</th>   
                     <th>Tipo</th>   
-                    <th>Destino</th>   
+                 
 
                 </tr>
             </thead>
@@ -446,6 +477,8 @@
               <div class="alinear-input">
                 <label for="Placa_remolque2">Placa:</label>
                 <input type="text" id="Placa_remolque2" style="width: 100px;">
+                <div id="pagina-remolque" style="margin: auto;"></div>
+
                 </div>
               <div class="tabla-placa">
   
@@ -468,6 +501,7 @@
           <button class="paginas">Refrescar</button>
           <button  type="button" id="nextPage4" class="paginas">>></button>
           <button  type="button" id="lastPage4" class="paginas">>>|</button>
+          <div id="pagina-vehiculo"></div>
           </div>
         </div>
 

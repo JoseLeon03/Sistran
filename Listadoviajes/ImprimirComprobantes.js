@@ -73,7 +73,7 @@ async function generarListadoComprobantes() {
   await page.setContent(htmlContent);
 
   // Genera el PDF
-  await page.pdf({ path: 'sedes.pdf', format: 'A4', 
+  await page.pdf({ path: 'sedes.pdf', format: 'Letter', 
   printBackground: true,
   displayHeaderFooter: true,
   headerTemplate: ` <div class="centrado" style="display: flex; background-color: blue; ">

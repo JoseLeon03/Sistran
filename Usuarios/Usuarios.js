@@ -20,17 +20,22 @@ const obtenerUsuarios = (conexion) => {
 module.exports = obtenerUsuarios
 
 
+let currentPage = 0;
+const rowsPerPage = 15;
 
 
 //Codigo para usar si la consulta esta en un archivo diferente
 // const obtenerSedes = require('./')
+const renderUsuariosTable = (usuarios) => {
+  const tableBody = document.querySelector('#tabla-usuarios  tbody');
+  tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
+  const start = currentPage * rowsPerPage;
+  const end = start + rowsPerPage;
+  const currentUsuarios = usuarios.slice(start, end);
 
-consultar.connect().then(() => {
-  obtenerUsuarios(consultar).then((usuarios) => {
-    const tableBody = document.querySelector('#tabla-usuarios tbody')
-    usuarios.forEach((usuario) => {
-      const rowElement = document.createElement('tr')
-      const UsuarioCell = document.createElement('td')
+  currentUsuarios.forEach((usuario) => {
+     const rowElement = document.createElement('tr')
+     const UsuarioCell = document.createElement('td')
      const NivelCell = document.createElement('td')
      const NombreCell = document.createElement('td')
      const ApellidoCell = document.createElement('td')
@@ -44,16 +49,57 @@ consultar.connect().then(() => {
       FecharegistroCell.textContent = usuario.fecharegistro_u
      Ultimo_inicioCell.textContent = usuario.UltimoInicio_u
      
-      rowElement.appendChild(UsuarioCell)
+     rowElement.appendChild(UsuarioCell)
      rowElement.appendChild(NivelCell)
      rowElement.appendChild(NombreCell)
      rowElement.appendChild(ApellidoCell)
      rowElement.appendChild(FecharegistroCell)
-     rowElement.appendChild(Ultimo_inicioCell)
+    //  rowElement.appendChild(Ultimo_inicioCell)
       tableBody.appendChild(rowElement)
     })
-  }).catch((err) => {
-    console.error(err)
+
+    const maxPages = Math.ceil(usuarios.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagina-usuarios');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
+}   
+    
+    consultar.connect().then(() => {
+  obtenerUsuarios(consultar).then((usuarios) => {
+    renderUsuariosTable(usuarios)
+
+        // Agregar controladores de eventos al botón de siguiente página
+        const nextPageButton1 = document.querySelector('#nextPage');
+        nextPageButton1.addEventListener('click', () => {
+          const maxPages = Math.ceil(usuarios.length / rowsPerPage);
+          if (currentPage < maxPages - 1) {
+            currentPage++;
+            renderUsuariosTable(usuarios);
+          }
+        });
+    
+        // Agregar controladores de eventos al botón de página anterior
+        const previousPageButton1 = document.querySelector('#previousPage');
+        previousPageButton1.addEventListener('click', () => {
+          if (currentPage > 0) {
+            currentPage--;
+            renderUsuariosTable(usuarios);
+          }
+        });
+    
+        // Agregar controladores de eventos al botón de primera página
+        const firstPageButton1 = document.querySelector('#firstPage');
+        firstPageButton1.addEventListener('click', () => {
+          currentPage = 0;
+          renderUsuariosTable(usuarios);
+        });
+    
+        // Agregar controladores de eventos al botón de última página
+        const lastPageButton1 = document.querySelector('#lastPage');
+        lastPageButton1.addEventListener('click', () => {
+          currentPage = Math.floor(usuarios.length / rowsPerPage) ;
+          renderUsuariosTable(usuarios);
+        });
+
   })
 })
 

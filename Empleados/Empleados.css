@@ -57,7 +57,7 @@ textarea{
 
 }
 select{
-    width: 100%;
+    width: 100px;
     /* padding: 10px; */
     border-radius: 3px;
     border: 1px solid #000000;
@@ -111,7 +111,7 @@ select{
   border-right: none; /* Prevent double borders */
 }    
 
-button[type="button"]:not(.paginas,.menubar-btn), [type="Reset"] {
+button[type="button"]:not(.paginas,.menubar-btn,.modificar), [type="Reset"] {
     display: inline-block;
     background-color: #4CAF50;
     color: #fff;
@@ -122,6 +122,23 @@ button[type="button"]:not(.paginas,.menubar-btn), [type="Reset"] {
     margin-right: 8px;
 
 }
+
+#Modificar {
+  display: inline-block;
+
+background-color: #2f6ffa;
+color: #fff;
+padding: 10px 15px;
+border-radius: 5px;
+border: none;
+cursor: pointer;
+margin-right: 10px;
+
+}
+#Modificar:active{
+  background-color: #145dfa;
+}
+
 
 button:active {
     background-color: #3e8e41;

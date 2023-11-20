@@ -152,17 +152,17 @@ function emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDi
           const modificarComprobante = document.getElementById('comprobanteAyudantebtn');
     
           modificarComprobante.addEventListener('click', async () => {
-            const descripcion = document.getElementById('descripcion').value;
-            const monto = document.getElementById('monto').value;
+            const descripcion     = document.getElementById('descripcion').value;
+            const monto           = document.getElementById('monto').value;
             const tipoComprobante = document.getElementById('selectComprobante').value;
-            const cedula = document.getElementById('selectAyudante').value;
+            const cedula          = document.getElementById('selectAyudante').value;
           
     
             let nombresMostrados = {
-              'descripcion': 'Por favor, ingrese la descripción del comprobante ',
-              'monto': 'Por favor, ingrese el monto del comprobante',
+              'descripcion'    : 'Por favor, ingrese la descripción del comprobante ',
+              'monto'          : 'Por favor, ingrese el monto del comprobante',
               'tipoComprobante': 'Por favor, seleccione un tipo de comprobante',
-              'ayudante':'Por favor, seleccione un ayudante',
+              'ayudante'       : 'Por favor, seleccione un ayudante',
     
               // Agrega más mapeos según sea necesario
             };
@@ -216,22 +216,14 @@ function emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDi
               console.log('Insert realizado con éxito');
             } catch (err) {
               console.error(err);
-            }} ipcRenderer.send('registroExitoso')
+            }} location.reload()
+               ipcRenderer.send('registroExitoso')
           }});
 
           
-
-
-
-
-
-
-
-
-
-
     
     
         });
       }
 module.exports = emergenteComprobanteayudante;
+

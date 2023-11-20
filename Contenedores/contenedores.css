@@ -50,11 +50,25 @@ label {
   
 }
 
+#modificarContenedor {
+  display: inline-block;
+
+background-color: #2f6ffa;
+color: #fff;
+padding: 10px 15px;
+border-radius: 5px;
+border: none;
+cursor: pointer;
+margin-right: 10px;
+
+}
+#modificarContenedor:active{
+  background-color: #145dfa;
+}
 
 
 input[type="text"], input[type="number"], input[type="date"], select{
   width: 100%;
-
   border-radius: 5px;
   border: 1px solid #000000;
  margin-bottom: 5%;
@@ -95,7 +109,7 @@ max-width: 100px;
 }
 
 .listado{
-  margin-top: 25px;
+  margin-top: 15px;
 }
 select{
 max-width: 100px;
@@ -116,7 +130,7 @@ max-width: 100px;
   
 }
 
-button[type="button"]:not(.paginas), [type="Reset"] {
+button[type="button"]:not(.paginas,.menubar-btn, #modificarContenedor), [type="Reset"] {
   display: inline-block;
   background-color: #4CAF50;
   color: #fff;

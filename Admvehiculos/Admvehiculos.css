@@ -73,8 +73,23 @@ input[type="text"], input[type="number"], input[type="date"]{
 
     
 }
+
+#Modificar {
+  display: inline-block;
+  background-color: #2f6ffa;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+  /* margin-top: 26px; */
+}
+#Modificar:active  {
+  background-color: #145dfa ;
+  }
 select{
-    width: 100%;
+    width: 150px;
     /* padding: 10px; */
     border-radius: 3px;
     border: 1px solid black;
@@ -108,7 +123,7 @@ select{
 
 }
 
-button[type="Button"]:not(.paginas), [type="Reset"] {
+button[type="Button"]:not(.paginas, .menubar-btn), [type="Reset"] {
     display: inline-block;
     background-color: #4CAF50;
     color: #fff;

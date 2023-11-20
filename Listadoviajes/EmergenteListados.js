@@ -1,7 +1,7 @@
 
-function agregarEventosFilas(filasTabla, ventanaEmergente) {
+function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
     filasTabla.forEach(fila => {
-      fila.addEventListener('dblclick', () => {
+      fila.addEventListener('click', () => {
         // Aquí va el código para obtener los datos de la fila
         const id_viaje = fila.querySelector('td:nth-child(1)').textContent;
         const fecharequerimiento = fila.querySelector('td:nth-child(2)').textContent;
@@ -12,25 +12,26 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
         const placa = fila.querySelector('td:nth-child(7)').textContent;
         const placacava = fila.querySelector('td:nth-child(8)').textContent;
         const placaremolque = fila.querySelector('td:nth-child(9)').textContent;
-        const cedulachofer = fila.querySelector('td:nth-child(10)').textContent;
+        const Cedula_chofer = fila.querySelector('td:nth-child(10)').textContent;
         const Nombredelchofer = fila.querySelector('td:nth-child(11)').textContent;
         const Apellido = fila.querySelector('td:nth-child(12)').textContent;
         const Observacion = fila.querySelector('td:nth-child(13)').textContent;
         const Ayudante = fila.querySelector('td:nth-child(14)').textContent;
-        const Bultos = fila.querySelector('td:nth-child(15)').textContent;
+        const Contenedor2 = fila.querySelector('td:nth-child(15)').textContent;
+        const Bultos = fila.querySelector('td:nth-child(16)').textContent;
  
   // Variable para almacenar el ID del viaje seleccionado
 
 // Agregar evento doble clic a las filas de la tabla
   const contenidoVentana = `
 
-<div class ="Menu">
+<div class ="Menu" id="Menu2">
        
 <button type="button" class="menubar-btn2" id="botonCerrar"><i class="fas fa-times"></i></button>
 
 </div>
 <h2 class="Titulo">Datos del viaje</h2>
-<div class="tab-menu">
+<div class="tab-menu" id="tab-menu">
 <div class="tab active" data-tab="tab1">Detalles del viaje</div>
 <div class="tab" data-tab="tab2">Estados del viaje</div>
 <div class="tab" data-tab="tab3">Comprobantes del viaje</div>
@@ -39,9 +40,12 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 
 
 <div class="tab-content active" id="tab1">
-
+<div id="separar">
 <fieldset style="width: max-content;" >
-<label >Fecha de requerimiento: </label> <span class="Fecha">${fecharequerimiento}</span></fieldset>
+<label >Fecha de requerimiento: </label> <span class="Fecha">${fecharequerimiento}</span>
+</fieldset>
+<button type="button" id="Reload" class="normalButton2"> Refrescar </button>
+</div>
 <fieldset class="fieldEmergente1"> 
 <div class="Tablas">
 
@@ -50,16 +54,16 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 <span >${origen}</span>
 <br>
 <label >Cedula chofer:</label>
-<span>${cedulachofer}</span>
+<span>${Cedula_chofer}</span>
 <br>
 <label >Placa del vehículo:</label>
 <span>${placa}</span>
 <br>
-<label >Placa cava</label>
+<label >Placa cava:</label>
 <span>${placacava}</span>
 <br>
 <label >Contenedor:</label>
-<span class="Ubicacion">En patio guacara</span>
+<span class="Ubicacion">${Contenedor2}</span>
 
 </Select></Label>
 
@@ -90,12 +94,16 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 <span class="estadoViaje">${estatus} </span>
 
 <label style="margin-left: 50px;">Fecha de estado: </label>
-<span>15/08/2023</span></fieldset>
+<span>${fecharequerimiento}</span></fieldset>
 
 <div class="emergente_btn"> 
 <button type="button" class="actualizarEstatus" id="modificarEstatus">Modificar estatus</button>
-<button type="button" id="Anular" class="redButton"> Anular viaje</button> 
-<button type="button" id="reImprimir" class="normalButton"> Re imprimir</button> 
+<button type="button" id="reImprimir" class="normalButton"> Re imprimir</button>
+
+
+
+
+
 
 </div>
 </div>
@@ -108,7 +116,7 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 
 <fieldset>
 <h2>${estatus} </h2>
-<h4>15/08/2023</h4>
+<h4></h4>
 </fieldset>
 
 <fieldset class="listadoEstadosviaje"><legend>Estados anteriores del viaje</legend>
@@ -252,9 +260,11 @@ function agregarEventosFilas(filasTabla, ventanaEmergente) {
 
   `   
 ;
+{/* <button type="button" id="Anular" class="redButton">Eliminar viaje</button>   */}
 ventanaEmergente.innerHTML = contenidoVentana;
 const nuevoComprobante = document.getElementById('nuevoComprobante');
 const contenedor = document.getElementById('nuevoComprobanteDiv');
+
 
 nuevoComprobante.addEventListener('click', () => {
   const contenidoHTML = `
@@ -272,11 +282,11 @@ nuevoComprobante.addEventListener('click', () => {
             <label for="">Tipo de comprobante</label>
             <select name="tipoComprobante" id="tipoComprobante" class="requerido2 "><option value="" ></option></select>
             <br><br>
-            <label for="">Monto</label>
+            <label for="">Monto Bs.</label>
             <input type="number" id="monto" class="requerido2 " name="monto">
                 <br><br>
             <div class="emergente_btn">
-                <button type="button" id="modificar_comprobante" class="boton" >Guardar</button>
+                <button type="button" id="crear_comprobante" class="boton" >Guardar</button>
                 </div>
     </fieldset>
         </div>
@@ -342,54 +352,59 @@ GenerarTipoComprobante()
 /*Fin select de destino*/
 
 
-const modificarComprobante = document.getElementById('modificar_comprobante');
+  const crearComprobante = document.getElementById('crear_comprobante');
 
-modificarComprobante.addEventListener('click', async () => {
+  crearComprobante.addEventListener('click', async () => {
   // Obtener los valores de los elementos del formulario
 
-  const concepto = document.getElementById('concepto').value;
-  const monto = document.getElementById('monto').value;
-  const tipoComprobante = document.getElementById('tipoComprobante').value;
-  const fecha = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      crearComprobante.disabled = true
+
+      const concepto        = document.getElementById('concepto').value;
+      const monto           = document.getElementById('monto').value;
+      const tipoComprobante = document.getElementById('tipoComprobante').value;
+      const fecha           = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
 
-  const pool =  await consultar;
+      const pool =  await consultar;
 
-  const result = await  pool.request().query(`SELECT Codigo from Sedes where sede = '${origen}'`);
+      const result = await  pool.request().query(`SELECT Codigo from Sedes where sede = '${origen}'`);
 
-  const Informacion = result.recordset[0];
+      const Informacion = result.recordset[0];
 
-  const sede = Informacion.Codigo;
+      const sede = Informacion.Codigo;
 
 
 
-  let nombresMostrados = {
-    'concepto': 'Por favor, ingrese un concepto para el comprobante ',
-    'monto': 'Por favor, ingrese el monto del comprobante',
-    'tipoComprobante': 'Por favor, seleccione un tipo de comprobante'
-  
+      let nombresMostrados = {
+        'concepto'       : 'Por favor, ingrese un concepto para el comprobante ',
+        'monto'          : 'Por favor, ingrese el monto del comprobante',
+        'tipoComprobante': 'Por favor, seleccione un tipo de comprobante'
+      
 
-    // Agrega más mapeos según sea necesario
-  };
+        // Agrega más mapeos según sea necesario
+      };
 
-  let inputs = document.querySelectorAll('.requerido2 ,.comprobante');
+      let inputs = document.querySelectorAll('.requerido2 ,.comprobante');
 
-  let camposVacios = []; 
+      let camposVacios = []; 
 
-  for (let i = 0; i < inputs.length; i++) {
-    // Si el elemento de entrada está vacío...
-    if (inputs[i].value === '') {
-        // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
-        let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
-        // Añade el nombre del campo vacío a la lista
-        camposVacios.push(nombreMostrado);
-    }
-  }
+      for (let i = 0; i < inputs.length; i++) {
+        // Si el elemento de entrada está vacío...
+        if (inputs[i].value === '') {
+            // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
+            let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
+            // Añade el nombre del campo vacío a la lista
+            camposVacios.push(nombreMostrado);
+        }
+      }
 
       // Si hay campos vacíos...
       if (camposVacios.length > 0) {
           // Envía un mensaje al proceso principal con la lista de campos vacíos
           ipcRenderer.send('campos-vacios', camposVacios);
+          setTimeout(() =>{
+            crearComprobante.disabled = false
+               }, 2500)
           
       } 
 
@@ -403,24 +418,45 @@ modificarComprobante.addEventListener('click', async () => {
 
       if (index === 1) {
         // El usuario hizo clic en "no"
+        crearComprobante.disabled = false
       }
       else {
 
+    // Generar el nuevo comprobante utilizando los valores obtenidos
+    crearComprobante.disabled = false
+        try {
+          async function obtenerUltimatasa(){
+          const pool      = await consultar.connect();
+          const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
+          const result2   = await pool.request().query(sqlQuery2)
+          const Tasa      = result2.recordset[0].Tasa;
+        
+          return Tasa;
+          }
+          obtenerUltimatasa()
+          
+          const Tasa      = await obtenerUltimatasa({});  
+          const montoUsd = monto / Tasa;
 
+          const pool = await consultar.connect();
+          const sqlQuery = `
+            INSERT INTO Comprobante_viajes (Codigo_viaje, Monto, Origen, Descripcion, Tipocomprobante, Fecha,
+              Beneficiario, Cedula, Monto_usd) Values (${id_viaje}, ${monto}, ${sede} , '${concepto}', 
+              '${tipoComprobante}', '${fecha}', '${Nombredelchofer} ${Apellido}', ${Cedula_chofer} , ${montoUsd})
+              ;
+          `;
+          await pool.request().query(sqlQuery);
+          ipcRenderer.send('registroExitoso');
+          const tablasComprobante = require('./TablaComprobantes.js'); 
+          tablasComprobante(contenedor2, numeroComprobante, idViaje)
 
-      // Generar el nuevo comprobante utilizando los valores obtenidos
-      try {
-        const pool = await consultar.connect();
-        const sqlQuery = `
-          INSERT INTO Comprobante_viajes (Codigo_viaje, Monto, Origen, Descripcion, Tipocomprobante, Fecha, Beneficiario, Cedula) Values (${id_viaje}, ${monto}, ${sede} , '${concepto}',  '${tipoComprobante}', '${fecha}', '${Nombredelchofer} ${Apellido}', ${cedulachofer})
-            ;
-        `;
-        await pool.request().query(sqlQuery);
-      } catch (err) {
-        console.error(err);
-      }  ipcRenderer.send('registroExitoso');
+        } catch (err) {
+          console.error(err);
+        }  
+
       }
     }   
+   
   });
 });
 
@@ -522,7 +558,7 @@ const tabs = document.querySelectorAll('.tab');
       try {
           const pool = await consultar;
           const sqlQuery = `Update  Viajes  set Cedula_chofer = ${datos.nuevaCedula} where Id_viaje = ${id_viaje};
-          Update empleados set Estatus = 1 where Cedula =${cedulachofer};
+          Update empleados set Estatus = 1 where Cedula =${Cedula_chofer};
           Update empleados set Estatus = 2 where Cedula =${datos.nuevaCedula} `;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
@@ -543,8 +579,11 @@ const tabs = document.querySelectorAll('.tab');
   
         const nuevaPlaca = document.querySelector('#placaNueva').value;
    
-        const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaPlaca}' and tipovehiculo not in (2,5,6)`
-        const consultaPlacadisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaPlaca}' and Ubicacion =1`;
+        const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaPlaca}' 
+        and tipovehiculo not in (2,5,6)`
+
+        const consultaPlacadisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaPlaca}' 
+        and Ubicacion =1`;
 
         // Ejecutar la consulta y obtener el resultado
         const pool = await consultar;
@@ -615,8 +654,11 @@ const tabs = document.querySelectorAll('.tab');
   
         const nuevaCava = document.querySelector('#cavaNueva').value;
    
-        const ConsultaCava = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaCava}' and tipovehiculo in (2,4)`
-        const consultaCavadisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaCava}' and Ubicacion =1 and tipovehiculo in (2,4)`;
+        const ConsultaCava = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaCava}' 
+        and tipovehiculo in (2,4)`
+
+        const consultaCavadisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaCava}'
+         and Ubicacion =1 and tipovehiculo in (2,4)`;
 
         // Ejecutar la consulta y obtener el resultado
         const pool = await consultar;
@@ -682,7 +724,7 @@ const tabs = document.querySelectorAll('.tab');
   /******************Fin de codigo para modificar la cava ************************/
 
 
-    /***************************************Codigo para modificar el remolque******************************************************* */
+  /**************************Codigo para modificar el remolque*********************** */
   const modificarRemolque = document.getElementById("modificarRemolque");
 
   modificarRemolque.addEventListener('click', async (evento) => {
@@ -690,8 +732,11 @@ const tabs = document.querySelectorAll('.tab');
   
         const nuevoRemolque= document.querySelector('#remolqueNuevo').value;
    
-        const consultaRemolque = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevoRemolque}' and tipovehiculo  in (5,6)`
-        const consultaRemolquedisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevoRemolque}' and Ubicacion =1 and tipovehiculo in (5,6)`;
+        const consultaRemolque = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevoRemolque}' 
+        and tipovehiculo  in (5,6)`
+
+        const consultaRemolquedisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevoRemolque}'
+         and Ubicacion =1 and tipovehiculo in (5,6)`;
 
         // Ejecutar la consulta y obtener el resultado
         const pool = await consultar;
@@ -764,8 +809,13 @@ botonImprimir.addEventListener('click', async () => {
   // Usa la función consultar para obtener el listado de viajes.
   // Cuando el botón sea clickeado, genera el PDF.
   const generarSalida = require ('../Reqtransporte/GenerarAutorizacionsalida')
-
   await generarSalida({id_viaje})
+
+  const generarBitacora = require('../Reqtransporte/GenerarBitacora');
+  await generarBitacora({id_viaje, Cedula_chofer})
+
+  const generarDespacho = require ('../Reqtransporte/GenerarAutorizaciondespacho')
+  await generarDespacho({id_viaje})
 
   // Aquí puedes guardar el PDF en un archivo, enviarlo a través de una respuesta HTTP, etc.
 });
@@ -860,8 +910,8 @@ modificarFechallegada.addEventListener('click', async (evento) => {
 
 
     // Limpia los campos del formulario
-}
-  });
+  }
+});
 
 
 async function modificarFechallegadafunction(datos) {
@@ -929,52 +979,58 @@ async function modificarFechasalidafunction(datos) {
 /******************Fin de codigo para modificar la fecha de llegada ************************/
 
 /*******************Codigo para anular viajes************************* */
-const anularViaje = document.getElementById("Anular");
+// const anularViaje = document.getElementById("Anular");
 
-anularViaje.addEventListener('click', async (evento) => {
-    evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+// anularViaje.addEventListener('click', async (evento) => {
+//     evento.preventDefault(); // Evita que el formulario se envíe automáticamente
  
-      ipcRenderer.send('elimination-confirm-dialog',id_viaje)
+//       ipcRenderer.send('elimination-confirm-dialog',id_viaje)
      
-      const index = await new Promise((resolve) => {
-        ipcRenderer.once('elimination-dialog-result', (event, index) => {
-          resolve(index)
-        })
-      })
+//       const index = await new Promise((resolve) => {
+//         ipcRenderer.once('elimination-dialog-result', (event, index) => {
+//           resolve(index)
+//         })
+//       })
       
      
-      if (index === 1) {
-        // El usuario hizo clic en "no"
-      }
-      else{
+//       if (index === 1) {
+//         // El usuario hizo clic en "no"
+//       }
+//       else{
 
-      // Utiliza los valores en tus consultas SQL
-      await eliminarViajesfunction({id_viaje});
-      ipcRenderer.send('datosEliminados');
-      // Limpia los campos del formulario
-      location.reload();
+//       // Utiliza los valores en tus consultas SQL
+//       await eliminarViajesfunction({id_viaje});
+//       ipcRenderer.send('datosEliminados');
+//       // Limpia los campos del formulario
+//       location.reload();
 
-      }
+//       }
     
-});
+// });
 
 
-async function eliminarViajesfunction() {
-    try {
-        const pool = await consultar;
-        const sqlQuery = `delete  Viajes  where Id_viaje = ${id_viaje};
-        Delete comprobante_viajes where Codigo_viaje = ${id_viaje}`;
-        const result = await pool.request().query(sqlQuery);
-        console.log('Registro agregado a la base de datos:', result);
+// async function eliminarViajesfunction() {
+//     try {
+//         const pool = await consultar;
+//         const sqlQuery = `delete  Viajes  where Id_viaje = ${id_viaje};
+//      `;
+//         const result = await pool.request().query(sqlQuery);
+//         const sqlQuery2 = `Update Empleados set estatus = 1 where Cedula = ${Cedula_chofer} or Nombre = '${Ayudante}'; Update Vehiculos set Ubicacion =1 where Placa ='${placa}' or Placa ='${placacava}' or Placa ='${placaremolque}'`;
+//         const result2 = await pool.request().query(sqlQuery2);
+
+//         const sqlQuery3 = `Delete comprobante_viajes where codigo_viaje = ${id_viaje}`;
+//         const result3 = await pool.request().query(sqlQuery3);
+
+//         console.log('Registro agregado a la base de datos:', result);
        
-    } catch (error) {
-        console.log('Error al agregar el registro:', error);
-    }
+//     } catch (error) {
+//         console.log('Error al agregar el registro:', error);
+//     }
 
-}
+// }
 /*******************Fin Codigo para anular viajes************************* */
 
-
+  //  Delete comprobante_viajes where Codigo_viaje = ${id_viaje}
 
 /*******************Codigo para añadir observaciones************************* */
 const añadirObservacion = document.getElementById("añadirObservacion");
@@ -1011,13 +1067,13 @@ async function añadirObservacionfunction(datos) {
 
 
 
-const estatusEmergente = document.getElementById('estatus-emergente');
-const modificarEstatus = document.getElementById('modificarEstatus')
+      const estatusEmergente = document.getElementById('estatus-emergente');
+      const modificarEstatus = document.getElementById('modificarEstatus')
 
-   const modificarEstatusfunc = require ('./EmergenteEstatus.js')
-   modificarEstatusfunc(estatusEmergente,modificarEstatus, estatus, id_viaje, fila, cedulachofer)
+        const modificarEstatusfunc = require ('./EmergenteEstatus.js')
+        modificarEstatusfunc(estatusEmergente,modificarEstatus, estatus, id_viaje, fila, Cedula_chofer)
 
-   const idViaje = id_viaje; 
+        const idViaje = id_viaje; 
 
         function llenarTablaEstados(idViaje) {
         
@@ -1029,10 +1085,10 @@ const modificarEstatus = document.getElementById('modificarEstatus')
             (SELECT Sede FROM Sedes s WHERE s.Codigo = ce.Sede) AS Nombre_Sede,
             Format(ce.Fecha, 'dd/MM/yyyy') AS Fecha,
             ce.Bultos
-        FROM Cambio_estatusviaje ce
-        JOIN EStatusviaje ev ON ce.Codigo_estado = ev.Id_estatus
-        WHERE ce.Codigo_viaje = ${idViaje}
-        ORDER BY ce.Fecha DESC, ce.Cod_estatus DESC;
+            FROM Cambio_estatusviaje ce
+            JOIN EStatusviaje ev ON ce.Codigo_estado = ev.Id_estatus
+            WHERE ce.Codigo_viaje = ${idViaje}
+            ORDER BY ce.Fecha DESC, ce.Cod_estatus DESC;
             `).then((result) => {
               const tabla = document.querySelector('#listadoEstadosviajes tbody');
               tabla.innerHTML = ''; // Limpiar la tabla antes de agregar datos
@@ -1072,48 +1128,74 @@ const modificarEstatus = document.getElementById('modificarEstatus')
 
         }
 
-const tablasComprobante = require('./TablaComprobantes.js');
+        const reload = document.getElementById("Reload");
+
+        reload.addEventListener('click', async (evento) => {
+        location.reload()
+          // const tablasComprobante = require('./TablaComprobantes.js');
+          // tablasComprobante(contenedor2, numeroComprobante, idViaje)
+          // llenarTablaEstados(idViaje)
+
+      });
+
+    const tablasComprobante = require('./TablaComprobantes.js');
 
 
-const contenedor2 = document.getElementById('ventana-modificarComprobante');
-let numeroComprobante;
+      const contenedor2 = document.getElementById('ventana-modificarComprobante');
+      let numeroComprobante;
 
-llenarTablaEstados(idViaje);   
+      llenarTablaEstados(idViaje);   
 
-
-    tablasComprobante(contenedor2, numeroComprobante, idViaje)
-
-
-
-
-
-
-const emergenteComprobanteayudante = require('./EmergenteComprobanteayudante.js');
-
-const comprobanteAyudante = document.getElementById("comprobanteAyudante")
-const comprobanteAyudanteDiv = document.getElementById("generar-comprobanteAyudante")
-
-    emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDiv, id_viaje, origen)
+      tablasComprobante(contenedor2, numeroComprobante, idViaje)
 
 
 
+      const emergenteComprobanteayudante = require('./EmergenteComprobanteayudante.js');
 
-    const botonComprobantes = document.querySelector('#imprimirComprobantes');
+      const comprobanteAyudante = document.getElementById("comprobanteAyudante")
+      const comprobanteAyudanteDiv = document.getElementById("generar-comprobanteAyudante")
 
-              // Añade un escuchador de eventos para el evento de clic.
-              botonComprobantes.addEventListener('click', async () => {
-                // Usa la función consultar para obtener el listado de viajes.
-                // Cuando el botón sea clickeado, genera el PDF.
-                const generarListadoComprobantes = require ('./ImprimirComprobantes')
+      emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDiv, id_viaje, origen)
+
+
+
+      // Agregar un controlador de eventos para el evento "click" en el menú de pestañas
+      fila.addEventListener("click", function(event) {
+        // Obtener el índice de la pestaña seleccionada
+        var selectedIndex = Array.prototype.indexOf.call(fila.children, event.target);
+
+        // Guardar el índice de la pestaña seleccionada en localStorage
+        localStorage.setItem("selectedTabIndex", selectedIndex); 
+      });
+
+      // Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
+      var selectedTabIndex = localStorage.getItem("selectedTabIndex");
+      console.log(selectedTabIndex)
+      // Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
+      if (selectedTabIndex !== null) {
+        fila.children[selectedTabIndex].click();
+      }
+
+    // const botonComprobantes = document.querySelector('#imprimirComprobantes');
+
+    //           // Añade un escuchador de eventos para el evento de clic.
+    //           botonComprobantes.addEventListener('click', async () => {
+    //             // Usa la función consultar para obtener el listado de viajes.
+    //             // Cuando el botón sea clickeado, genera el PDF.
+    //             const generarListadoComprobantes = require ('./ImprimirComprobantes')
               
-                await generarListadoComprobantes()
+    //             await generarListadoComprobantes()
               
-                // Aquí puedes guardar el PDF en un archivo, enviarlo a través de una respuesta HTTP, etc.
-              });
+    //             // Aquí puedes guardar el PDF en un archivo, enviarlo a través de una respuesta HTTP, etc.
+    //           });
 
   });
 
- }
+
+   }
+ 
  )}
 module.exports = agregarEventosFilas;
+
+
 

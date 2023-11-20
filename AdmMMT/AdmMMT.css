@@ -41,6 +41,7 @@ h1{
     display: inline-block;
     height: 284px;
     width: 300px;
+    white-space: nowrap;
     border-collapse: collapse;
     overflow: auto;
     background-color: #e0e0e0;
@@ -64,7 +65,7 @@ h1{
 #tabla{
     float: right;
     margin-right: 15px;
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
    padding: 10px;
     border-radius: 6px;
     border: 1px solid black;
@@ -93,17 +94,20 @@ h1{
 	background-color: #ddd;
   }
 
-  #anular{
-    background-color: #d83434;
-   
-    padding: 10px 20px;
-  }
-  #anular:active{
-    background-color: #ce2f2f;
-    }
-  
+  .modificar {
+    display: inline-block;
+ 
+  background-color: #2f6ffa;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
 
-button[type="Button"]:not(.paginas, .menubar-btn), [type="Reset"] {
+}
+
+button[type="Button"]:not(.paginas, .menubar-btn,.anular,.modificar ), [type="Reset"] {
 
     display: inline-block;
     background-color: #4CAF50;
@@ -116,11 +120,24 @@ button[type="Button"]:not(.paginas, .menubar-btn), [type="Reset"] {
 
 }
 
-button[class="modificar"] {
- 
-  background-color: #2f6ffa;
+.anular{
+
+  display: inline-block;
+  background-color: #d83434;
+  margin-top: 10px;
+  border-radius: 5px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
 
 }
+.anular:active{
+  background-color: #ce2f2f;
+  }
+
+
+
 /* 
 button[class="limpiar"]{
 
@@ -180,6 +197,10 @@ input[type="number"] ,select {
   
     box-sizing: border-box;
     
+}
+
+select{
+  max-width: 100px;
 }
 
 

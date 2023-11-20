@@ -3,11 +3,14 @@ const {consultar, config} = require ('../Promise')
 const agregarEventosFilas = require('./EmergenteListados.js');
 const generarPDF = require('./Imprimirviajes');
 
+
+
 const obtenerListados = (conexion) => {
     const request = new sql.Request(conexion)
-    return request.query(`SELECT Id_viaje , Format (Fecha , 'dd/MM/yyyy') as Fecha ,sede1.Sede ,sede2.Sede as Sede2 ,estatusviaje.Nombre as Estatus ,(SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje And beneficiario is null) Monto ,vehiculo1.Placa ,Placa_cava   ,Placa_remolque ,Empleados.Cedula ,Viatico_Usd,Empleados.Nombre ,Empleados.Apellido , Observaciones ,Viatico_chofer, Nombre_ayudante, Bultos 
-    From Viajes,Vehiculos as vehiculo1,Sedes as sede1, Sedes as sede2,Empleados,estatusviaje Where Viajes.cod_origen=sede1.Codigo and Viajes.cod_destino=sede2.Codigo and Viajes.placa_veh=vehiculo1.placa  and Viajes.cedula_chofer=Empleados.cedula and Viajes.estatus=estatusviaje.id_estatus
-    ORDER BY Viajes.fecha,Viajes.id_viaje
+    return request.query(`SELECT Id_viaje , Format (Fecha , 'dd/MM/yyyy') as Fecha ,sede1.Sede ,sede2.Sede as Sede2 ,estatusviaje.Nombre as Estatus ,(SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (1)) Monto ,vehiculo1.Placa ,Placa_cava   ,Placa_remolque ,Empleados.Cedula ,Viatico_Usd,Empleados.Nombre ,Empleados.Apellido , Observaciones ,Viatico_chofer, Nombre_ayudante, Bultos,Contenedor,  (SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Comprobante_viajes.Tipocomprobante = 3 ) Pago_peaje , 
+    (SELECT sum(Monto_Usd) Monto_usd FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (1) ) Monto_usd,  (SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (2) ) GastosBs,  (SELECT sum(Monto_Usd) Monto_Usd FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (2) ) GastosUsd
+        From Viajes,Vehiculos as vehiculo1,Sedes as sede1, Sedes as sede2,Empleados,estatusviaje Where Viajes.cod_origen=sede1.Codigo and Viajes.cod_destino=sede2.Codigo and Viajes.placa_veh=vehiculo1.placa  and Viajes.cedula_chofer=Empleados.cedula and Viajes.estatus=estatusviaje.id_estatus
+        ORDER BY Viajes.fecha,Viajes.id_viaje
      `).then((result) => {
       const Listado = result.recordset.map((row) => ({
     
@@ -17,8 +20,10 @@ const obtenerListados = (conexion) => {
         Sede2_v: row.Sede2,
         Estatus_v: row.Estatus,
         Monto_v: row.Monto,
-        ViaticoUsd: row.Viatico_Usd,
-        ViaticoBs: row.Viatico_chofer,
+        MontoUSD_v: row.Monto_usd,
+        GastosUsd: row.GastosUsd,
+        GastosBs: row.GastosBs,
+        Peaje: row.Pago_peaje,
         Placa_v: row.Placa,
         Placa2_v: row.Placa_cava,
         Placa3_v: row.Placa_remolque,
@@ -27,6 +32,7 @@ const obtenerListados = (conexion) => {
         Apellido_v: row.Apellido,
         Observaciones_v: row.Observaciones,
         Nombreayu_v: row.Nombre_ayudante,
+        Contenedor_v: row.Contenedor,
         Bultos_v: row.Bultos,
 
       }))
@@ -63,6 +69,7 @@ const obtenerListados = (conexion) => {
       const ApellidoCell = document.createElement('td');
       const ObservacionesCell = document.createElement('td');
       const Nombre_ayudanteCell = document.createElement('td');
+      const ContenedorCell = document.createElement('td');
       const BultosCell = document.createElement('td');
   
       id_viajeCell.textContent = listado.Id_v;
@@ -79,6 +86,7 @@ const obtenerListados = (conexion) => {
       ApellidoCell.textContent = listado.Apellido_v;
       ObservacionesCell.textContent = listado.Observaciones_v;
       Nombre_ayudanteCell.textContent = listado.Nombreayu_v;
+      ContenedorCell.textContent = listado.Contenedor_v;
       BultosCell.textContent = listado.Bultos_v;
   
       rowElement.appendChild(id_viajeCell);
@@ -95,14 +103,19 @@ const obtenerListados = (conexion) => {
       rowElement.appendChild(ApellidoCell);
       rowElement.appendChild(ObservacionesCell);
       rowElement.appendChild(Nombre_ayudanteCell);
+      rowElement.appendChild(ContenedorCell);
       rowElement.appendChild(BultosCell);
   
       
      tableBody.appendChild(rowElement);
     });
+    const maxPages = Math.ceil(listados.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagina-listado');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
+
     const filasTabla = document.querySelectorAll('#listadoviajes tbody tr');
-  const ventanaEmergente = document.getElementById('ventana-emergente');
-  agregarEventosFilas(filasTabla, ventanaEmergente);
+    const ventanaEmergente = document.getElementById('ventana-emergente');
+    agregarEventosFilas(filasTabla, ventanaEmergente);
 };
   
   consultar.connect().then(() => {
@@ -152,7 +165,7 @@ const obtenerListados = (conexion) => {
      let placa2FilterValue = '';
      let placa3FilterValue = '';
      let nombreayuFilterValue = '';
-     let estatusFilterValue = 'Todos';
+     let estatusFilterValue = 'Viajes no terminados';
      let sedeFilterValue = 'Todas';
 
           const fechaPosteriorInput = document.querySelector('#fechaPosterior');
@@ -277,7 +290,6 @@ const updateFilteredListados = () => {
     
         const result = await sql.query('SELECT Id_estatus, Nombre FROM Estatusviaje');
     
-        await sql.close();
     
         return result.recordset;
       } catch (error) {
@@ -287,27 +299,77 @@ const updateFilteredListados = () => {
     }
     
     
+    // async function GenerarEstado() {
+    //   try {
+    //     const destino = await obtenerEstado();
+    
+    //     let selectOptions = '<option value="Todos">Todos</option>';
+    
+    
+    
+    //     destino.forEach((row) => {
+    //       // Establecer el valor de las opciones como el id del estatus
+    //       selectOptions += `<option value="${row.Nombre}">${row.Nombre}</option>`
+            
+    //     });
+        
+    //     const selectHtml = `<select id="selectEstados">${selectOptions}</select>`;
+    //     document.getElementById('selectEstados').innerHTML = selectHtml;
+    
+    //     // Agregar evento change al select
+    
+    //     return selectHtml;
+    //   } catch (error) {
+    //     console.error('Error al generar el select:', error);
+    //     throw error;
+    //   }
+    // }
+
+
     async function GenerarEstado() {
       try {
         const destino = await obtenerEstado();
     
-        let selectOptions = '<option value="Todos" selected>Todos</option>';
+        let selectOptions = '<option value="Todos">Todos</option>';
     
+        // Crear una variable con el valor de la opción seleccionada por defecto
+        let opcionSeleccionada = "Viajes no terminados";
     
+        // Crear una variable para almacenar el índice de la opción seleccionada
+        let indiceSeleccionado = -1;
     
-        destino.forEach((row) => {
+        // Recorrer el array de destino con un bucle for
+        for (let i = 0; i < destino.length; i++) {
           // Establecer el valor de las opciones como el id del estatus
-          selectOptions += `<option value="${row.Nombre}">${row.Nombre}</option>`;
-        });
+          selectOptions += `<option value="${destino[i].Nombre}">${destino[i].Nombre}</option>`;
+    
+          // Si el valor de la opción es igual al valor de la opción seleccionada
+          // Guardar el índice de la opción en la variable indiceSeleccionado
+          if (destino[i].Nombre == opcionSeleccionada) {
+            indiceSeleccionado = i;
+          }
+        }
     
         const selectHtml = `<select id="selectEstados">${selectOptions}</select>`;
-        document.getElementById('selectEstados').innerHTML = selectHtml;
+        document.getElementById("selectEstados").innerHTML = selectHtml;
+    
+        // Si se encontró el índice de la opción seleccionada
+        if (indiceSeleccionado != -1) {
+          // Obtener el elemento option correspondiente al índice
+          // Usando la propiedad options del select y el índice
+          let optionSeleccionada = document
+            .getElementById("selectEstados")
+            .options[indiceSeleccionado + 1]; // Sumar 1 porque la primera opción es "Todos"
+    
+          // Agregar el atributo selected al elemento option
+          optionSeleccionada.setAttribute("selected", "selected");
+        }
     
         // Agregar evento change al select
     
         return selectHtml;
       } catch (error) {
-        console.error('Error al generar el select:', error);
+        console.error("Error al generar el select:", error);
         throw error;
       }
     }
@@ -329,9 +391,8 @@ const updateFilteredListados = () => {
       
           await sql.connect(config);
       
-          const result = await sql.query(`SELECT  Sede  FROM Sedes, Tiposede where Tiposede.Id = Sedes.Tiposede and Tiposede.Tiposede not in ('Distribuidora', 'Anulada')`);
+          const result = await sql.query(`SELECT  Sede  FROM Sedes, Tiposede where Tiposede.Id = Sedes.Tiposede and Tiposede.Tiposede not in ('Distribuidora', 'Anulada') order by Sede`);
       
-          await sql.close();
       
           return result.recordset;
         } catch (error) {
@@ -374,3 +435,13 @@ const updateFilteredListados = () => {
     })
 
  })
+//  ipcRenderer.invoke('filtro2', (event) => {
+
+
+//   console.log('hola', userData)
+
+// })
+// async function prueba()  {
+//   const userData = await ipcRenderer.invoke('filtrando', datosUsuario)
+// console.log(userData)
+// }prueba()

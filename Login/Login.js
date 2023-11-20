@@ -1,10 +1,13 @@
 
 const sql = require('mssql')
 const {consultar, config} = require ('../Promise');
+// const filtrar = require('../Menuprincipal/Menuprincipal');
+
+// const userData = require('../Menuprincipal/Menuprincipal');
 
 
+ async function login(usuario, clave) {
 
-async function login(usuario, clave) {
     try {
       // Conectar a la base de datos y buscar al usuario
       let pool = await sql.connect(config);
@@ -14,23 +17,51 @@ async function login(usuario, clave) {
   
       if (result.recordset.length > 0) {
         let user = result.recordset[0];
-        let nivel = user.Nivel
-  
+        // let nivel = 2
+        // nivel = user.Nivel
+        // module.exports = {nivel}
+
         // Verificar la contraseña
         if (clave === user.Clave) {
-            ipcRenderer.send('login', { usuario, clave, nivel: user.Nivel });   
-           
-            console.log(user.Nivel)       // Aquí puedes redirigir al usuario a otra página o hacer algo más
-        } else {
+          //  const userData = require('../Menuprincipal/Menuprincipal');
+          //   userData(nivel)
+          //     console.log(user.Nivel)
+
+
+          ipcRenderer.send('login', { usuario, clave, nivel: user.Nivel }); 
+          // const filtro = user.Nivel
+
+          // let variable = 0
+          // // let filtro = user.Nivel
+          // ipcRenderer.send('filtrando', { usuario, clave, filtro}); 
+          //   if(filtro ===1 ){
+
+          //    variable = 1
+          //     module.exports.variable = this.variable;
+
+          //   }
+
+         
+            // await filtrar({nivel});     
+                 // Aquí puedes redirigir al usuario a otra página o hacer algo más
+        }   
+        
+        else {
           ipcRenderer.send('Contraseñaincorrecta');
         }
-      } else {
+   
+      }   
+      else {
         ipcRenderer.send('Usuarionoencontrado');
       }
+    //  return nivel
     } catch (err) {
       console.error(err);
     }
   }
+
+
+  // module.exports = login();
 
   document.getElementById('Acceder').addEventListener('click', function() {
     let usuario = document.getElementById('username').value;
@@ -49,3 +80,25 @@ function mostrarContrasena() {
       inputPassword.type = 'password';
     }
   }
+
+  document.getElementById('password').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+        document.getElementById('Acceder').click();
+    }
+});
+
+
+let usernameInput = document.getElementById('username');
+let passwordInput = document.getElementById('password');
+
+
+  function alternateInput(e) {
+    if (e.keyCode === 40) { 
+        passwordInput.focus();
+    } else if (e.keyCode === 38) { 
+        usernameInput.focus();
+    }
+}
+
+usernameInput.addEventListener('keydown', alternateInput);
+passwordInput.addEventListener('keydown', alternateInput);

@@ -54,11 +54,13 @@
             </tbody>
             </table>
             <div class="btn-group">
-                <button type="button" id="firstPage">|<<</button>
-                <button type="button" id="previousPage"><<</button>
+                <button type="button" id="firstPage" class="paginas">|<<</button>
+                <button type="button" id="previousPage" class="paginas"><<</button>
                 <button>Refrescar</button>
-                <button type="button" id="nextPage">>></button>
-                <button type="button" id="lastPage">>>|</button>
+                <button type="button" id="nextPage" class="paginas">>></button>
+                <button type="button" id="lastPage" class="paginas">>>|</button>
+                <div id="pagination-info"></div>
+
                 </div>
         </div>
      
@@ -78,8 +80,9 @@
         <fieldset class="ajustar2">
             <legend>Acciones</legend>
             <button type="button" id="Guardar" >Guardar</button>
-            <button type="button"  id="modificar">Modificar</button>
             <button type="reset" >Limpiar</button>
+            <button type="button"  id="modificar" class="modificar">Modificar</button>
+
            
              <br>
              <button type="button" id="anular">Anular</button>
@@ -117,11 +120,13 @@
 
                 </table>
                 <div class="btn-group">
-                    <button type="button" id="firstPage2">|<<</button>
-                <button type="button" id="previousPage2"><<</button>
+                    <button type="button" id="firstPage2" class="paginas">|<<</button>
+                <button type="button" id="previousPage2" class="paginas"><<</button>
                 <button>Refrescar</button>
-                <button type="button" id="nextPage2">>></button>
-                <button type="button" id="lastPage2">>>|</button>
+                <button type="button" id="nextPage2" class="paginas">>></button>
+                <button type="button" id="lastPage2" class="paginas">>>|</button>
+                <div id="pagination-tipos"></div>
+
                     </div>
             </div>
          
@@ -139,8 +144,9 @@
             <fieldset class="ajustar2">
                 <legend>Acciones</legend>
                 <button type="button"  id="Guardar-tipos">Guardar</button>
-                <button type="button" id="modificar2">Modificar</button>
                 <button type="reset" >Limpiar</button>
+                <button type="button" id="modificar2" class="modificar">Modificar</button>
+
                
                  <br>
                  <button type="button" id="eliminar">Anular</button>

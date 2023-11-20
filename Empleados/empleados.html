@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- <div class="Empleados" > -->
-        <form  method="POST" id="formulario">
+        <form   id="formulario">
 
             <div id="menu-bar">
                 <div class="left" role="menu">
@@ -55,7 +55,7 @@
                 <table >
                    
                     <tr>
-                        <td><label>Cedulaa:</label></td>
+                        <td><label>Cedula:</label></td>
                         <td><input type="number" name="Cedula" id="Cedula" class="requerido" ></td>
                     </tr>
                     <tr>
@@ -108,8 +108,8 @@
                 <fieldset class="field">
                     <legend><b>Acciones</b></legend>
                     <button type="button" id="Guardar">Guardar</button>
-                    <button type="button" id="Modificar">Modificar</button>
                     <button type="reset">Limpiar</button>
+                    <button type="button" id="Modificar" class="modificar">Modificar</button>
                     <br></br>
                     <button type="button" id="Anular">Anular</button>
                 </fieldset>
@@ -155,6 +155,7 @@
                 <button class="paginas">Refrescar</button>
                 <button  type="button" id="nextPage2" class="paginas">>></button>
                 <button  type="button" id="lastPage2" class="paginas">>>|</button>
+                <div id="pagina-empleados"></div>
                 </div>
             </div>
 
@@ -201,6 +202,18 @@
             <tr>
                 <td class="excluir"><label>Tipo Empleado: </label></td>
                 <td class="excluir"><Select id="templeadofilter"></Select></td>
+            </tr>
+
+            <tr>
+                <td class="excluir"><label>Estatus: </label></td>
+                <td class="excluir"><Select id="estatusEmpleado">
+
+                    <option value="Activo">Activo</option>
+                    <option value="Anulado">Anulado</option>
+                    <option value="Todos">Todos</option>
+
+
+                </Select></td>
             </tr>
                
         </table>

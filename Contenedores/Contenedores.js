@@ -6,7 +6,7 @@ const Emergentes = require ('./EmergenteContenedores')
 const obtenerContenedores = (conexion) => {
     const request = new sql.Request(conexion)
     // return request.query(`SELECT Format (Fecha_asignacion , 'dd/MM/yyyy') as Fecha_asignacion, Cedula, Placa , Id  FROM Asignacion_vehiculos order by Cedula`).then((result) => {
-        return request.query(`SELECT contenedores.Id , Expediente ,Bultos, Contenedor , Contenedores.Mercancia , Chofer , sedes.Sede,format (Fecharequerimiento , 'dd/MM/yyyy') as Fecharequerimiento ,format (Fecharecepcion , 'dd/MM/yyyy') as Fecharecepcion, estatusvehiculo.Estatusvehiculo, Capacidad, Observaciones, format (Fechafin , 'dd/MM/yyyy') as Fechafin   FROM Contenedores,Sedes,estatusvehiculo WHERE sedes.Codigo=contenedores.Puertoorigen AND estatusvehiculo.id=contenedores.estatus
+        return request.query(`SELECT contenedores.Id , Expediente ,Bultos, Contenedor , Contenedores.Mercancia , Chofer , sedes.Sede,format (Fecharequerimiento , 'dd/MM/yyyy') as Fecharequerimiento ,format (Fecharecepcion , 'dd/MM/yyyy') as Fecharecepcion, estatusvehiculo.Estatusvehiculo, Capacidad, Observaciones, format (Fechafin , 'dd/MM/yyyy') as Fechafin, Importadora, Choferalquilado,format (Fechadesc , 'dd/MM/yyyy') as Fechadesc, Tienda, Destino   FROM Contenedores,Sedes,estatusvehiculo WHERE sedes.Codigo=contenedores.Puertoorigen AND estatusvehiculo.id=contenedores.estatus
         Order by id desc`).then((result) => {
       const Contenedores = result.recordset.map((row) => ({
 
@@ -14,15 +14,21 @@ const obtenerContenedores = (conexion) => {
         Expediente_c: row.Expediente,
         Contenedor_c: row.Contenedor,
         Mercancia_c: row.Mercancia,
-        Chofer_c: row.Chofer,
+        Chofer_c: row.Choferalquilado,
+        Chofer2_c: row.Chofer,
         Sede_c: row.Sede,
         Fecha_c: row.Fecharequerimiento,
+        Importadora_c : row.Importadora,
         Fecharecepcion_c: row.Fecharecepcion,
         Estatus_c: row.Estatusvehiculo,
         Capacidad_c: row.Capacidad,
         Bultos_c: row.Bultos,
         Observacion_c : row.Observaciones,
-        Fechafin_c: row.Fechafin
+        Fechafin_c: row.Fechafin,
+        Fechadesc_c:row.Fechadesc,
+        Destino_c:row.Destino,
+        Agente_c:row.Tienda,
+
         
 
       }))
@@ -35,7 +41,7 @@ const obtenerContenedores = (conexion) => {
   //Codigo para usar si la consulta esta en un archivo diferente
   // const obtenerSedes = require('./')
   let currentPage = 0;
-const rowsPerPage = 2;
+const rowsPerPage = 15;
 
 const renderContenedoresTable = (contenedor) => {
   const tableBody = document.querySelector('#tabla-contenedores tbody');
@@ -54,6 +60,8 @@ const renderContenedoresTable = (contenedor) => {
     const SedeCell = document.createElement('td');
     const FecharequerimientoCell = document.createElement('td');
     const FecharecepcionCell = document.createElement('td');
+    const FecharellenoCell = document.createElement('td');
+    const FechafinCell = document.createElement('td');
     const EstatusvehiculoCell = document.createElement('td');
     const CapacidadCell = document.createElement('td');
     const BultosCell = document.createElement('td');
@@ -67,6 +75,8 @@ const renderContenedoresTable = (contenedor) => {
     SedeCell.textContent = column.Sede_c;
     FecharequerimientoCell.textContent = column.Fecha_c;
     FecharecepcionCell.textContent = column.Fecharecepcion_c
+    FecharellenoCell.textContent = column.Fechadesc_c
+    FechafinCell.textContent = column.Fechafin_c
     EstatusvehiculoCell.textContent = column.Estatus_c;
     CapacidadCell.textContent = column.Capacidad_c;
     BultosCell.textContent = column.Bultos_c
@@ -80,6 +90,8 @@ const renderContenedoresTable = (contenedor) => {
     rowElement.appendChild(SedeCell);
     rowElement.appendChild(FecharequerimientoCell);
     rowElement.appendChild(FecharecepcionCell);
+    rowElement.appendChild(FecharellenoCell);
+    rowElement.appendChild(FechafinCell);
     rowElement.appendChild(EstatusvehiculoCell);
     rowElement.appendChild(CapacidadCell);
     rowElement.appendChild(BultosCell);
@@ -87,6 +99,10 @@ const renderContenedoresTable = (contenedor) => {
 
     tableBody.appendChild(rowElement);
   });
+
+  const maxPages = Math.ceil(contenedor.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-contenedores');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 
 //*Ventana emergente */
 const filasTabla = document.querySelectorAll('#tabla-contenedores tbody tr');
@@ -145,6 +161,9 @@ const formulario3 = document.querySelector('#Registro_Cont');
 Guardar_cont.addEventListener('click', async (evento) => {
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
 
+      Guardar_cont.disabled = true
+
+
         const Fecha = document.querySelector('input[name="registro"]').value;
         const Expediente = document.querySelector('input[name="expediente"]').value;
         const Mercancia = document.querySelector('input[name="mercancia"]').value;
@@ -153,6 +172,7 @@ Guardar_cont.addEventListener('click', async (evento) => {
         const Embarque = document.querySelector('#embarques').value;
         const Tienda = document.querySelector('#tienda').value;
         const Chofer = document.querySelector('#chofer').value;
+        const ChoferEntrega = document.querySelector('#choferEntrega').value;
         const Recepcion = document.querySelector('input[name="Recepcion"]').value;
         const Contenedor = document.querySelector('input[name="Contenedor"]').value;
         const Capacidad = document.querySelector('input[name="Capacidad"]').value;
@@ -170,11 +190,13 @@ Guardar_cont.addEventListener('click', async (evento) => {
           'puerto': 'Por favor, seleccione un puerto',
           'naviera': 'Por favor, seleccione una naviera',
           'embarque': 'Por favor, seleccione el embarque',
-          'destino': 'Por favor, seleccione un destino',
-          'Sidunea': 'Por favor, introduzca sidunea',
+          'destino': 'Por favor, ingrese un destino',
+          // 'Sidunea': 'Por favor, introduzca sidunea',
           'registro': 'Por favor, introduzca la fecha de registro',
           'Recepcion': 'Por favor, introduzca la fecha de recepción',
           'Bultos': 'Por favor, ingrese la cantidad de bultos',
+          'importadora': 'Por favor, ingrese la importadora',
+
 
           // Agrega más mapeos según sea necesario
         };
@@ -206,11 +228,16 @@ Guardar_cont.addEventListener('click', async (evento) => {
             if (camposVacios.length > 0) {
                 // Envía un mensaje al proceso principal con la lista de campos vacíos
                 ipcRenderer.send('campos-vacios', camposVacios);
-
+                setTimeout(() =>{
+                  Guardar_cont.disabled = false
+                     }, 2500)
             }
           else if( count >0){
 
                 ipcRenderer.send('contenedorExistente', Contenedor)
+                setTimeout(() =>{
+                  Guardar_cont.disabled = false
+                     }, 2500)
             }
 
             else{
@@ -224,13 +251,18 @@ Guardar_cont.addEventListener('click', async (evento) => {
 
             if (index === 1) {
               // El usuario hizo clic en "no"
+              Guardar_cont.disabled = false
             }
             else{
+              Guardar_cont.disabled = false
       // Utiliza los valores en tus consultas SQL
-      await agregarContenedores({Fecha, Expediente, Mercancia, Contenedor, Recepcion, Capacidad, Bultos, Sidunea, Puerto, Naviera, Embarque, Tienda, Chofer, Destino, Importadora, Observacion});
+      await agregarContenedores({Fecha, Expediente, Mercancia, Contenedor, Recepcion, Capacidad, Bultos, Sidunea, Puerto, Naviera, Embarque, Tienda, Chofer, Destino, Importadora, Observacion, ChoferEntrega});
               ipcRenderer.send('registroExitoso')
       // Limpia los campos del formulario
-      location.reload();
+
+      setTimeout(() =>{
+        location.reload();
+           }, 1000)
 
   }}
 });
@@ -238,10 +270,11 @@ Guardar_cont.addEventListener('click', async (evento) => {
   async function agregarContenedores(datos) {
       try {
           const pool = await consultar;
-          const sqlQuery = `INSERT INTO Contenedores (Expediente, Contenedor, Mercancia, Estatus, Fecharequerimiento, Fecharecepcion, Capacidad, Bultos, Sidunea, Puertoorigen, Naviera, Embarque, Tienda, Chofer, Destino, Importadora, Observaciones)
-          VALUES ('${datos.Expediente}', '${datos.Contenedor}', '${datos.Mercancia}', 7, '${datos.Fecha}', '${datos.Recepcion}', ${datos.Capacidad}, ${datos.Bultos}, '${datos.Sidunea}', ${datos.Puerto}, '${datos.Naviera}', '${datos.Embarque}', '${datos.Tienda}', '${datos.Chofer}', '${datos.Destino}', '${datos.Importadora}', '${datos.Observacion}')`;
+          const sqlQuery = `INSERT INTO Contenedores (Expediente, Contenedor, Mercancia, Estatus, Fecharequerimiento, Fecharecepcion, Capacidad, Bultos, Sidunea, Puertoorigen, Naviera, Embarque, Tienda, Choferalquilado, Destino, Importadora, Observaciones, Chofer)
+          VALUES ('${datos.Expediente}', '${datos.Contenedor}', '${datos.Mercancia}', 7, '${datos.Fecha}', '${datos.Recepcion}', ${datos.Capacidad}, ${datos.Bultos}, '${datos.Sidunea}', ${datos.Puerto}, '${datos.Naviera}', '${datos.Embarque}', '${datos.Tienda}', '${datos.Chofer}', '${datos.Destino}', '${datos.Importadora}', '${datos.Observacion}', '${datos.ChoferEntrega}')`;
           const result = await pool.request().query(sqlQuery);
           console.log('Registro agregado a la base de datos:', result);
+          ipcRenderer.send('registroExitoso')
       } catch (error) {
           console.log('Error al agregar el registro:', error);
       }
@@ -399,7 +432,7 @@ generarSelectpuertos()
    
        await sql.connect(config);
    
-       const result = await sql.query('SELECT  Estatusvehiculo from Estatusvehiculo where Id in (1,2,5,6,7)');
+       const result = await sql.query('SELECT  Estatusvehiculo from Estatusvehiculo where Id in (5,7)');
    
    
        return result.recordset;
@@ -453,18 +486,34 @@ generarSelectpuertos()
           if (estadosFilterValue === 'Pendiente') { 
 
               const pool = await consultar;
-              const sqlQuery = `Update Contenedores set Estatus  = 6 where Estatus = 7`;
+              const sqlQuery = `Update Contenedores set Estatus  = 5 where Estatus = 7`;
               const result = await pool.request().query(sqlQuery);
         }
      });
-   
- 
- 
-    });
+   });
 
 
 
 });
+
+var tabMenu = document.querySelector("#tab-menu");
+
+// Agregar un controlador de eventos para el evento "click" en el menú de pestañas
+tabMenu.addEventListener("click", function(event) {
+  // Obtener el índice de la pestaña seleccionada
+  var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
+
+  // Guardar el índice de la pestaña seleccionada en localStorage
+  localStorage.setItem("selectedTabIndex", selectedIndex);
+});
+
+// Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
+var selectedTabIndex = localStorage.getItem("selectedTabIndex");
+
+// Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
+if (selectedTabIndex !== null) {
+  tabMenu.children[selectedTabIndex].click();
+}
 
 
 

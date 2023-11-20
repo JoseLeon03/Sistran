@@ -167,9 +167,8 @@ input[type="text"], select{
 }
 
 select{
-	max-width: max-content;
+	max-width: 100px;
 
-  
 }
 
 

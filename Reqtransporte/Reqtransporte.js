@@ -6,7 +6,9 @@ const formulario = document.querySelector('#formulario');
 
 // CREATE SEQUENCE miPuntero AS INT START WITH 1 NO CACHE; CREATE TABLE miTable ( Id INT PRIMARY KEY DEFAULT NEXT VALUE FOR miPuntero, ...<resto_de_campos>... );
 // ALTER SEQUENCE miPuntero RESTART WITH 1
-document.getElementById('Guardar').addEventListener('click', async function(evento) {
+const guardarViaje = document.getElementById('Guardar');
+guardarViaje.addEventListener('click', async function(evento) {
+  guardarViaje.disabled = true
 
     evento.preventDefault(); // Evita que el formulario se envíe automáticamente
 
@@ -21,7 +23,7 @@ document.getElementById('Guardar').addEventListener('click', async function(even
     const Cedula_chofer = document.querySelector('input[name="Cedula_chofer"]').value;
     const Viatico = document.querySelector('input[name="Viatico"]').value;
     const modelo = document.querySelector('input[name="Modelo"]').value;
-    // const Peaje = document.querySelector('input[name="Peaje"]').value;
+    const Peaje = document.querySelector('input[name="Peaje"]').value;
     // const Viatico_total = document.querySelector('input[name="Total"]').value;
     const Ayudante = document.querySelector('input[name="Nombre_ayudante"]').value;
     const Cedula_ayu = document.querySelector('input[name="Cedula_ayudante"]').value;
@@ -32,9 +34,13 @@ document.getElementById('Guardar').addEventListener('click', async function(even
     const Placa_remolque = document.querySelector('input[name="Placa_remolque"]').value;
     const Nombre = document.querySelector('input[name="Nombre_chofer"]').value;
     const Viatico_usd2 = document.querySelector('input[name="Viatico_usd"]').value
+    const Mercancia = document.querySelector('input[name="Mercancia"]').value
+
+    real = parseInt(Peaje) + parseInt(Viatico)  
+
 
     let selectElement = document.querySelector('#Sedes'); // Reemplaza '#tuSelect' con el selector de tu elemento select
-let selectedOptionText = selectElement.options[selectElement.selectedIndex].textContent;
+    let selectedOptionText = selectElement.options[selectElement.selectedIndex].textContent;
 
 // let selectTiposede = document.querySelector('#Destino'); // Reemplaza '#tuSelect' con el selector de tu elemento select
 // let selectedTiposedeTexto= selectElement.options[selectTiposede.selectedIndex].textContent;
@@ -50,7 +56,8 @@ let nombresMostrados = {
   'Bultos':  'Por favor, ingrese una cantidad de bultos',
   'origen': 'Por favor, seleccione un origen',
   'destino': 'Por favor, seleccione un destino',
-
+  'Mercancia': 'Por favor, Ingrese la mercancia',
+  'Peaje': 'Por favor, ingrese un monto de peaje',
   // Agrega más mapeos según sea necesario
 };
 
@@ -76,6 +83,7 @@ for (let i = 0; i < inputs.length; i++) {
 if (camposVacios.length > 0) {
     // Envía un mensaje al proceso principal con la lista de campos vacíos
     ipcRenderer.send('campos-vacios', camposVacios);
+    setTimeout(() =>{ guardarViaje.disabled = false }, 2500)
 }
   // setTimeout(function(){document.getElementById("Guardar").disabled = false;},5000);
 
@@ -90,33 +98,58 @@ if (camposVacios.length > 0) {
 
     if (index === 1) {
       // El usuario hizo clic en "no"
+      guardarViaje.disabled = false 
     }
     else{
       
-
+      guardarViaje.disabled = false 
     // Utiliza los valores en tus consultas SQL
-    const [numeroComprobante, id_viaje] = await agregarViaje({Fecha_req, Origen, Sede, Placa_veh, Placa_cava,  Precinto,  Cedula_chofer, Viatico , Ayudante, Cedula_ayu, Viatico_ayu, Observaciones, Bultos, Destino, Contenedor, Placa_remolque, Viatico_usd2, Precinto2, Nombre});
-    formulario.reset();
+    const [numeroComprobante, id_viaje] = await agregarViaje({Fecha_req, Origen, Sede, Placa_veh, Placa_cava,  Precinto,  Cedula_chofer, Viatico , Ayudante, Cedula_ayu, Viatico_ayu, Observaciones, Bultos, Destino, Contenedor, Placa_remolque, Viatico_usd2, Precinto2, Nombre, Mercancia, Peaje, real});
+    // formulario.reset();
 
-    const generarComprobante = require('./GenerarComprobante');
-    await generarComprobante({numeroComprobante});
 
-        const generarSalida = require ('./GenerarAutorizacionsalida')
-
+        ipcRenderer.send('impresion-confirm-dialog')
+     const index = await new Promise((resolve) => {
+         ipcRenderer.once('impresion-dialog-result', (event, index) => {
+             resolve(index)
+         })
+     })
+   
+     if (index === 1) {
+         location.reload(); // El usuario hizo clic en "no"
+     }
+     else{
+      const generarComprobante = require('./GenerarComprobante');
+      await generarComprobante({numeroComprobante});
+  
+      const generarBitacora = require('./GenerarBitacora');
+      await generarBitacora({id_viaje, Cedula_chofer})
+  
+      const generarSalida = require ('./GenerarAutorizacionsalida') 
+      await generarSalida({id_viaje})
+  
+      const generarDespacho = require ('./GenerarAutorizaciondespacho')
+      await generarDespacho({id_viaje})
+     }
     
 
     // await generarSalida({Fecha_req, Placa_veh, Nombre, Cedula_chofer, selectedOptionText, modelo, Placa_remolque, Contenedor, Observaciones, Precinto, Placa_cava, Precinto2  })
-    await generarSalida({id_viaje})
+   
 
-    ipcRenderer.send('viaje');
+    
     location.reload();
 }}
 });
 
 
 
+
 async function agregarViaje(datos) {
   try {
+
+
+   
+    
       const pool = await consultar.connect();
       const sqlQuery = `
     
@@ -133,49 +166,154 @@ async function agregarViaje(datos) {
       );
       
       INSERT INTO Viajes
-          (Cod_origen, Cod_destino, Fecha, Placa_veh, Placa_cava, Precinto, Nombre_ayudante, Cedula_ayudante, Observaciones, Viatico_chofer, Viatico_ayudante, Estatus, Tipoviaje, Bultos, Cedula_chofer, Contenedor, Placa_remolque, Viatico_usd, Precinto2)
+          (Cod_origen, Cod_destino, Fecha, Placa_veh, Placa_cava, Precinto, Nombre_ayudante, Cedula_ayudante, Observaciones, Viatico_chofer, Viatico_ayudante, Estatus, Tipoviaje, Bultos, Cedula_chofer, Contenedor, Placa_remolque, Viatico_usd, Precinto2, Mercancia, Pago_peaje)
       OUTPUT INSERTED.Id_viaje, INSERTED.Viatico_chofer, INSERTED.Cod_destino, INSERTED.Fecha, INSERTED.Cedula_chofer, INSERTED.Viatico_usd INTO @MyTableVar
-      VALUES ( ${datos.Origen} , ${datos.Sede}, '${datos.Fecha_req}', '${datos.Placa_veh}', '${datos.Placa_cava || '' }', '${datos.Precinto}', '${datos.Ayudante || ''}', ${datos.Cedula_ayu || 'NULL'}, '${datos.Observaciones}', ${datos.Viatico},${datos.Viatico_ayu || 'NULL'}, 1, ${datos.Destino}, ${datos.Bultos}, ${datos.Cedula_chofer} , '${datos.Contenedor || ''}' , '${datos.Placa_remolque || ''}', ${datos.Viatico_usd2}, '${datos.Precinto2 || ''}');
+      VALUES ( ${datos.Origen} , ${datos.Sede}, '${datos.Fecha_req}', '${datos.Placa_veh}', '${datos.Placa_cava || '' }', '${datos.Precinto}', '${datos.Ayudante || ''}', ${datos.Cedula_ayu || 'NULL'}, '${datos.Observaciones}', ${datos.Viatico},${datos.Viatico_ayu || 'NULL'}, 1, ${datos.Destino}, ${datos.Bultos}, ${datos.Cedula_chofer} , '${datos.Contenedor || ''}' , '${datos.Placa_remolque || ''}', ${datos.Viatico_usd2}, '${datos.Precinto2 || ''}', '${datos.Mercancia}', ${datos.Peaje});
       -- Ahora puedes usar los valores en @MyTableVar para tu segunda consulta
-      INSERT INTO Comprobante_viajes (Codigo_viaje, Monto, Origen, Fecha, Cedula,Monto_usd)
-      SELECT Id_viaje, Viatico_chofer, Sede, Fecha, Cedula_chofer, Viatico_usd FROM @MyTableVar;
+      INSERT INTO Comprobante_viajes (Codigo_viaje, Origen, Fecha, Cedula)
+      SELECT Id_viaje, Sede, Fecha, Cedula_chofer FROM @MyTableVar;
 
 
 
 COMMIT;
+    
 
 Update Empleados set estatus =2 where Cedula = ${datos.Cedula_chofer} or Cedula = '${datos.Cedula_ayu}';
 Update Vehiculos set Ubicacion =2 where Placa ='${datos.Placa_veh}' or Placa ='${datos.Placa_cava}' or Placa ='${datos.Placa_remolque}';
       `;
+
+      const result20 = await pool.request()
+      .query(`SELECT Dias FROM Tabladeviaticos WHERE Destino = ${datos.Sede}`);
+      
+      let diasEsperados = result20.recordset[0].Dias;
+      
+      
+      async function obtenerUltimatasa(){
+        const pool = await consultar.connect();
+       const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
+      const result20 = await pool.request().query(sqlQuery2)
+      const Tasa = result20.recordset[0].Tasa;
+      
+      
+      console.log ('Ultima tasa ', Tasa)
+      return Tasa;
+       }obtenerUltimatasa()
+      
+       const Tasa =   await obtenerUltimatasa({});  
+      
+      
+    
+  
+      
       const sqlQuery2 = `SELECT MAX(Num_comprobante) AS UltimoComprobante FROM Comprobante_viajes`;
       const result2 = await pool.request().query(sqlQuery2)
       const result = await pool.request().query(sqlQuery);
 
       const sqlQuery3 = `SELECT MAX(Id_viaje) AS id_viaje FROM viajes where Cedula_chofer = ${datos.Cedula_chofer}`;
       const result3 = await pool.request().query(sqlQuery3)
-      console.log('Registro agregado a la base de datos:', result);
+
+
       // Aquí tienes el número de comprobante
       const id_viaje = result3.recordset[0].id_viaje;
-      const numeroComprobante = result2.recordset[0].UltimoComprobante + 1;
+      const numeroComprobante2 = result2.recordset[0].UltimoComprobante + 1 ;
 
-      const sqlQuery5 = `Select Sedes.Sede as Destino from Viajes, Sedes  where id_viaje = '${id_viaje}' and Viajes.Cod_destino = Sedes.Codigo`;
+
+
+      const sqlQuery5 = `Select Sedes.Sede as Destino , Tiposede.Tiposede as Tipo from Viajes, Sedes, Tiposede  where id_viaje = '${id_viaje}' and Viajes.Cod_destino = Sedes.Codigo and Sedes.Tiposede = Tiposede.Id`;
       const result5 = await pool.request().query(sqlQuery5)
       const Destino2 = result5.recordset[0].Destino
+      const tipo2 = result5.recordset[0].Tipo;
+
+      const montoComprobanteAdicionales = 15 * Tasa;
+      const montoUsd = 15;
+
+    // if(diasEsperados > 1){
+    //   for(let i = 0; i < diasEsperados -1 ; i++) {
+    //     if  (diasEsperados === 1){break;}
+      
+    //     await pool.request()
+    //       .input('Codigo_viaje', sql.Int, id_viaje)
+    //       .input('Fecha', sql.DateTime, datos.Fecha_req)
+    //       .input('Origen', sql.Int, datos.sede)
+    //       .input('Cedula', sql.Int, datos.Cedula_chofer)
+    //       .input('Monto', sql.Float, montoComprobanteAdicionales) 
+    //       .input('Beneficiario', sql.NVarChar,  datos.Nombre)
+    //       .input('Monto_Usd', sql.Float, montoUsd)
+    //       .query(`INSERT INTO Comprobante_viajes (Codigo_viaje, Fecha, Origen, Descripcion, Monto, Beneficiario, Cedula, Tipocomprobante, Monto_Usd) VALUES (@Codigo_viaje, @Fecha, @Origen, CONCAT('codigo', (SELECT Sede FROM Sedes WHERE Codigo = @Origen)), @Monto, @Beneficiario, @Cedula, '2', @Monto_Usd)`);
+    //     console.log('insert');
+    //     }
+    //   }
+
+    //   if(diasEsperados > 1){
+    //     const totalMonto = montoComprobanteAdicionales * (diasEsperados - 1);
+    //     const totalMontoUsd = montoUsd * (diasEsperados - 1);
+    
+    //     await pool.request()
+    //         .input('Codigo_viaje', sql.Int, id_viaje)
+    //         .input('Fecha', sql.DateTime, datos.Fecha_req)
+    //         .input('Origen', sql.Int, datos.sede)
+    //         .input('Cedula', sql.Int, datos.Cedula_chofer)
+    //         .input('Monto', sql.Float, totalMonto) 
+    //         .input('Beneficiario', sql.NVarChar,  datos.Nombre)
+    //         .input('Monto_Usd', sql.Float, totalMontoUsd)
+    //         .query(`INSERT INTO Comprobante_viajes (Codigo_viaje, Fecha, Origen, Descripcion, Monto, Beneficiario, Cedula, Tipocomprobante, Monto_Usd) VALUES (@Codigo_viaje, @Fecha, @Origen, CONCAT('codigo', (SELECT Sede FROM Sedes WHERE Codigo = @Origen)), @Monto, @Beneficiario, @Cedula, '2', @Monto_Usd)`);
+    //     console.log('insert');
+    // }
+
+      let totalMonto = 0;
+   
+  
+    if(diasEsperados > 1){
+      totalMonto = montoComprobanteAdicionales * (diasEsperados - 1);
+      totalMontoUsd = montoUsd * (diasEsperados - 1);
+      console.log('insert2')
+      await pool.request()
+          .input('Codigo_viaje', sql.Int, id_viaje)
+          .input('Fecha', sql.DateTime, datos.Fecha_req)
+          .input('Origen', sql.Int, datos.Sede)
+          .input('Cedula', sql.Int, datos.Cedula_chofer)
+          .input('Monto', sql.Float, totalMonto) 
+          .input('Beneficiario', sql.NVarChar,  datos.Nombre)
+          .input('Monto_Usd', sql.Float, totalMontoUsd)
+          .query(`INSERT INTO Comprobante_viajes (Codigo_viaje, Fecha, Origen, Descripcion, Monto, Beneficiario, Cedula, Tipocomprobante, Monto_Usd) VALUES (@Codigo_viaje, @Fecha, @Origen, CONCAT('Pago de comida por viaje a ${tipo2} ', (SELECT Sede FROM Sedes WHERE Codigo = @Origen)), @Monto, @Beneficiario, @Cedula, '2', @Monto_Usd)`);
+      console.log('insert');
+    }
 
 
-      const sqlQuery4 = `Update comprobante_viajes set Beneficiario = '${datos.Nombre}', descripcion = '50% Gastos reembolsables a ${Destino2}' where num_comprobante = '${numeroComprobante}'`;
+      let real2 = parseInt(datos.real) + parseInt(totalMonto)
+
+
+      console.log(numeroComprobante2)
+
+
+      const sqlQuery4 = `Update comprobante_viajes set Beneficiario = '${datos.Nombre}', descripcion = '50% Gastos reembolsables a ${tipo2}  ${Destino2}', Tipocomprobante = 1, Monto = ${datos.Viatico}, Monto_Usd = ${datos.Viatico_usd2} where num_comprobante = '${numeroComprobante2}'`;
       const result4 = await pool.request().query(sqlQuery4);
       console.log('Registro agregado a la base de datos:', result4);
 
       const sqlQuery6 = `Insert into Cambio_estatusviaje (Codigo_viaje, Codigo_estado, Sede, Fecha, Bultos ) Values (${id_viaje}, 1, ${datos.Destino}, '${datos.Fecha_req}', ${datos.Bultos})`;
       const result6 = await pool.request().query(sqlQuery6);
+      console.log('insert1');
+      const sqlQuery7 = `Insert into Comprobante_viajes (Codigo_viaje, Descripcion, Fecha, Monto, Beneficiario, Cedula, Tipocomprobante ) Values (${id_viaje}, 'Pago de peaje' ,  '${datos.Fecha_req}', ${datos.Peaje},'${datos.Nombre}', ${datos.Cedula_chofer}, 3 )`;
+      const result7 = await pool.request().query(sqlQuery7);
+      console.log('insert2');
+      const sqlQuery8 = `Insert into Comprobante_viajes (Codigo_viaje, Descripcion, Fecha, Monto, Beneficiario, Cedula, Tipocomprobante ) Values (${id_viaje}, '50% Gastos reembolsables a ${tipo2}  ${Destino2}' ,  '${datos.Fecha_req}', ${real2} ,'${datos.Nombre}', ${datos.Cedula_chofer}, 10 )`;
+      const result8= await pool.request().query(sqlQuery8);
+      console.log('insert3');
+      const sqlQuery9 = `SELECT MAX(Num_comprobante) AS UltimoComprobante FROM Comprobante_viajes`;
+      const result9= await pool.request().query(sqlQuery9)
+      console.log('insert4');
+      const numeroComprobante = result9.recordset[0].UltimoComprobante 
 
+      ipcRenderer.send('viaje');
       return [numeroComprobante, id_viaje];
       
+     
   } catch (error) {
-      console.log('Error al agregar el registro:', error);
-  }
+ipcRenderer.send('error', error)  
+console.log(error)
 }
+}
+
 module.exports = agregarViaje;
 //funciones para abrir y cerrar emergergentes
 
@@ -288,7 +426,7 @@ tab1.addEventListener('click', () => {
 
 inputTab2.dispatchEvent(new Event('change'));
 let currentPage = 0;
-const rowsPerPage = 10;
+const rowsPerPage = 15;
 
 function mostrarResultadosEnTabla(marca) {
   const renderPlacasTable = (marca) => {
@@ -316,6 +454,9 @@ function mostrarResultadosEnTabla(marca) {
     rowElement.appendChild(TipoCell);
     tableBody.appendChild(rowElement);
   });
+  const maxPages = Math.ceil(marca.length / rowsPerPage);
+  const paginationInfoDiv = document.querySelector('#pagina-vehiculos');
+  paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
   }
 
 
@@ -465,7 +606,9 @@ const obtenerempleados = (conexion) => {
         rowElement.appendChild(TipoempleadoCell)
         tableBody.appendChild(rowElement)
       })
-      
+      const maxPages = Math.ceil(listados.length / rowsPerPage);
+      const paginationInfoDiv = document.querySelector('#pagina-empleado');
+      paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
    }
   
       consultar.connect().then(() => {
@@ -542,8 +685,8 @@ const obtenerempleados = (conexion) => {
 
 
   const tablachoferes = document.getElementById("choferes");
-  const NombreInput = document.getElementById("NombreInput");
-  const CedulaInput = document.getElementById("CedulaInput");
+  const NombreInput   = document.getElementById("NombreInput");
+  const CedulaInput   = document.getElementById("CedulaInput");
   
   
   tablachoferes.addEventListener("dblclick", async function(event) {
@@ -612,10 +755,10 @@ let cava = [];
 let placafilterValue = '';
  // Ajusta esto al número de filas que quieres por página
 
-async function generarCavas(Sede) {
+ async function generarCavas() {
   try {
     await consultar.connect();
-    cava = await obtenercava(consultar, Sede);
+    cava = await obtenercava(consultar);
     updateFilteredCavas();
 
     // Agregar controladores de eventos al botón de siguiente página
@@ -661,7 +804,7 @@ async function generarCavas(Sede) {
   } catch (error) {
     console.error(error);
   }
-}
+}generarCavas()
 
 const renderCavasTable = (cava) => {
   const tableBody = document.querySelector('#cavas tbody');
@@ -682,16 +825,19 @@ const renderCavasTable = (cava) => {
         MarcaCell.textContent = cava.Marca_p;
         ModeloCell.textContent = cava.Modelo_p;
         TipoCell.textContent = cava.tipo_t;
-        Destinocell.textContent = cava.Destino;
+    
 
         rowElement.appendChild(placaCell);
         rowElement.appendChild(MarcaCell);
         rowElement.appendChild(ModeloCell);
         rowElement.appendChild(TipoCell);
-        rowElement.appendChild(Destinocell);
+
         tableBody.appendChild(rowElement);
       // Aquí va el código para crear y agregar las filas a la tabla
     });
+    const maxPages = Math.ceil(cava.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagina-cava');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
 };
 
 const updateFilteredCavas = () => {
@@ -702,29 +848,26 @@ const updateFilteredCavas = () => {
 };
 
 
-            const obtenercava = (conexion, Sede) => {
+            const obtenercava = (conexion) => {
               const request = new sql.Request(conexion);
               return request.query(`
               SELECT
-              Placa, k.Marca, m.Modelo, s.Sede AS Destino, t.Tipo
+              Placa, k.Marca, m.Modelo, t.Tipo
             FROM
               Vehiculos AS v
-              INNER JOIN marca AS k ON v.marca = k.id
-              INNER JOIN modelo AS m ON v.modelo = m.id
-              INNER JOIN Sedes AS s ON v.Destino = s.Codigo
+              INNER JOIN marca  AS k ON v.marca   = k.id
+              INNER JOIN modelo AS m ON v.modelo  = m.id
               INNER JOIN tipovehiculo AS t ON v.tipovehiculo = t.id
             WHERE
-              v.Tipovehiculo IN (2, 4) AND
+              v.Tipovehiculo IN (2, 3) AND
               v.Estadocontrol = 1 AND
-            v.Ubicacion = 1 and 
-              v.Destino = ${Sede}
+              v.Ubicacion = 1 
               `).then((result) => {
                 const cava = result.recordset.map((row) => ({
                   placa_p: row.Placa,
                   Marca_p: row.Marca,
                   Modelo_p: row.Modelo,
                   tipo_t: row.Tipo,
-                  Destino: row.Destino
                 }));
                 return cava;
               });
@@ -833,6 +976,10 @@ const obtenerRemolque= (conexion) => {
       rowElement.appendChild(destinoremolquesCell)
       tableBody.appendChild(rowElement)
     })
+
+    const maxPages = Math.ceil(remolque.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagina-remolque');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
     
   }
 
@@ -1122,7 +1269,7 @@ async function obtenertipodestino() {
 
   const result = await sql.query(` SELECT Sedes.Codigo, Sedes.Sede, Tabladeviaticos.Viatico_Bs, Tabladeviaticos.Viatico_Usd FROM Sedes  
   INNER JOIN Tabladeviaticos ON  Tabladeviaticos.Destino = Sedes.Codigo 
-  WHERE Sedes.Tiposede = ${valor}` );
+  WHERE Sedes.Tiposede = ${valor} order by Sedes.sede` );
 
    await sql.close(); return result.recordset; 
   }catch (error) { console.error("Error al obtener los datos:", error); 
