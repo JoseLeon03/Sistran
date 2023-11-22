@@ -3,7 +3,7 @@ const {consultar, config} = require ('../Promise')
 const agregarEventosFilas = require('./EmergenteListados.js');
 const generarPDF = require('./Imprimirviajes');
 
-
+function refrescar() {
 
 const obtenerListados = (conexion) => {
     const request = new sql.Request(conexion)
@@ -435,6 +435,9 @@ const updateFilteredListados = () => {
     })
 
  })
+}
+refrescar()
+module.exports = refrescar
 //  ipcRenderer.invoke('filtro2', (event) => {
 
 

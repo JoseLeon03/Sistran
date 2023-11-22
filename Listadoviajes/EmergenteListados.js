@@ -1,4 +1,6 @@
 
+// let filaseleccionada;
+
 function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
     filasTabla.forEach(fila => {
       fila.addEventListener('click', () => {
@@ -20,6 +22,7 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
         const Contenedor2 = fila.querySelector('td:nth-child(15)').textContent;
         const Bultos = fila.querySelector('td:nth-child(16)').textContent;
  
+        // filaseleccionada = id_viaje
   // Variable para almacenar el ID del viaje seleccionado
 
 // Agregar evento doble clic a las filas de la tabla
@@ -45,6 +48,7 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 <label >Fecha de requerimiento: </label> <span class="Fecha">${fecharequerimiento}</span>
 </fieldset>
 <button type="button" id="Reload" class="normalButton2"> Refrescar </button>
+<button type="button" id="Reload2" class="normalButton2"> Refrescar2 </button>
 </div>
 <fieldset class="fieldEmergente1"> 
 <div class="Tablas">
@@ -1131,7 +1135,42 @@ async function añadirObservacionfunction(datos) {
         const reload = document.getElementById("Reload");
 
         reload.addEventListener('click', async (evento) => {
-        location.reload()
+        // location.reload()
+        const refrescar = require('./Listadoviajes.js')
+        refrescar()
+     
+        // fila.querySelector('td:nth-child(1)').click()
+
+
+        var row = document.querySelector("tr td"); // Seleccionar el elemento tr con id fila
+        console.log(row)
+        var index = row.rowIndex; // Obtener el índice del elemento tr
+        // window.location.reload(); // Recargar la página
+        refrescar()
+        console.log(index)
+        var row = document.querySelector("tr:nth-child(" + index + ")"); // Seleccionar el elemento tr con el mismo índice
+        
+        row.click(); // Hacer clic en el elemento tr
+      });
+
+      const reload2 = document.getElementById("Reload2");
+      // document.querySelector('td').click()
+// console.log(fila.querySelector('td:nth-child(1)'))
+        reload2.addEventListener('click',  (evento) => {
+        // location.reload()
+        botonCerrar.click()
+        // function click(){
+          // reload2.style.display ='none';
+        // reload2.style.display ='none';
+
+        setTimeout(() => {
+               document.querySelector(`td(:nth-child(1) , :contains(${id_viaje}))`).click();
+               console.log(fila.querySelector('td:nth-child(13)'))
+        }, 1000);
+         
+    
+            
+       
           // const tablasComprobante = require('./TablaComprobantes.js');
           // tablasComprobante(contenedor2, numeroComprobante, idViaje)
           // llenarTablaEstados(idViaje)
@@ -1160,21 +1199,21 @@ async function añadirObservacionfunction(datos) {
 
 
       // Agregar un controlador de eventos para el evento "click" en el menú de pestañas
-      fila.addEventListener("click", function(event) {
-        // Obtener el índice de la pestaña seleccionada
-        var selectedIndex = Array.prototype.indexOf.call(fila.children, event.target);
+      // fila.addEventListener("click", function(event) {
+      //   // Obtener el índice de la pestaña seleccionada
+      //   var selectedIndex = Array.prototype.indexOf.call(fila.children, event.target);
 
-        // Guardar el índice de la pestaña seleccionada en localStorage
-        localStorage.setItem("selectedTabIndex", selectedIndex); 
-      });
+      //   // Guardar el índice de la pestaña seleccionada en localStorage
+      //   localStorage.setItem("selectedTabIndex", selectedIndex); 
+      // });
 
-      // Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
-      var selectedTabIndex = localStorage.getItem("selectedTabIndex");
-      console.log(selectedTabIndex)
-      // Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
-      if (selectedTabIndex !== null) {
-        fila.children[selectedTabIndex].click();
-      }
+      // // Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
+      // var selectedTabIndex = localStorage.getItem("selectedTabIndex");
+      // console.log(selectedTabIndex)
+      // // Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
+      // if (selectedTabIndex !== null) {
+      //   fila.children[selectedTabIndex].click();
+      // }
 
     // const botonComprobantes = document.querySelector('#imprimirComprobantes');
 
