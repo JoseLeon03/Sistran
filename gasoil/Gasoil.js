@@ -1,5 +1,6 @@
 const sql = require('mssql')
-const consultar = require('../Promise')
+const {consultar, config} = require ('../Promise')
+const emergenteGasoil = require('./EmergenteGasoil')
 
 
 const obtenerGasoil = (conexion) => {
@@ -155,7 +156,7 @@ const obtenerGasoilBomba = (conexion) => {
   
   consultar.connect().then(() => {
     obtenerGasoilGeneral(consultar).then((gasoil) => {
-      const tableBody = document.querySelector('.tablalistado tbody')
+      const tableBody = document.querySelector('#tablalistado tbody')
       gasoil.forEach((compra) => {
   
         const rowElement       = document.createElement('tr')
@@ -193,74 +194,13 @@ const obtenerGasoilBomba = (conexion) => {
         tableBody.appendChild(rowElement)
       })
 
-      const filasTabla = document.querySelectorAll('.tablalistado tbody tr');
-const ventanaEmergente = document.getElementById('ventana-emergente');
+      const filasTabla = document.querySelectorAll('#tablalistado tbody tr');
+      const tabla = document.getElementById("tablalistado")
+      const ventanaEmergente = document.getElementById('ventana-emergente');
 
-filasTabla.forEach(fila => {
-  fila.addEventListener('click', () => {    
-    const proveedor    = fila.querySelector('td:nth-child(1)').textContent;
-    const chofer       = fila.querySelector('td:nth-child(2)').textContent;
-    const cedula       = fila.querySelector('td:nth-child(3)').textContent;
-    const placa        = fila.querySelector('td:nth-child(4)').textContent;
-    const cantidad     = fila.querySelector('td:nth-child(5)').textContent;
-    const monto        = fila.querySelector('td:nth-child(6)').textContent;
-    const sitioentrega = fila.querySelector('td:nth-child(7)').textContent;
-    const fecha        = fila.querySelector('td:nth-child(8)').textContent;
-    const tipocompra   = fila.querySelector('td:nth-child(9)').textContent; 
-   // const imagenhd = fila.querySelector('tdnth-child(10').textContent;
-    
-    const contenidoVentana = `
+      emergenteGasoil(filasTabla,ventanaEmergente, tabla )
 
- 
-      <div class="ventana-emergente-contenido">
-      
-      <button id="botonCerrar">Cerrar</button>
-      
-      <div id="menu-bar">
-            <div class="left" role="menu">
-              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
-              
-            </div>
-            <div class="right">
-              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
-              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
-              <button class="menubar-btn" id="cerrar" onclick="close"><i class="fas fa-times"></i></button>
-            </div>
-          </div>
-        <h2>Detalles de la compra</h2>
-        
-        <div class ="ordenado">
-        
-        <div class ="izquierda">
-          <div class="dato"><span>Proveedor:</span> ${proveedor}</div>
-          <div class="dato"><span>Cédula:</span> ${cedula}</div>
-          <div class="dato"><span>Cantidad:</span> ${cantidad}</div>
-          <div class="dato"><span>Sitio de entrega:</span> ${sitioentrega}</div>
-          <div class="dato"><span>Tipo de compra:</span> ${tipocompra}</div>
-        <button id="botonCompra">Billete de la compra</button>
 
-      </div>
-
-      <div class="derecha">
-          <div class='dato'><span>Chofer:</span> ${chofer}</div>
-          <div class="dato"><span>Placa:</span> ${placa}</div>
-          <div class="dato"><span>Monto:</span> ${monto}</div
-          <div class="dato"><span>Fecha:</span> ${fecha}</div>
-      </div>
-    </div>
-   </div>
-
-    <script> 
-  
-    </script>
-
-    `;
-   
-
-    ventanaEmergente.innerHTML = contenidoVentana;
-    ventanaEmergente.style.display = 'block';
-  });
-});
 
     }).catch((err) => {
       console.error(err)

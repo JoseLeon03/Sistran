@@ -2,12 +2,16 @@ const sql = require('mssql')
 const {consultar, config} = require ('../Promise')
 const agregarEventosFilas = require('./EmergenteListados.js');
 const generarPDF = require('./Imprimirviajes');
+const selectSedes = require('../Utility/obtenerSedes.js');
+
 
 function refrescar() {
 
+
 const obtenerListados = (conexion) => {
     const request = new sql.Request(conexion)
-    return request.query(`SELECT Id_viaje , Format (Fecha , 'dd/MM/yyyy') as Fecha ,sede1.Sede ,sede2.Sede as Sede2 ,estatusviaje.Nombre as Estatus ,(SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (1)) Monto ,vehiculo1.Placa ,Placa_cava   ,Placa_remolque ,Empleados.Cedula ,Viatico_Usd,Empleados.Nombre ,Empleados.Apellido , Observaciones ,Viatico_chofer, Nombre_ayudante, Bultos,Contenedor,  (SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Comprobante_viajes.Tipocomprobante = 3 ) Pago_peaje , 
+    return request.query(`SELECT Id_viaje , Format (Fecha , 'dd/MM/yyyy') as Fecha , Format (Fecha_llegada , 'dd/MM/yyyy') as Fecha_llegada ,sede1.Sede ,sede2.Sede as Sede2 ,estatusviaje.Nombre as Estatus ,(SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (1)) Monto ,vehiculo1.Placa ,Placa_cava ,
+    Placa_remolque ,Empleados.Cedula ,Viatico_Usd,Empleados.Nombre ,Empleados.Apellido , Observaciones ,Viatico_chofer, Nombre_ayudante, Bultos,Contenedor,  (SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Comprobante_viajes.Tipocomprobante = 3 ) Pago_peaje ,Precinto, Precinto2,
     (SELECT sum(Monto_Usd) Monto_usd FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (1) ) Monto_usd,  (SELECT sum(Monto) Monto FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (2) ) GastosBs,  (SELECT sum(Monto_Usd) Monto_Usd FROM Comprobante_viajes Where Codigo_viaje=Viajes.Id_viaje and Tipocomprobante in (2) ) GastosUsd
         From Viajes,Vehiculos as vehiculo1,Sedes as sede1, Sedes as sede2,Empleados,estatusviaje Where Viajes.cod_origen=sede1.Codigo and Viajes.cod_destino=sede2.Codigo and Viajes.placa_veh=vehiculo1.placa  and Viajes.cedula_chofer=Empleados.cedula and Viajes.estatus=estatusviaje.id_estatus
         ORDER BY Viajes.fecha,Viajes.id_viaje
@@ -16,6 +20,7 @@ const obtenerListados = (conexion) => {
     
         Id_v: row.Id_viaje,
         Fecha_v: row.Fecha,
+        Fecha_v2: row.Fecha_llegada,
         Sede1_v: row.Sede,
         Sede2_v: row.Sede2,
         Estatus_v: row.Estatus,
@@ -34,6 +39,8 @@ const obtenerListados = (conexion) => {
         Nombreayu_v: row.Nombre_ayudante,
         Contenedor_v: row.Contenedor,
         Bultos_v: row.Bultos,
+        Precinto_v: row.Precinto,
+        Precinto2_v: row.Precinto2,
 
       }))
       return Listado
@@ -70,6 +77,8 @@ const obtenerListados = (conexion) => {
       const ObservacionesCell = document.createElement('td');
       const Nombre_ayudanteCell = document.createElement('td');
       const ContenedorCell = document.createElement('td');
+      const precintoCell = document.createElement('td');
+      const precinto2Cell = document.createElement('td');
       const BultosCell = document.createElement('td');
   
       id_viajeCell.textContent = listado.Id_v;
@@ -87,6 +96,8 @@ const obtenerListados = (conexion) => {
       ObservacionesCell.textContent = listado.Observaciones_v;
       Nombre_ayudanteCell.textContent = listado.Nombreayu_v;
       ContenedorCell.textContent = listado.Contenedor_v;
+      precintoCell.textContent = listado.Precinto_v;
+      precinto2Cell.textContent = listado.Precinto2_v;
       BultosCell.textContent = listado.Bultos_v;
   
       rowElement.appendChild(id_viajeCell);
@@ -104,6 +115,8 @@ const obtenerListados = (conexion) => {
       rowElement.appendChild(ObservacionesCell);
       rowElement.appendChild(Nombre_ayudanteCell);
       rowElement.appendChild(ContenedorCell);
+      rowElement.appendChild(precintoCell);
+      rowElement.appendChild(precinto2Cell);
       rowElement.appendChild(BultosCell);
   
       
@@ -159,21 +172,21 @@ const obtenerListados = (conexion) => {
 
 
      
-     let filteredListados = listados;
+     let filteredListados  = listados;
      let cedulaFilterValue = '';
-     let placaFilterValue = '';
+     let placaFilterValue  = '';
      let placa2FilterValue = '';
      let placa3FilterValue = '';
      let nombreayuFilterValue = '';
      let estatusFilterValue = 'Viajes no terminados';
      let sedeFilterValue = 'Todas';
 
-          const fechaPosteriorInput = document.querySelector('#fechaPosterior');
+      const fechaPosteriorInput = document.querySelector('#fechaPosterior');
       const fechaAnteriorInput = document.querySelector('#fechaAnterior');
       let fechaPosteriorValue = new Date(fechaPosteriorInput.value);
-      let fechaAnteriorValue = new Date(fechaAnteriorInput.value)
-
-const updateFilteredListados = () => {
+      let fechaAnteriorValue = new Date(fechaAnteriorInput.value)  
+ 
+  const updateFilteredListados = () => {
 
   filteredListados = listados.filter((listado) => {
 
@@ -181,7 +194,7 @@ const updateFilteredListados = () => {
     const [day, month, year] = listado.Fecha_v.split('/');
     const fechaListado = new Date(year, month - 1, day);
     // Verificar si la fecha está dentro del rango especificado
-    return fechaListado >= fechaPosteriorValue && fechaListado <= fechaAnteriorValue;
+    return fechaListado >= fechaPosteriorValue && fechaListado <=  fechaAnteriorValue  ;
   }).filter((listado) => {
     return String(listado.Placa_v).toLowerCase().startsWith(placaFilterValue);
   }).filter((listado) => {
@@ -215,61 +228,73 @@ const updateFilteredListados = () => {
   });
   renderListadosTable(filteredListados);
 };
+setTimeout(() => {
+       updateFilteredListados();
 
-      updateFilteredListados();
-
+}, 500);
+   
    
 
     // Agregar controladores de eventos a los inputs de fecha para actualizar el filtro cuando cambien
     fechaPosteriorInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
       fechaPosteriorValue = new Date(event.target.value);
       updateFilteredListados();
     });
 
     fechaAnteriorInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
       fechaAnteriorValue = new Date(event.target.value);
+      fechaAnteriorValue.setDate(fechaAnteriorValue.getDate() + 1);
       updateFilteredListados();
     });
 
      
      const placaFilterInput = document.querySelector('#placaVehiculo');
      placaFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
        placaFilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const placa2FilterInput = document.querySelector('#placaCava');
      placa2FilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
        placa2FilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const placa3FilterInput = document.querySelector('#placaRemolque');
      placa3FilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
        placa3FilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const nombreayuFilterInput = document.querySelector('#inp_ayudante');
      nombreayuFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
        nombreayuFilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const cedulaFilterInput = document.querySelector('#cedula');
      cedulaFilterInput.addEventListener('input', (event) => {
+        document.getElementById("firstPage").click()
        cedulaFilterValue = event.target.value;
        updateFilteredListados();
      });
 
      const estatusFilterInput = document.querySelector('#selectEstados');
      estatusFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage").click()
        estatusFilterValue = event.target.value;
        updateFilteredListados();
      });
 
         const sedeFilterInput = document.querySelector('#Sedes');
     sedeFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage").click()
       sedeFilterValue = event.target.value;
       updateFilteredListados();
     });
@@ -376,7 +401,6 @@ const updateFilteredListados = () => {
     
     GenerarEstado()
       .then((selectHtml) => {
-        console.log('Select HTML generado:', selectHtml);
       })
       .catch((error) => {
         console.error('Error en la generación del select:', error);
@@ -385,66 +409,17 @@ const updateFilteredListados = () => {
     
     
     
-
-      async function obtenersede() {
-        try {
-      
-          await sql.connect(config);
-      
-          const result = await sql.query(`SELECT  Sede  FROM Sedes, Tiposede where Tiposede.Id = Sedes.Tiposede and Tiposede.Tiposede not in ('Distribuidora', 'Anulada') order by Sede`);
-      
-      
-          return result.recordset;
-        } catch (error) {
-          console.error('Error al obtener los datos:', error);
-          throw error;
-        }
-      }
-      
-      
-      async function Generarsede() {
-        try {
-          const destino = await obtenersede();
-      
-          let selectOptions = '<option value="Todas">Todas</option>';
-          
-      
-          destino.forEach((row) => {
-            selectOptions += `<option value="${row.Sede}">${row.Sede}</option>`;
-          });
-      
-          const selectHtml = `<select>${selectOptions}</select>`;
-          document.getElementById('Sedes').innerHTML = selectHtml;
-          return selectHtml;
-        } catch (error) {
-          console.error('Error al generar el select:', error);
-          throw error;
-        }
-      }
-      
-      Generarsede()
-        .then((selectHtml) => {
-          console.log('Select HTML generado:', selectHtml);
-        })
-        .catch((error) => {
-          console.error('Error en la generación del select:', error);
-        });
+      const consulta =  `SELECT  Sede  FROM Sedes, Tiposede where Tiposede.Id = Sedes.Tiposede and Tiposede.Tiposede not in ('Distribuidora', 'Anulada') order by Sede`
+      const sedeSelect = 'Sedes'
+      selectSedes(sedeSelect, consulta)
       
   
 
     })
 
  })
+
+
 }
 refrescar()
 module.exports = refrescar
-//  ipcRenderer.invoke('filtro2', (event) => {
-
-
-//   console.log('hola', userData)
-
-// })
-// async function prueba()  {
-//   const userData = await ipcRenderer.invoke('filtrando', datosUsuario)
-// console.log(userData)
-// }prueba()

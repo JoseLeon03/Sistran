@@ -6,10 +6,11 @@
     <title>Empleados</title>
     <link rel="stylesheet" type="text/css" href="Empleados.css"> 
     <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script> 
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 </head>
 <body>
     <!-- <div class="Empleados" > -->
-        <form   id="formulario">
+        <form id="formulario"  enctype="multipart/form-data">
 
             <div id="menu-bar">
                 <div class="left" role="menu">
@@ -108,15 +109,12 @@
                 <fieldset class="field">
                     <legend><b>Acciones</b></legend>
                     <button type="button" id="Guardar">Guardar</button>
-                    <button type="reset">Limpiar</button>
+                    <button type="reset"  id="limpiezaImg">Limpiar</button>
                     <button type="button" id="Modificar" class="modificar">Modificar</button>
                     <br></br>
                     <button type="button" id="Anular">Anular</button>
                 </fieldset>
-            
-        
-        
-   
+                
      </fieldset>
     
     </div>
@@ -274,5 +272,6 @@ tab.addEventListener('click', () => {
       </script>
       <script src="Empleados.js"></script>
       <script src="../menu-functions.js"></script>
+
 </body>
 </html>

@@ -1,520 +1,317 @@
-  const sql = require('mssql')
-  const {consultar, config} = require ('../Promise')
+const sql = require('mssql')
+const {consultar, config} = require ('../Promise')
+const refrescarTab = require('../Utility/refrescarTab')
+const select = require('./select')
+const valores = require('./traervalores')
+const track = require ('../Utility/Track')
 
-  const obtenerVechiculos = (conexion) => {
-      const request = new sql.Request(conexion)
-      // return request.query(`SELECT Format (Fechacreacion , 'dd/MM/yyyy') as Fechacreacion, CodigoSap, Placa, Marca,Año,Poliza, Modelo, Tipovehiculo, Propietario,  Observacion, Activo  FROM Vehiculos  order by Placa`).then((result) => {
-        return request.query(` select Placa , k.Marca, m.Modelo , t.Tipo, Año ,Poliza ,e.Estadocontrol, Propietario ,Format (Fechacreacion , 'dd/MM/yyyy') as   Fechacreacion , Observacion from Vehiculos as v ,  marca as k, modelo as m, Estadocontrol as e ,tipovehiculo as t where v.marca=k.id and v.modelo=m.id and v.tipovehiculo=t.id  and v.Estadocontrol=e.id`).then((result) => {
-        const vehiculo = result.recordset.map((row) => ({
-          
-          Placa_v: row.Placa,
-          Marca_v: row.Marca,
-          Modelo_v:row.Modelo,
-          Tipo_v: row.Tipo,
-          Año_v: row.Año,
-          Poliza_v: row.Poliza,
-          Propietario_v: row.Propietario,
-          Fecha_v: row.Fechacreacion,
-          Observacion_v: row.Observacion,
-          Estatus_v: row.Estadocontrol,
-    
-        }))
-        return vehiculo
-      })
-    }
-    
-    module.exports = obtenerVechiculos
-    
-    
-    
-    //Codigo para usar si la consulta esta en un archivo diferente
-    // const obtenerSedes = require('./')
-    
-    let currentPage = 0;
-    const rowsPerPage = 15;
-    
-    const renderVehiculosTable = (vehiculos) => {
-      const tableBody = document.querySelector('#tabla-vehiculos tbody');
-      tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
-      const start = currentPage * rowsPerPage;
-      const end = start + rowsPerPage;
-      const currentVehiculos = vehiculos.slice(start, end);
-    
-      currentVehiculos.forEach((vehiculo) => {
-        const rowElement = document.createElement('tr');
-        const PlacaCell = document.createElement('td');
-        const MarcaCell = document.createElement('td');
-        const ModeloCell = document.createElement('td');
-        const TipoCell = document.createElement('td');
-        const AñoCell = document.createElement('td');
-        const PolizaCell = document.createElement('td');
-        const PropietarioCell = document.createElement('td');
-        const FechaCell = document.createElement('td');
-        const ObservacionCell = document.createElement('td');
-        const EstadocontrolCell = document.createElement('td');
-    
-        PlacaCell.textContent = vehiculo.Placa_v;
-        MarcaCell.textContent = vehiculo.Marca_v;
-        ModeloCell.textContent = vehiculo.Modelo_v;
-        TipoCell.textContent = vehiculo.Tipo_v;
-        AñoCell.textContent = vehiculo.Año_v;
-        PolizaCell.textContent = vehiculo.Poliza_v;
-        PropietarioCell.textContent = vehiculo.Propietario_v;
-        FechaCell.textContent = vehiculo.Fecha_v;
-        ObservacionCell.textContent = vehiculo.Observacion_v;
-        EstadocontrolCell.textContent = vehiculo.Estatus_v;
-    
-        rowElement.appendChild(PlacaCell);
-        rowElement.appendChild(MarcaCell);
-        rowElement.appendChild(ModeloCell);
-        rowElement.appendChild(TipoCell);
-        rowElement.appendChild(AñoCell);
-        rowElement.appendChild(PolizaCell);
-        rowElement.appendChild(PropietarioCell);
-        rowElement.appendChild(FechaCell);
-        rowElement.appendChild(ObservacionCell);
-        rowElement.appendChild(EstadocontrolCell);
-        
-        tableBody.appendChild(rowElement);
-      });
+const obtenerVechiculos = (conexion) => {
+  const request = new sql.Request(conexion)
+  // return request.query(`SELECT Format (Fechacreacion , 'dd/MM/yyyy') as Fechacreacion, CodigoSap, Placa, Marca,Año,Poliza, Modelo, Tipovehiculo, Propietario,  Observacion, Activo  FROM Vehiculos  order by Placa`).then((result) => {
+    return request.query(` select Placa , k.Marca, m.Modelo , t.Tipo, Año ,Poliza ,e.Estadocontrol, Propietario ,Format (Fechacreacion , 'dd/MM/yyyy') as   Fechacreacion , Observacion from Vehiculos as v ,  marca as k, modelo as m, Estadocontrol as e ,tipovehiculo as t where v.marca=k.id and v.modelo=m.id and v.tipovehiculo=t.id  and v.Estadocontrol=e.id`).then((result) => {
+    const vehiculo = result.recordset.map((row) => ({
+      
+      Placa_v: row.Placa,
+      Marca_v: row.Marca,
+      Modelo_v:row.Modelo,
+      Tipo_v: row.Tipo,
+      Año_v: row.Año,
+      Poliza_v: row.Poliza,
+      Propietario_v: row.Propietario,
+      Fecha_v: row.Fechacreacion,
+      Observacion_v: row.Observacion,
+      Estatus_v: row.Estadocontrol,
 
+    }))
+    return vehiculo
+  })
+}
+    
+  module.exports = obtenerVechiculos
+  
+  
+  
+  //Codigo para usar si la consulta esta en un archivo diferente
+  // const obtenerSedes = require('./')
+  
+  let currentPage = 0;
+  const rowsPerPage = 15;
+  
+  const renderVehiculosTable = (vehiculos) => {
+    const tableBody = document.querySelector('#tabla-vehiculos tbody');
+    tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizarla
+    const start = currentPage * rowsPerPage;
+    const end = start + rowsPerPage;
+    const currentVehiculos = vehiculos.slice(start, end);
+  
+    currentVehiculos.forEach((vehiculo) => {
+      const rowElement = document.createElement('tr');
+      const PlacaCell = document.createElement('td');
+      const MarcaCell = document.createElement('td');
+      const ModeloCell = document.createElement('td');
+      const TipoCell = document.createElement('td');
+      const AñoCell = document.createElement('td');
+      const PolizaCell = document.createElement('td');
+      const PropietarioCell = document.createElement('td');
+      const FechaCell = document.createElement('td');
+      const ObservacionCell = document.createElement('td');
+      const EstadocontrolCell = document.createElement('td');
+  
+      PlacaCell.textContent = vehiculo.Placa_v;
+      MarcaCell.textContent = vehiculo.Marca_v;
+      ModeloCell.textContent = vehiculo.Modelo_v;
+      TipoCell.textContent = vehiculo.Tipo_v;
+      AñoCell.textContent = vehiculo.Año_v;
+      PolizaCell.textContent = vehiculo.Poliza_v;
+      PropietarioCell.textContent = vehiculo.Propietario_v;
+      FechaCell.textContent = vehiculo.Fecha_v;
+      ObservacionCell.textContent = vehiculo.Observacion_v;
+      EstadocontrolCell.textContent = vehiculo.Estatus_v;
+  
+      rowElement.appendChild(PlacaCell);
+      rowElement.appendChild(MarcaCell);
+      rowElement.appendChild(ModeloCell);
+      rowElement.appendChild(TipoCell);
+      rowElement.appendChild(AñoCell);
+      rowElement.appendChild(PolizaCell);
+      rowElement.appendChild(PropietarioCell);
+      rowElement.appendChild(FechaCell);
+      rowElement.appendChild(ObservacionCell);
+      rowElement.appendChild(EstadocontrolCell);
+      
+      tableBody.appendChild(rowElement);
+    });
+
+    const maxPages = Math.ceil(vehiculos.length / rowsPerPage);
+    const paginationInfoDiv = document.querySelector('#pagination-info');
+    paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
+  };
+  
+  consultar.connect().then(() => {
+    obtenerVechiculos(consultar).then((vehiculos) => {
+    renderVehiculosTable(vehiculos);
+
+    // Agregar controladores de eventos al botón de siguiente página
+    const nextPageButton1 = document.querySelector('#nextPage');
+    nextPageButton1.addEventListener('click', () => {
       const maxPages = Math.ceil(vehiculos.length / rowsPerPage);
-      const paginationInfoDiv = document.querySelector('#pagination-info');
-      paginationInfoDiv.textContent = `Página: ${currentPage + 1} de  ${maxPages}`;
-    };
-    
-    consultar.connect().then(() => {
-      obtenerVechiculos(consultar).then((vehiculos) => {
-        renderVehiculosTable(vehiculos);
-    
-        // Agregar controladores de eventos al botón de siguiente página
-        const nextPageButton1 = document.querySelector('#nextPage');
-        nextPageButton1.addEventListener('click', () => {
-          const maxPages = Math.ceil(vehiculos.length / rowsPerPage);
-          if (currentPage < maxPages - 1) {
-            currentPage++;
-            renderVehiculosTable(filteredListados);
-          }
-        });
-    
-        // Agregar controladores de eventos al botón de página anterior
-        const previousPageButton1 = document.querySelector('#previousPage');
-        previousPageButton1.addEventListener('click', () => {
-          if (currentPage > 0) {
-            currentPage--;
-            renderVehiculosTable(filteredListados);
-          }
-        });
-    
-        // Agregar controladores de eventos al botón de primera página
-        const firstPageButton1 = document.querySelector('#firstPage');
-        firstPageButton1.addEventListener('click', () => {
-          currentPage = 0;
-          renderVehiculosTable(filteredListados);
-        });
-    
-        // Agregar controladores de eventos al botón de última página
-        const lastPageButton1 = document.querySelector('#lastPage');
-        lastPageButton1.addEventListener('click', () => {
-          currentPage = Math.floor(vehiculos.length / rowsPerPage) ;
-          renderVehiculosTable(filteredListados);
-        });
+      if (currentPage < maxPages - 1) {
+        currentPage++;
+        renderVehiculosTable(filteredListados);
+      }
+    });
+
+    // Agregar controladores de eventos al botón de página anterior
+    const previousPageButton1 = document.querySelector('#previousPage');
+    previousPageButton1.addEventListener('click', () => {
+      if (currentPage > 0) {
+        currentPage--;
+        renderVehiculosTable(filteredListados);
+      }
+    });
+
+    // Agregar controladores de eventos al botón de primera página
+    const firstPageButton1 = document.querySelector('#firstPage');
+    firstPageButton1.addEventListener('click', () => {
+      currentPage = 0;
+      renderVehiculosTable(filteredListados);
+    });
+
+    // Agregar controladores de eventos al botón de última página
+    const lastPageButton1 = document.querySelector('#lastPage');
+    lastPageButton1.addEventListener('click', () => {
+      currentPage = Math.floor(vehiculos.length / rowsPerPage) ;
+      renderVehiculosTable(filteredListados);
+    });
 
 
 
-        let filteredListados = vehiculos;
-        let propietarioFilterValue = '';
-        let polizaFilterValue = '';
-        let añoFilterValue = '';
-       //  let fingresFilterValue = '';
-        let placaFilterValue = '';
-        let estatusFilterValue = 'Todos';
-        let marcaFilterValue ='Todas';
-        let modeloFilterValue ='Todos';
-        let tipoFilterValue ='Todos';
-      
-         
-   
-   const updateFilteredListados = () => {
-   
-     filteredListados = vehiculos.filter((listado) => {
-   
-     return String(listado.Placa_v).toLowerCase().startsWith(placaFilterValue);
-     }).filter((listado) => {
-       return String(listado.Año_v).toLowerCase().startsWith(añoFilterValue);
-     }).filter((listado) => {
-       return String(listado.Poliza_v).toLowerCase().startsWith(polizaFilterValue);
-     }).filter((listado) => {
-       return String(listado.Propietario_v).toLowerCase().startsWith(propietarioFilterValue);
-     }).filter((listado) => {
-       if (estatusFilterValue === 'Todos') {
-         // Si el valor del filtro es 'Todos', incluir todos los listados
-         return true;
-       } else {
-         // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
-         return listado.Estatus_v.trim() === estatusFilterValue.trim();
-       }
-     }).filter((listado) => {
-      if (marcaFilterValue === 'Todas') {
+    let filteredListados = vehiculos;
+    let propietarioFilterValue = '';
+    let polizaFilterValue = '';
+    let añoFilterValue = '';
+    //  let fingresFilterValue = '';
+    let placaFilterValue = '';
+    let estatusFilterValue = 'Todos';
+    let marcaFilterValue ='Todas';
+    let modeloFilterValue ='Todos';
+    let tipoFilterValue ='Todos';
+    
+        
+  
+  const updateFilteredListados = () => {
+  
+    filteredListados = vehiculos.filter((listado) => {
+  
+    return String(listado.Placa_v).toLowerCase().startsWith(placaFilterValue);
+    }).filter((listado) => {
+      return String(listado.Año_v).toLowerCase().startsWith(añoFilterValue);
+    }).filter((listado) => {
+      return String(listado.Poliza_v).toLowerCase().startsWith(polizaFilterValue);
+    }).filter((listado) => {
+      return String(listado.Propietario_v).toLowerCase().startsWith(propietarioFilterValue);
+    }).filter((listado) => {
+      if (estatusFilterValue === 'Todos') {
         // Si el valor del filtro es 'Todos', incluir todos los listados
         return true;
       } else {
         // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
-        return listado.Marca_v.trim() === marcaFilterValue.trim();
+        return listado.Estatus_v.trim() === estatusFilterValue.trim();
       }
     }).filter((listado) => {
-      if (modeloFilterValue === 'Todos') {
-        // Si el valor del filtro es 'Todos', incluir todos los listados
-        return true;
-      } else {
-        // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
-        return listado.Modelo_v.trim() === modeloFilterValue.trim();
-      }
-    }).filter((listado) => {
-      if (tipoFilterValue === 'Todos') {
-        // Si el valor del filtro es 'Todos', incluir todos los listados
-        return true;
-      } else {
-        // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
-        return listado.Tipo_v.trim() === tipoFilterValue.trim();
-      }
-    })
-     
-     renderVehiculosTable(filteredListados);
-   };
-   
-         updateFilteredListados();
-   
-     
-       //  const placaFilterInput = document.querySelector('#Fnacimientofilter');
-       //  placaFilterInput.addEventListener('input', (event) => {
-       //    placaFilterValue = event.target.value.toLowerCase();
-       //    updateFilteredListados();
-       //  });
-        
-        const placaInput = document.querySelector('#placafilter');
-        placaInput.addEventListener('input', (event) => {
-          placaFilterValue = event.target.value.toLowerCase();
-          updateFilteredListados();
-        });
-        
-        const añoFilterInput = document.querySelector('#añofilter');
-        añoFilterInput.addEventListener('input', (event) => {
-          añoFilterValue = event.target.value.toLowerCase();
-          updateFilteredListados();
-        });
-        
-        const polizaFilterInput = document.querySelector('#polizafilter');
-        polizaFilterInput.addEventListener('input', (event) => {
-          polizaFilterValue = event.target.value.toLowerCase();
-          updateFilteredListados();
-        });
-        
-        const propietarioFilterInput = document.querySelector('#propietario_filter');
-        propietarioFilterInput.addEventListener('input', (event) => {
-          propietarioFilterValue = event.target.value.toLowerCase();
-          updateFilteredListados();
-        });
-   
-        const estatusFilterInput = document.querySelector('#Estatus_filter');
-        estatusFilterInput.addEventListener('change', (event) => {
-          estatusFilterValue = event.target.value;
-          updateFilteredListados();
-        });
-   
-        const marcaFilterInput = document.querySelector('#marcafilter');
-        marcaFilterInput.addEventListener('change', (event) => {
-          marcaFilterValue = event.target.value;
-          updateFilteredListados();
-        });
-
-        const modeloFilterInput = document.querySelector('#modelofilter');
-        modeloFilterInput.addEventListener('change', (event) => {
-          modeloFilterValue = event.target.value;
-          updateFilteredListados();
-        });
-
-        const tipoFilterInput = document.querySelector('#tipofilter');
-        tipoFilterInput.addEventListener('change', (event) => {
-          tipoFilterValue = event.target.value;
-          updateFilteredListados();
-        });
-
-        // const ubicacionFilterInput = document.querySelector('#estatusfilter');
-        // ubicacionFilterInput.addEventListener('change', (event) => {
-        //   ubicacionFilterValue = event.target.value;
-        //   updateFilteredListados();
-        // });
-        
-        
-
-        
-  async function obtenerUbicacion2() {
-    try {
-
-      await sql.connect(config);
-
-
-      const result = await sql.query('SELECT Id,Estatusvehiculo FROM Estatusvehiculo');
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
+    if (marcaFilterValue === 'Todas') {
+      // Si el valor del filtro es 'Todos', incluir todos los listados
+      return true;
+    } else {
+      // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
+      return listado.Marca_v.trim() === marcaFilterValue.trim();
     }
-  }
-
-
-  async function generarSelectUbicacion2() {
-    try {
-
-      const ubicacion = await obtenerUbicacion2();
-
-      let selectOptions = '<option value="Todos"  selected>Todos</option>';
-
-      ubicacion.forEach((row) => {
-        selectOptions += `<option value="${row.Estatusvehiculo}">${row.Estatusvehiculo}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('estatusfilter').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
+  }).filter((listado) => {
+    if (modeloFilterValue === 'Todos') {
+      // Si el valor del filtro es 'Todos', incluir todos los listados
+      return true;
+    } else {
+      // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
+      return listado.Modelo_v.trim() === modeloFilterValue.trim();
     }
-  }
-
-  generarSelectUbicacion2()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
+  }).filter((listado) => {
+    if (tipoFilterValue === 'Todos') {
+      // Si el valor del filtro es 'Todos', incluir todos los listados
+      return true;
+    } else {
+      // De lo contrario, incluir solo los listados cuyo estado coincide con el valor del filtro
+      return listado.Tipo_v.trim() === tipoFilterValue.trim();
+    }
+  })
     
-    })
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-
-    });
-
+    renderVehiculosTable(filteredListados);
+  };
    
+    updateFilteredListados();
 
-
-        async function obtenerTipo2() {
-          try {
-      
-            await sql.connect(config);
-      
-      
-            const result = await sql.query('SELECT Id,Tipo FROM Tipovehiculo order by Tipo');
-      
-      
-      
-            return result.recordset;
-          } catch (error) {
-            console.error('Error al obtener los datos:', error);
-            throw error;
-          }
-        }
-      
-      
-        async function generarSelectTipo2() {
-          try {
-      
-            const tipo = await obtenerTipo2();
-      
-            let selectOptions = '<option value="Todos"  selected>Todos</option>';
-      
-            tipo.forEach((row) => {
-              selectOptions += `<option value="${row.Tipo}">${row.Tipo}</option>`;
-            });
-      
-            const selectHtml = `<select>${selectOptions}</select>`;
-            document.getElementById('tipofilter').innerHTML = selectHtml;
-            return selectHtml;
-          } catch (error) {
-            console.error('Error al generar el select:', error);
-            throw error;
-          }
-        }
-      
-        generarSelectTipo2()
-          .then((selectHtml) => {
-            console.log('Select HTML generado:', selectHtml);
-          
-          })
-          .catch((error) => {
-            console.error('Error en la generación del select:', error);
-      
-          });
-   
-
-
-        
-  async function obtenerModelo() {
-    try {
-
-      await sql.connect(config);
-
-      const result = await sql.query('SELECT Modelo FROM Modelo order by Modelo');
-
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
-    }
-  }
-
-
-  async function generarSelectmodelo() {
-    try {
-
-      const marcas = await obtenerModelo();
-
-      let selectOptions = '<option value="Todos" selected>Todos</option>';
-
-      marcas.forEach((row) => {
-        selectOptions += `<option value="${row.Modelo}">${row.Modelo}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('modelofilter').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
-    }
-  }
-
-  generarSelectmodelo()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
-    })
-
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-    });
-
-
-
-
-
-
-        
-  async function obtenerMarcasss() {
-    try {
-
-      await sql.connect(config);
-
-      const result = await sql.query('SELECT Id,Marca FROM Marca order by Marca');
-
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
-    }
-  }
-
-
-  async function generarSelectMarcasss() {
-    try {
-
-      const marcas = await obtenerMarcasss();
-
-      let selectOptions = '<option value="Todas" selected>Todas</option>';
-
-      marcas.forEach((row) => {
-        selectOptions += `<option value="${row.Marca}">${row.Marca}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('marcafilter').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
-    }
-  }
-
-  generarSelectMarcasss()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
-    })
-
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-    });
-
-
-
-
-
-
-
-
-        async function obtenerEstatus() {
-          try {
-      
-            await sql.connect(config);
-      
-      
-            const result = await sql.query('SELECT Id,Estadocontrol FROM Estadocontrol');
-      
-      
-      
-            return result.recordset;
-          } catch (error) {
-            console.error('Error al obtener los datos:', error);
-            throw error;
-          }
-        }
-      
-      
-        async function generarSelectEstatus() {
-          try {
-      
-            const estatus = await obtenerEstatus();
-      
-            let selectOptions = '<option value="Todos"  selected>Todos</option>';
-      
-            estatus.forEach((row) => {
-              selectOptions += `<option value="${row.Estadocontrol}">${row.Estadocontrol}</option>`;
-            });
-      
-            const selectHtml = `<select>${selectOptions}</select>`;
-            document.getElementById('Estatus_filter').innerHTML = selectHtml;
-            return selectHtml;
-          } catch (error) {
-            console.error('Error al generar el select:', error);
-            throw error;
-          }
-        }
-      
-        generarSelectEstatus()
-          .then((selectHtml) => {
-            console.log('Select HTML generado:', selectHtml);
-          
-          })
-          .catch((error) => {
-            console.error('Error en la generación del select:', error);
-      
-          });
-
-          const printButton = document.querySelector('#imprimir');
-          printButton.addEventListener('click', () => {
-          
-            const generarVehiculosPDF = require('./ImprimirVehiculos')
-          
-            generarVehiculosPDF(filteredListados);
-           
-          });
     
-      })
-
+      //  const placaFilterInput = document.querySelector('#Fnacimientofilter');
+    //  placaFilterInput.addEventListener('input', (event) => {
+    //    placaFilterValue = event.target.value.toLowerCase();
+    //    updateFilteredListados();
+    //  });
+    
+    const placaInput = document.querySelector('#placafilter');
+    placaInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
+      placaFilterValue = event.target.value.toLowerCase();
+      updateFilteredListados();
     });
+    
+    const añoFilterInput = document.querySelector('#añofilter');
+    añoFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
+      añoFilterValue = event.target.value.toLowerCase();
+      updateFilteredListados();
+    });
+    
+    const polizaFilterInput = document.querySelector('#polizafilter');
+    polizaFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
+      polizaFilterValue = event.target.value.toLowerCase();
+      updateFilteredListados();
+    });
+    
+    const propietarioFilterInput = document.querySelector('#propietario_filter');
+    propietarioFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage").click()
+      propietarioFilterValue = event.target.value.toLowerCase();
+      updateFilteredListados();
+    });
+
+    const estatusFilterInput = document.querySelector('#Estatus_filter');
+    estatusFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage").click()
+      estatusFilterValue = event.target.value;
+      updateFilteredListados();
+    });
+
+    const marcaFilterInput = document.querySelector('#marcafilter');
+    marcaFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage").click()
+      marcaFilterValue = event.target.value;
+      updateFilteredListados();
+    });
+
+    const modeloFilterInput = document.querySelector('#modelofilter');
+    modeloFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage").click()
+      modeloFilterValue = event.target.value;
+      updateFilteredListados();
+    });
+
+    const tipoFilterInput = document.querySelector('#tipofilter');
+    tipoFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage").click()
+      tipoFilterValue = event.target.value;
+      updateFilteredListados();
+    });
+
+    // const ubicacionFilterInput = document.querySelector('#estatusfilter');
+    // ubicacionFilterInput.addEventListener('change', (event) => {
+    //   ubicacionFilterValue = event.target.value;
+    //   updateFilteredListados();
+    // });
+      
+    select()
+    async function obtenerEstatus() {
+      try {
+  
+        await sql.connect(config);
+  
+      console.log("obtenerEstatus")
+        const result = await sql.query('SELECT Id,Estadocontrol FROM Estadocontrol');
+  
+  
+  
+        return result.recordset;
+      } catch (error) {
+        console.error('Error al obtener los datos:', error);
+        throw error;
+      }
+    }
+    
+    
+    async function generarSelectEstatus() {
+      try {
+          console.log("obtenerEstatus2")
+        const estatus = await obtenerEstatus();
+  
+        let selectOptions = '<option value="Todos"  selected>Todos</option>';
+  
+        estatus.forEach((row) => {
+          selectOptions += `<option value="${row.Estadocontrol}">${row.Estadocontrol}</option>`;
+        });
+  
+        const selectHtml = `<select>${selectOptions}</select>`;
+        document.getElementById('Estatus_filter').innerHTML = selectHtml;
+        return selectHtml;
+      } catch (error) {
+        console.error('Error al generar el select:', error);
+        throw error;
+      }
+    }
+    
+  generarSelectEstatus()
+      
+
+    const printButton = document.querySelector('#imprimir');
+    printButton.addEventListener('click', () => {
+    
+      const generarVehiculosPDF = require('./ImprimirVehiculos')
+    
+      generarVehiculosPDF(filteredListados);
+      
+    });
+
+  })
+
+});
 
    
 
@@ -524,111 +321,122 @@
   const Guardar_vehiculos = document.getElementById("Guardar");
 
   Guardar_vehiculos.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+  evento.preventDefault(); // Evita que el formulario se envíe automáticamente
 
-      Guardar_vehiculos.disabled = true
+  Guardar_vehiculos.disabled = true
 
-      const f_registro = document.querySelector('input[name="fecharegistro"]').value;
-      const sap = document.querySelector('input[name="Codigosap"]').value;
-      const placa = document.querySelector('input[name="Placa"]').value;
-      const marca = document.querySelector('#selectMarca').value;
-      const modelo = document.querySelector('#selectModelo').value;
-      const año = document.querySelector('input[name="Año"]').value;
-      const poliza = document.querySelector('input[name="poliza"]').value;
-      const C_desde = document.querySelector('input[name="coberturadesde"]').value;
-      const C_hasta= document.querySelector('input[name="coberturahasta"]').value;
-      const tipo = document.querySelector('#selectTipo').value;
-      const ejes = document.querySelector('#Ejes').value;
-      const ubicacion = document.querySelector('#selectUbicacion').value;
-      const Propietario = document.querySelector('input[name="Propietario"]').value;
-      const econtrol = document.querySelector('#selectEcontrol').value;
-      const observaciones = document.querySelector('textarea[name="Observaciones"]').value;
-
-
-      let nombresMostrados = {
-        'fecharegistro': 'Por favor, ingrese una fecha de requerimiento',
-        'Codigosap': 'Por favor, ingrese el codigo sap del vehículo',
-        'Placa': 'Por favor, ingrese la placa del vehículo',
-        'poliza': 'Por favor, ingrese el número de poliza',
-        'marca':  'Por favor, seleccione la marca del vehículo',
-        'modelo':  'Por favor, seleccione el modelo del vehículo',
-        'Año': 'Por favor, ingrese el año del vehículo',
-        'coberturadesde': 'Por favor, seleccione el inicio de fecha de cobertura de poliza',
-        'coberturahasta': 'Por favor, seleccione el fin de fecha de cobertura de poliza',
-        'tipovehiculo':  'Por favor, seleccione el tipo de vehiculo',
-        'ejes': 'Por favor, ingrese la cantidad de ejes del vehículo', 
-        'ubicacion':  'Por favor, seleccione la ubicación del vehículo',
-        'Propietario': 'Por favor, ingrese el propietario del vehículo',
-        'estadoControl':  'Por favor, seleccione un estado de control',
-  
-        // Agrega más mapeos según sea necesario
-      };
-
-      // Consulta para verificar si la placa existe
-      const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where placa = '${placa}'`
-      const Consultasap = `SELECT count(*) as count FROM Vehiculos where Codigosap = '${sap}'`
+  const f_registro = document.querySelector('input[name="fecharegistro"]').value;
+  const sap = document.querySelector('input[name="Codigosap"]').value;
+  const placa = document.querySelector('input[name="Placa"]').value;
+  const marca = document.querySelector('#selectMarca').value;
+  const modelo = document.querySelector('#selectModelo').value;
+  const año = document.querySelector('input[name="Año"]').value;
+  const poliza = document.querySelector('input[name="poliza"]').value;
+  const C_desde = document.querySelector('input[name="coberturadesde"]').value;
+  const C_hasta= document.querySelector('input[name="coberturahasta"]').value;
+  const tipo = document.querySelector('#selectTipo').value;
+  const ejes = document.querySelector('#Ejes').value;
+  const ubicacion = document.querySelector('#selectUbicacion').value;
+  const Propietario = document.querySelector('input[name="Propietario"]').value;
+  const econtrol = document.querySelector('#selectEcontrol').value;
+  const observaciones = document.querySelector('textarea[name="Observaciones"]').value;
 
 
-      // Ejecutar la consulta y obtener el resultado
-      const pool = await consultar;
-      const result = await pool.request().query(ConsultaPlaca);
-      const result2 = await pool.request().query(Consultasap);
+  let nombresMostrados = {
+    'fecharegistro': 'Por favor, ingrese una fecha de requerimiento',
+    'Codigosap': 'Por favor, ingrese el codigo sap del vehículo',
+    'Placa': 'Por favor, ingrese la placa del vehículo',
+    'poliza': 'Por favor, ingrese el número de poliza',
+    'marca':  'Por favor, seleccione la marca del vehículo',
+    'modelo':  'Por favor, seleccione el modelo del vehículo',
+    'Año': 'Por favor, ingrese el año del vehículo',
+    'coberturadesde': 'Por favor, seleccione el inicio de fecha de cobertura de poliza',
+    'coberturahasta': 'Por favor, seleccione el fin de fecha de cobertura de poliza',
+    'tipovehiculo':  'Por favor, seleccione el tipo de vehiculo',
+    'ejes': 'Por favor, ingrese la cantidad de ejes del vehículo', 
+    'ubicacion':  'Por favor, seleccione la ubicación del vehículo',
+    'Propietario': 'Por favor, ingrese el propietario del vehículo',
+    'estadoControl':  'Por favor, seleccione un estado de control',
+
+    // Agrega más mapeos según sea necesario
+  };
+
+  // Consulta para verificar si la placa existe
+  const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where placa = '${placa}'`
+  const Consultasap = `SELECT count(*) as count FROM Vehiculos where Codigosap = '${sap}'`
 
 
-      // Obtener el valor de count del objeto result
-      const count = result.recordset[0].count;
-      const count2 = result2.recordset[0].count;
-      let inputs = document.querySelectorAll('.requerido');
+  // Ejecutar la consulta y obtener el resultado
+  const pool = await consultar;
+  const result = await pool.request().query(ConsultaPlaca);
+  const result2 = await pool.request().query(Consultasap);
 
-      let camposVacios = []; // Lista para almacenar los nombres de los campos vacíos
 
-        // Itera sobre los elementos de entrada
-        for (let i = 0; i < inputs.length; i++) {
-            // Si el elemento de entrada está vacío...
-            if (inputs[i].value === '') {
-                // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
-                let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
-                // Añade el nombre del campo vacío a la lista
-                camposVacios.push(nombreMostrado);
-            }
-        }
+  // Obtener el valor de count del objeto result
+  const count = result.recordset[0].count;
+  const count2 = result2.recordset[0].count;
+  let inputs = document.querySelectorAll('.requerido');
 
-          // Si hay campos vacíos...
-          if (camposVacios.length > 0) {
-              // Envía un mensaje al proceso principal con la lista de campos vacíos
-              ipcRenderer.send('campos-vacios', camposVacios);
-              setTimeout(() =>{
-                Guardar_vehiculos.disabled = false
-                   }, 2500)
-              
-          }
+  let camposVacios = []; // Lista para almacenar los nombres de los campos vacíos
 
-      // Si count es mayor que cero, la placa existe
-        else if (count > 0) {
+    // Itera sobre los elementos de entrada
+    for (let i = 0; i < inputs.length; i++) {
+      // Si el elemento de entrada está vacío...
+      if (inputs[i].value === '') {
+        // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
+        let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
+        // Añade el nombre del campo vacío a la lista
+        camposVacios.push(nombreMostrado);
+      }
+    }
+
+      // Si hay campos vacíos...
+    if (camposVacios.length > 0) {
+      // Envía un mensaje al proceso principal con la lista de campos vacíos
+      ipcRenderer.send('campos-vacios', camposVacios);
+      setTimeout(() =>{
+        Guardar_vehiculos.disabled = false
+      }, 2500)
         
-        await  ipcRenderer.send('vehiculoexistente', placa)
-        setTimeout(() =>{
-          Guardar_vehiculos.disabled = false
-             }, 2500)
-        // console.log(`La placa ${placa} ya existe en la base de datos`);
-      } 
-        else if( count2 >0 ){
-          await ipcRenderer.send('sap' , sap);
-          setTimeout(() =>{
-            Guardar_vehiculos.disabled = false
-               }, 2500)
-        }
-      else {
-          // Si count es cero, la placa no existe
+    }
 
-          // Utiliza los valores en tus consultas SQL
-          await agregarVehiculos({sap, placa, marca, modelo,tipo , año, poliza, Propietario,  observaciones, f_registro, C_desde, C_hasta, ejes, ubicacion,econtrol});
-         
-          // Limpia los campos del formulario
-          setTimeout(() =>{
-            location.reload();
-          }, 1000)
-        }
+  // Si count es mayor que cero, la placa existe
+    else if (count > 0) {
+    
+    await  ipcRenderer.send('vehiculoexistente', placa)
+    setTimeout(() =>{
+     Guardar_vehiculos.disabled = false
+    }, 2500)
+    // console.log(`La placa ${placa} ya existe en la base de datos`);
+  } 
+    else if( count2 >0 ){
+      await ipcRenderer.send('sap' , sap);
+      setTimeout(() =>{
+        Guardar_vehiculos.disabled = false
+      }, 2500)
+    }
+    else {
+      // Si count es cero, la placa no existe
+      ipcRenderer.send('dato')
+      // console.log('golita') 
+      const arg = await new Promise((resolve) => {
+        ipcRenderer.on('user-data', (event, arg) => {               
+          resolve(arg)
+        });
+      })
+      
+      const usuario = arg.usuario
+      const descripcion =` Se ha creado el vehiculo con la placa ${placa}`       
+
+      track(descripcion , usuario)
+      // Utiliza los valores en tus consultas SQL
+      await agregarVehiculos({sap, placa, marca, modelo,tipo , año, poliza, Propietario,  observaciones, f_registro, C_desde, C_hasta, ejes, ubicacion,econtrol});
+      
+      // Limpia los campos del formulario
+      setTimeout(() =>{
+        location.reload();
+      }, 1000)
+    }
   });
 
   async function agregarVehiculos(datos) {
@@ -648,58 +456,71 @@
   const anularVehiculosbtn = document.getElementById("Anular");
 
   anularVehiculosbtn.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+  evento.preventDefault(); // Evita que el formulario se envíe automáticamente
 
-      const placa = document.querySelector('input[name="Placa"]').value;
-      
-      // Consulta para verificar si la placa existe
-      const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where placa = '${placa}'`
-      const ConsultaPlacaActivo = `SELECT count(*) as counts FROM Vehiculos where placa = '${placa}' and Estadocontrol = 2`
+  const placa = document.querySelector('input[name="Placa"]').value;
+  
+  // Consulta para verificar si la placa existe
+  const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where placa = '${placa}'`
+  const ConsultaPlacaActivo = `SELECT count(*) as counts FROM Vehiculos where placa = '${placa}' and Estadocontrol = 2`
 
 
-      // Ejecutar la consulta y obtener el resultado
-      const pool = await consultar;
-      const result = await pool.request().query(ConsultaPlaca);
-      const result2 = await pool.request().query(ConsultaPlacaActivo);
+  // Ejecutar la consulta y obtener el resultado
+  const pool = await consultar;
+  const result = await pool.request().query(ConsultaPlaca);
+  const result2 = await pool.request().query(ConsultaPlacaActivo);
 
-      // Obtener el valor de count del objeto result
-      const count = result.recordset[0].count;
-      const count2 = result2.recordset[0].counts;
+  // Obtener el valor de count del objeto result
+  const count = result.recordset[0].count;
+  const count2 = result2.recordset[0].counts;
+
+  // Itera sobre los elementos de entrada
+  
+
+  // Si count es mayor que cero, la placa existe
+    if (count === 0) {
     
-        // Itera sobre los elementos de entrada
-      
+    await  ipcRenderer.send('vehiculoNoexistente', placa)
 
-      // Si count es mayor que cero, la placa existe
-        if (count === 0) {
-        
-        await  ipcRenderer.send('vehiculoNoexistente', placa)
+  } 
+    else if( count2 >0 ){
+      await ipcRenderer.send('vehiculoAnulado' , placa);
+    }
 
-      } 
-        else if( count2 >0 ){
-          await ipcRenderer.send('vehiculoAnulado' , placa);
-        }
+  else{
 
-        else{
+      ipcRenderer.send('anular-confirm-dialog')
+      const index = await new Promise((resolve) => {
+        ipcRenderer.once('anular-dialog-result', (event, index) => {
+          resolve(index)
+        })
+      })
+  
+      if (index === 1) {
+        // El usuario hizo clic en "no"
+      }
+    else{
 
-          ipcRenderer.send('anular-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('anular-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
-      
-          if (index === 1) {
-            // El usuario hizo clic en "no"
-          }
-          else{
+      // Utiliza los valores en tus consultas SQL
+      await anularVehiculos({placa});
+      ipcRenderer.send('dato')
+      // console.log('golita') 
+      const arg = await new Promise((resolve) => {
+        ipcRenderer.on('user-data', (event, arg) => {               
+          resolve(arg)
+        });
+      })
+    
+    const usuario = arg.usuario
+    const descripcion =` Se ha anulado el vehiculo con la placa ${placa}`       
 
-          // Utiliza los valores en tus consultas SQL
-          await anularVehiculos({placa});
-          ipcRenderer.send('datosAnulados');
-          // Limpia los campos del formulario
-          location.reload();
-        }
-  }});
+      track(descripcion , usuario)
+      ipcRenderer.send('datosAnulados');
+      // Limpia los campos del formulario
+      location.reload();
+    }
+  } 
+});
 
   async function anularVehiculos(datos) {
       try {
@@ -714,64 +535,12 @@
   }
 
 
-
-  //! Pruebas para obtener marcas
-
-  async function obtenerMarcass() {
-    try {
-
-      await sql.connect(config);
-
-      const result = await sql.query('SELECT Id,Marca FROM Marca order by Marca');
-
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
-    }
-  }
-
-
-  async function generarSelectMarcass() {
-    try {
-
-      const marcas = await obtenerMarcass();
-
-      let selectOptions = '<option value="" disabled selected>Seleccione</option>';
-
-      marcas.forEach((row) => {
-        selectOptions += `<option value="${row.Id}">${row.Marca}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('selectMarca').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
-    }
-  }
-
-  generarSelectMarcass()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
-    })
-
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-    });
-
-
-
-
-
-
   //! Fin de las pruebas para obtener marcas
 
   //! Pruebas para generar modelos según marca
 
+  
+  //! Fin de los select de los estatus
   const selectMarca = document.getElementById('selectMarca');
   const selectModelo = document.getElementById('selectModelo'); 
 
@@ -829,170 +598,6 @@
 
   // Cargar las marcas iniciales
   generarSelectMarcas()
-    .then(() => {
-      console.log('Select de marcas generado');
-    })
-    .catch((error) => {
-      console.error('Error en la generación del select de marcas:', error);
-    });
-
-    
-  //!Fin de generar select  según marcas
-
-  //! Select de ubicaciones
-
-  async function obtenerUbicacion() {
-    try {
-
-      await sql.connect(config);
-
-
-      const result = await sql.query('SELECT Id,Estatusvehiculo FROM Estatusvehiculo');
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
-    }
-  }
-
-
-  async function generarSelectUbicacion() {
-    try {
-
-      const ubicacion = await obtenerUbicacion();
-
-      let selectOptions = '<option value="" disabled selected>Seleccione</option>';
-
-      ubicacion.forEach((row) => {
-        selectOptions += `<option value="${row.Id}">${row.Estatusvehiculo}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('selectUbicacion').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
-    }
-  }
-
-  generarSelectUbicacion()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
-    
-    })
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-
-    });
-
-  //! Fin del select de ubicaciones
-
-  //! Select para obtener  tipos
-
-  async function obtenerTipo() {
-    try {
-
-      await sql.connect(config);
-
-
-      const result = await sql.query('SELECT Id,Tipo FROM Tipovehiculo order by Tipo');
-
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
-    }
-  }
-
-
-  async function generarSelectTipo() {
-    try {
-
-      const tipo = await obtenerTipo();
-
-      let selectOptions = '<option value="" disabled selected>Seleccione</option>';
-
-      tipo.forEach((row) => {
-        selectOptions += `<option value="${row.Id}">${row.Tipo}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('selectTipo').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
-    }
-  }
-
-  generarSelectTipo()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
-    
-    })
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-
-    });
-
-  //! Fin de el select de tipos
-
-  //! select de los estatus
-
-  async function obtenerEstatus() {
-    try {
-
-      await sql.connect(config);
-
-
-      const result = await sql.query('SELECT Id,Estadocontrol FROM Estadocontrol');
-
-
-
-      return result.recordset;
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      throw error;
-    }
-  }
-
-
-  async function generarSelectEstatus() {
-    try {
-
-      const estatus = await obtenerEstatus();
-
-      let selectOptions = '<option value="" disabled selected>Seleccione</option>';
-
-      estatus.forEach((row) => {
-        selectOptions += `<option value="${row.Id}">${row.Estadocontrol}</option>`;
-      });
-
-      const selectHtml = `<select>${selectOptions}</select>`;
-      document.getElementById('selectEcontrol').innerHTML = selectHtml;
-      return selectHtml;
-    } catch (error) {
-      console.error('Error al generar el select:', error);
-      throw error;
-    }
-  }
-
-  generarSelectEstatus()
-    .then((selectHtml) => {
-      console.log('Select HTML generado:', selectHtml);
-    
-    })
-    .catch((error) => {
-      console.error('Error en la generación del select:', error);
-
-    });
-
-  //! Fin de los select de los estatus
 
   //!Codigo para traer con un click los datos a los inputs, select, etc
 
@@ -1024,6 +629,7 @@
     
   });
 
+  
   const tabla = document.getElementById("tabla-vehiculos");
   let originalPlaca;
   tabla.addEventListener("click", async function(event) {
@@ -1084,7 +690,7 @@
       const ejes = await obtenerEjes(placa);
       ejesSelect.value = ejes;
       const ubicacion = await obtenerUbicacion2(placa);
-  ubicacionSelect.value = ubicacion;
+      ubicacionSelect.value = ubicacion;
       // Obtener el valor de la columna Coberturadesde de la tabla Vehiculos
       const coberturaDesde = await obtenerCoberturaDesde(placa);
       coberturaDesdeInput.valueAsDate = new Date(coberturaDesde);
@@ -1094,16 +700,16 @@
       coberturaHastaInput.valueAsDate = new Date(coberturaHasta);
 
       const propietario = await obtenerPropietario(placa);
-  propietarioInput.value = propietario;
+      propietarioInput.value = propietario;
 
-    const codigo = await obtenerCodigo(placa);
-    codigoSap.value = codigo;
+      const codigo = await obtenerCodigo(placa);
+      codigoSap.value = codigo;
 
 
-    const fechac = await ObtenerFecha(placa);
-    fecha_creacion.valueAsDate = new Date(fechac);
+      const fechac = await ObtenerFecha(placa);
+      fecha_creacion.valueAsDate = new Date(fechac);
 
-    console.log('el valor de orignal placa es: ' + originalPlaca);
+      console.log('el valor de orignal placa es: ' + originalPlaca);
     }
   });
 
@@ -1191,10 +797,7 @@
   }
 
 
-
   //! fin de el codigo para traer datos a inputs, select, etc
-
-  console.log('Hola')
 
   const modificar = document.getElementById('Modificar');
 
@@ -1204,7 +807,7 @@
     
     evento.preventDefault();
 
-
+   
     const f_registro = document.querySelector('input[name="fecharegistro"]').value;
     const sap = document.querySelector('input[name="Codigosap"]').value;
     const marca = document.querySelector('#selectMarca').value;
@@ -1220,7 +823,7 @@
     const econtrol = document.querySelector('#selectEcontrol').value;
     const observaciones = document.querySelector('textarea[name="Observaciones"]').value;
     placanuevecita = document.querySelector('input[name="Placa"]').value;
-    console.log('el valor de originalplaca dentro de modificar es ' + originalPlaca)
+ 
     console.log(' el valor de la placa nueva dentro de modificar es ' + placanuevecita)
 
     //consultaq
@@ -1264,6 +867,19 @@
           console.error('Error al actualizar los datos:', error);
           throw error;
         }
+
+        ipcRenderer.send('dato')
+      // console.log('golita') 
+      const arg = await new Promise((resolve) => {
+        ipcRenderer.on('user-data', (event, arg) => {               
+          resolve(arg)
+        });
+      })
+      
+      const usuario = arg.usuario
+      const descripcion =` Se ha modificado el vehiculo con la placa ${originalPlaca} a ${placanuevecita}`       
+
+      track(descripcion , usuario)
         ipcRenderer.send('datosModificados')
         location.reload();
   }
@@ -1272,21 +888,4 @@
   });
 
 
-  var tabMenu = document.querySelector("#tab-menu");
-
-// Agregar un controlador de eventos para el evento "click" en el menú de pestañas
-tabMenu.addEventListener("click", function(event) {
-  // Obtener el índice de la pestaña seleccionada
-  var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
-
-  // Guardar el índice de la pestaña seleccionada en localStorage
-  localStorage.setItem("selectedTabIndex", selectedIndex);
-});
-
-// Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
-var selectedTabIndex = localStorage.getItem("selectedTabIndex");
-
-// Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
-if (selectedTabIndex !== null) {
-  tabMenu.children[selectedTabIndex].click();
-}
+refrescarTab()

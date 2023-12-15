@@ -1,19 +1,23 @@
+const obtenerTasa = require('../Utility/obtenerTasa');
+const track = require('../Utility/Track')
+const ocultar = require('../Utility/ocultar')
 
-   
-function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
 
-
+function tablasComprobante(contenedor2,numeroComprobante , id_viaje ,Fecha_req){
 
   function llenarTablaComprobantes(idViaje) {  
-
    
     consultar.connect().then(() => {
       const request = new sql.Request(consultar);
       request.query(`
-        SELECT Num_comprobante, Descripcion, format ( Fecha, 'dd/MM/yyyy') as Fecha, Monto, Beneficiario from Comprobante_viajes WHERE Codigo_viaje= ${idViaje} order by Num_comprobante asc; 
+        SELECT Num_comprobante, Descripcion, format ( Fecha, 'dd/MM/yyyy') as Fecha, Monto, Beneficiario, Tipocomprobante
+         from Comprobante_viajes WHERE Codigo_viaje= ${idViaje} order by Num_comprobante asc; 
       `).then((result) => {
         const tabla = document.querySelector('#listadoComprobantesviaje tbody');
         tabla.innerHTML = ''; // Limpiar la tabla antes de agregar datos
+        // let minNumComprobante = Math.min(...result.recordset.map(fila => fila.Num_comprobante));
+
+        
        const Comprobantes = result.recordset.forEach((fila) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -23,8 +27,15 @@ function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
             <td>${fila.Monto}</td>
             <td>${fila.Beneficiario}</td>
           `;
-      
+          const Tipocomprobante = fila.Tipocomprobante
+        
+          // document.getElementById('filaTipo').style.display = 'none'
           tabla.appendChild(tr);
+
+          if (Tipocomprobante === 10) {
+            tr.style.backgroundColor = '#C8DBFF'; 
+          }
+
       
           // Agregar controlador de eventos a cada elemento td
           tr.querySelectorAll('td').forEach((td) => {
@@ -63,21 +74,24 @@ function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
                   </fieldset>
   
                   <button type="button" class="normalButton" id="reImprimir2" style="margin-top: 20px;">Re-imprimir</button>
-        
+                  <button type="button" id="Anular2" class="redButton"> Anular comprobante</button> 
+
                   <div class="emergente_btn"> 
-                  
+                   
                     <button type="button" class="normalButton" id="guardar" >Guardar</button>
-                  </div>
+                    </div>
   
                 `;
                 // <button type="button" id="Anular2" class="redButton"> Anular comprobante</button>  
               contenedor2.innerHTML = modificarComprobantes;
   
               document.getElementById('ventana-modificarComprobante').style.display = 'block';
-  
+              const anularComprobante = document.getElementById("Anular2");
               document.getElementById('botonCerrar3').addEventListener('click', function() {
                 document.getElementById('ventana-modificarComprobante').style.display = 'none';
             });
+
+            ocultar(anularComprobante)
 
             const botonImprimir = document.querySelector('#reImprimir2');
 
@@ -86,45 +100,58 @@ function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
               // Usa la función consultar para obtener el listado de viajes.
               // Cuando el botón sea clickeado, genera el PDF.
               const generarComprobante = require ('../Reqtransporte/GenerarComprobante')
-            
-              await generarComprobante({numeroComprobante})
+            console.log(Fecha_req)
+              await generarComprobante(numeroComprobante,Fecha_req)
             
               // Aquí puedes guardar el PDF en un archivo, enviarlo a través de una respuesta HTTP, etc.
             });
 
-            // const anularComprobante = document.getElementById("Anular2");
+            
 
-            // anularComprobante.addEventListener('click', async (evento) => {
-            //     evento.preventDefault(); 
+            anularComprobante.addEventListener('click', async (evento) => {
+                evento.preventDefault(); 
              
-            //     ipcRenderer.send('elimination-confirm-dialog', numeroComprobante)
+                ipcRenderer.send('elimination-confirm-dialog', numeroComprobante)
                  
-            //     const index = await new Promise((resolve) => {
-            //       ipcRenderer.once('elimination-dialog-result', (event, index) => {
-            //         resolve(index)
-            //       })
-            //     })
+                const index = await new Promise((resolve) => {
+                  ipcRenderer.once('elimination-dialog-result', (event, index) => {
+                    resolve(index)
+                  })
+                })
                 
-            //     if (index === 1) {
+                if (index === 1) {
                
-            //     }
-            //     else{
+                }
+                else{
 
 
-            //         try {
-            //             const pool = await consultar.connect();
-            //             const sqlQuery = `Delete comprobante_viajes where Num_comprobante = ${numeroComprobante}`;
-            //             const result = await pool.request().query(sqlQuery);
-            //             console.log('Registro eliminado de la base de datos:', result);
-            //         } catch (error) {
-            //             console.log('Error al eliminar el registro:', error);
-            //         }
+                    try {
+                        const pool = await consultar.connect();
+                        const sqlQuery = `Delete comprobante_viajes where Num_comprobante = ${numeroComprobante}`;
+                        const result = await pool.request().query(sqlQuery);
+                        console.log('Registro eliminado de la base de datos:', result);
+
+                    } catch (error) {
+                        console.log('Error al eliminar el registro:', error);
+                    }
+                    ipcRenderer.send('dato')
+                    // console.log('golita') 
+                    const arg = await new Promise((resolve) => {
+                      ipcRenderer.on('user-data', (event, arg) => {               
+                        resolve(arg)
+                      });
+                    })
                     
-            //         ipcRenderer.send('datosEliminados');
-            //         llenarTablaComprobantes(idViaje)
+                    const usuario = arg.usuario
+                    const descripcion =` Se ha eliminado el comprobante numero ${numeroComprobante} del viaje ID ${id_viaje}`       
+    
+                    track(descripcion , usuario)
+                    ipcRenderer.send('datosEliminados');
+                    llenarTablaComprobantes(idViaje)
+                    document.getElementById('botonCerrar3').click()
 
-            //     }
-            // });
+                }
+            });
 
 
 
@@ -138,22 +165,13 @@ function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
                 const fecha = document.getElementById('fecha').value;
                 const monto = document.getElementById('monto').value;
 
-                async function obtenerUltimatasa(){
-                  const pool = await consultar.connect();
-                 const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
-                const result2 = await pool.request().query(sqlQuery2)
-                const Tasa = result2.recordset[0].Tasa;
-                
-                console.log ('Ultima tasa ', Tasa)
-                return Tasa;
-                 }obtenerUltimatasa()
-                
-                 const Tasa =   await obtenerUltimatasa({});  
+               obtenerTasa()
+                 const Tasa =   await obtenerTasa({});  
                  const montoUsd = monto / Tasa;
   
                 let nombresMostrados = {
-                  'descripcion': 'Por favor, ingrese un nombre para la sede ',
-                  'monto': 'Por favor, seleccione un tipo de sede',
+                  'descripcion': 'Por favor, ingrese una descripcion ',
+                  'monto': 'Por favor, seleccione un monto para el comprobante',
                   'fecha': 'Por favor ingrese la fecha de hoy'       
                   // Agrega más mapeos según sea necesario
                 };
@@ -207,7 +225,22 @@ function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
                     } catch (error) {
                       console.log('Error al actualizar el registro:', error);
                   } ipcRenderer.send('datosModificados')
+
+                  ipcRenderer.send('dato')
+                  // console.log('golita') 
+                  const arg = await new Promise((resolve) => {
+                    ipcRenderer.on('user-data', (event, arg) => {               
+                      resolve(arg)
+                    });
+                  })
+                  
+                  const usuario = arg.usuario
+                  const descripcion =` Se ha modificado el comprobante numero ${numeroComprobante} del viaje ID ${id_viaje}`       
+  
+                  track(descripcion , usuario)
                   llenarTablaComprobantes(idViaje)
+                  document.getElementById('botonCerrar3').click()
+                  
                  } 
                 }
                 
@@ -244,6 +277,6 @@ function tablasComprobante(contenedor2,numeroComprobante , id_viaje){
   const idViaje = id_viaje; 
   llenarTablaComprobantes(idViaje);
 
-        }
+}
 
-        module.exports = tablasComprobante
+module.exports = tablasComprobante

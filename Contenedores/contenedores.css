@@ -90,10 +90,6 @@ width: 100px;
 margin-bottom: 20px;
 }
 
-fieldset{
-background-color: #c9c6c6;
-
-}
 fieldset + fieldset{
 margin-top: 20px;
 }
@@ -150,7 +146,7 @@ button[type="button"]:not(.paginas,.menubar-btn, #modificarContenedor), [type="R
 
 }
 fieldset{
-
+background-color: #c9c6c6;
 border-radius: 6px;
 
 }
@@ -424,3 +420,4 @@ display: flex;
 justify-content: end;
 margin-top: 10px;
 }
+

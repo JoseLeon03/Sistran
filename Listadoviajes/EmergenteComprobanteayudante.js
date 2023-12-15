@@ -1,4 +1,4 @@
-
+const track = require('../Utility/Track')
 function emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDiv, idViaje, origen){
 
     comprobanteAyudante.addEventListener('click', async () => {
@@ -216,8 +216,27 @@ function emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDi
               console.log('Insert realizado con éxito');
             } catch (err) {
               console.error(err);
-            }} location.reload()
-               ipcRenderer.send('registroExitoso')
+            }} 
+            
+            const sqlQuery2 = `SELECT MAX(Num_comprobante) AS UltimoComprobante FROM Comprobante_viajes`;
+          const result= await pool.request().query(sqlQuery2)
+
+          const numeroComprobante = result.recordset[0].UltimoComprobante 
+          ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+              
+                const usuario = arg.usuario
+                const descripcion2 =` Se ha creado un comprobante adicional al ayudante con el numero ${numeroComprobante} para el viaje con el ID ${idViaje}`       
+
+                track(descripcion2 , usuario)
+              ipcRenderer.send('registroExitoso')  
+              document.getElementById('botonCerrar2').click()
+               
           }});
 
           

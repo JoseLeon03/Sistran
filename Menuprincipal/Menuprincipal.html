@@ -63,13 +63,23 @@
     <div class="animation start-e"></div>
   </nav>
 
+  <div id="updates">       
+     <label id="messages"></label>
+    </div>
+
 
     <script src="Menubar.js">
-      
     </script>
            <!-- <script src="../Login/Login.js"></script> -->
 
        <script src="Menuprincipal.js">  </script>
+       <script>
+
+          ipcRenderer.on('message', function(event, text) {
+            var message = document.getElementById('messages'); // Obtiene el elemento div con el id progress-message
+            message.innerHTML = text; // Actualiza el contenido del elemento div con el texto del mensaje
+        })
+       </script>
 
 </body>
 </html>

@@ -1,12 +1,22 @@
 
-// let filaseleccionada;
+const refrescar = require ('./Listadoviajes.js')
+const obtenerTasa = require('../Utility/obtenerTasa.js');
+const nuevoComprobantefunc = require('./crearComprobante.js');
+const modificarContfunc = require('./emergenteCont.js');
+const track = require('../Utility/Track.js');
+const ocultar = require('../Utility/ocultar.js');
+const modificarViaje = require('./modificarViaje.js');
+const {estadosViaje, llenarTablaEstados} = require('./EstadosViaje.js');
+const emergenteComprobanteayudante = require('./EmergenteComprobanteayudante.js');
+const tablasComprobante = require('./TablaComprobantes.js');
 
-function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
+
+function agregarEventosFilas(filasTabla, ventanaEmergente) {
     filasTabla.forEach(fila => {
       fila.addEventListener('click', () => {
         // Aquí va el código para obtener los datos de la fila
         const id_viaje = fila.querySelector('td:nth-child(1)').textContent;
-        const fecharequerimiento = fila.querySelector('td:nth-child(2)').textContent;
+        const Fecha_req = fila.querySelector('td:nth-child(2)').textContent;
         const origen = fila.querySelector('td:nth-child(3)').textContent;
         const destino = fila.querySelector('td:nth-child(4)').textContent;
         const estatus = fila.querySelector('td:nth-child(5)').textContent;
@@ -20,7 +30,9 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
         const Observacion = fila.querySelector('td:nth-child(13)').textContent;
         const Ayudante = fila.querySelector('td:nth-child(14)').textContent;
         const Contenedor2 = fila.querySelector('td:nth-child(15)').textContent;
-        const Bultos = fila.querySelector('td:nth-child(16)').textContent;
+        const precinto = fila.querySelector('td:nth-child(16)').textContent;
+        const precinto2 = fila.querySelector('td:nth-child(17)').textContent;
+        const Bultos = fila.querySelector('td:nth-child(18)').textContent;
  
         // filaseleccionada = id_viaje
   // Variable para almacenar el ID del viaje seleccionado
@@ -45,11 +57,14 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 <div class="tab-content active" id="tab1">
 <div id="separar">
 <fieldset style="width: max-content;" >
-<label >Fecha de requerimiento: </label> <span class="Fecha">${fecharequerimiento}</span>
+<label >Fecha de requerimiento: </label> <span class="Fecha" id="fechaSpan">${Fecha_req}</span>
 </fieldset>
-<button type="button" id="Reload" class="normalButton2"> Refrescar </button>
-<button type="button" id="Reload2" class="normalButton2"> Refrescar2 </button>
+<fieldset>
+<label>ID: ${id_viaje} </label>
+</fieldset>
 </div>
+
+
 <fieldset class="fieldEmergente1"> 
 <div class="Tablas">
 
@@ -61,15 +76,16 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 <span>${Cedula_chofer}</span>
 <br>
 <label >Placa del vehículo:</label>
-<span>${placa}</span>
+<span id="vehiculoSpan">${placa}</span>
 <br>
 <label >Placa cava:</label>
-<span>${placacava}</span>
+<span id="cavaSpan">${placacava}</span>
 <br>
 <label >Contenedor:</label>
-<span class="Ubicacion">${Contenedor2}</span>
+<span class="Ubicacion" id="cont">${Contenedor2}</span>
 
-</Select></Label>
+
+
 
 </Div>
 <div class="Derecha">
@@ -80,12 +96,20 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 <span>${Nombredelchofer} ${Apellido}</span>
 <br>
 <label >Bultos:</label>
-<span>${Bultos}</span>
+<span id="bultosSpan">${Bultos}</span>
 <br>
 <label >Observacion:</label>
 <div class="Observacion">
-<p>${Observacion}</p>
+<p id="obsP">${Observacion}</p>
 </div>
+<label >Precinto:</label>
+<span class="Ubicacion" style ="margin-left: 17px" id="preci">${precinto}</span>
+<br>
+<label >Precinto 2:</label>
+<span class="Ubicacion" id="preci2">${precinto2}</span>
+
+
+
 </div>
 </div>
 <div class="textarea">
@@ -98,13 +122,12 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 <span class="estadoViaje">${estatus} </span>
 
 <label style="margin-left: 50px;">Fecha de estado: </label>
-<span>${fecharequerimiento}</span></fieldset>
+<span>${Fecha_req}</span></fieldset>
 
 <div class="emergente_btn"> 
 <button type="button" class="actualizarEstatus" id="modificarEstatus">Modificar estatus</button>
 <button type="button" id="reImprimir" class="normalButton"> Re imprimir</button>
-
-
+<button type="button" id="Anular" class="redButton">Eliminar viaje</button> 
 
 
 
@@ -119,9 +142,14 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 <div class="tab-content" id="tab2">
 
 <fieldset>
+
 <h2>${estatus} </h2>
 <h4></h4>
 </fieldset>
+
+<div class="ref">
+<button type="button" id="reloadEstatus" class="normalButton2"> Refrescar </button>
+</div>
 
 <fieldset class="listadoEstadosviaje"><legend>Estados anteriores del viaje</legend>
 <table id="listadoEstadosviajes">
@@ -189,6 +217,9 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
   
 
 </fieldset>
+<div class="ref">
+<button type="button" id="reloadComprobante" class="normalButton2"> Refrescar </button>
+</div>
 
 <fieldset class="listadoComprobantesviaje">
 <table id="listadoComprobantesviaje">
@@ -253,12 +284,16 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
     <button type="button" class="normalButton" id="nuevoComprobante"> Nuevo comprobante adicional</button>
     <br>
     <button type="button" class="normalButton" id="comprobanteAyudante"> Nuevo comprobante al ayudante</button>
+    <br>
+    <button type="button" class="modificarViajes" id="emergenteCont"> Modificar contenedor y precintos</button>
     </div>
 </fieldset>
     
 <div id="nuevoComprobanteDiv"></div>
 <div id="generar-ayudante"></div>
 <div id="generar-comprobanteAyudante"></div>
+<div id="modificarContenedor"></div>
+
 
 </div>
 
@@ -268,8 +303,13 @@ function agregarEventosFilas(filasTabla, ventanaEmergente, nivel) {
 ventanaEmergente.innerHTML = contenidoVentana;
 const nuevoComprobante = document.getElementById('nuevoComprobante');
 const contenedor = document.getElementById('nuevoComprobanteDiv');
+const contenedor2 = document.getElementById('ventana-modificarComprobante');
 
+const modificarCont= document.getElementById('emergenteCont')
 
+modificarContfunc(modificarCont, id_viaje,contenidoVentana, Contenedor2, precinto,precinto2)
+
+// nuevoComprobantefunc(nuevoComprobante,contenedor,origen, id_viaje, Cedula_chofer,Nombredelchofer, Apellido, contenedor2)
 nuevoComprobante.addEventListener('click', () => {
   const contenidoHTML = `
   <div id="contenedor-emergente">
@@ -298,6 +338,7 @@ nuevoComprobante.addEventListener('click', () => {
 
   // Agrega el contenido HTML al elemento
   contenedor.innerHTML = contenidoHTML;
+
   // Muestra el elemento con display: block
   contenedor.style.display = 'block';
 
@@ -305,7 +346,7 @@ nuevoComprobante.addEventListener('click', () => {
     document.getElementById('nuevoComprobanteDiv').style.display = 'none';
   });
 
-    /*Select de Tipo de viaje*/
+    /*Select de Tipo de comprobante*/
 async function obtenerTipoComprobante() {
   try {
 
@@ -357,7 +398,7 @@ GenerarTipoComprobante()
 
 
   const crearComprobante = document.getElementById('crear_comprobante');
-
+   
   crearComprobante.addEventListener('click', async () => {
   // Obtener los valores de los elementos del formulario
 
@@ -429,17 +470,11 @@ GenerarTipoComprobante()
     // Generar el nuevo comprobante utilizando los valores obtenidos
     crearComprobante.disabled = false
         try {
-          async function obtenerUltimatasa(){
-          const pool      = await consultar.connect();
-          const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
-          const result2   = await pool.request().query(sqlQuery2)
-          const Tasa      = result2.recordset[0].Tasa;
-        
-          return Tasa;
-          }
-          obtenerUltimatasa()
+          obtenerTasa();
           
-          const Tasa      = await obtenerUltimatasa({});  
+           const Tasa =   await obtenerTasa({}); 
+          
+         
           const montoUsd = monto / Tasa;
 
           const pool = await consultar.connect();
@@ -451,9 +486,26 @@ GenerarTipoComprobante()
           `;
           await pool.request().query(sqlQuery);
           ipcRenderer.send('registroExitoso');
-          const tablasComprobante = require('./TablaComprobantes.js'); 
-          tablasComprobante(contenedor2, numeroComprobante, idViaje)
+        
+          const sqlQuery2 = `SELECT MAX(Num_comprobante) AS UltimoComprobante FROM Comprobante_viajes`;
+          const result= await pool.request().query(sqlQuery2)
 
+          const numeroComprobante = result.recordset[0].UltimoComprobante 
+          ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha creado un comprobante adicional con el numero ${numeroComprobante} para el viaje con el ID ${id_viaje}`       
+
+                track(descripcion , usuario)
+                const tablasComprobante = require('./TablaComprobantes.js'); 
+                tablasComprobante(contenedor2, numeroComprobante, idViaje,Fecha_req)
+                document.getElementById('botonCerrar5').click()
         } catch (err) {
           console.error(err);
         }  
@@ -466,7 +518,7 @@ GenerarTipoComprobante()
 
 
 
-const tabs = document.querySelectorAll('.tab');
+    const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content')
 
     tabs.forEach(tab => {
@@ -500,309 +552,7 @@ const tabs = document.querySelectorAll('.tab');
       });
 
 
-  /*************************COdigo para modificar la cedula del chofer **************************************/
-      const modificarCedula = document.getElementById("modificarCedula");
-
-      modificarCedula.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
-        const nuevaCedula = document.querySelector('#cedulaNueva').value;
-   
-        const ConsultaCedula = `SELECT count(*) as count FROM empleados where cedula = '${nuevaCedula}'`;
-        const consultaCeduladisp =`SELECT count(*) as count FROM empleados where cedula = '${nuevaCedula}' and Estatus =1`;
-        // Ejecutar la consulta y obtener el resultado
-        const pool = await consultar;
-        const result = await pool.request().query(ConsultaCedula);
-        const result2 = await pool.request().query(consultaCeduladisp);
-        // Obtener el valor de count del objeto result
-        const count2 =result2.recordset[0].count;
-        const count = result.recordset[0].count;
-
-        if( nuevaCedula == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
-      
-          ipcRenderer.send('validarCampo')
-        }  
-       
-        else if (count == 0) {/*Envia un mensaje que indicar que la cedula no esta registrada*/
-          
-          await  ipcRenderer.send('choferNoregistrado')
-        } 
-        else if (count2 == 0){
-
-          await ipcRenderer.send('choferNodisponible');
-
-        }
-
-   
-        else{
-      // Utiliza los valores en tus consultas SQL 
-      ipcRenderer.send('modification-confirm-dialog')
-      const index = await new Promise((resolve) => {
-        ipcRenderer.once('modification-dialog-result', (event, index) => {
-          resolve(index)
-        })
-      })
-    
-      if (index === 1) {
-        // El usuario hizo clic en "no"
-      }
-
-        await  ipcRenderer.send('datosModificados');
-        location.reload();
-        await modificarCedulafunction({ nuevaCedula});
-
-        
-       
-            
-      // Limpia los campos del formulario
-  }});
-
-  
-  async function modificarCedulafunction(datos) {
-      try {
-          const pool = await consultar;
-          const sqlQuery = `Update  Viajes  set Cedula_chofer = ${datos.nuevaCedula} where Id_viaje = ${id_viaje};
-          Update empleados set Estatus = 1 where Cedula =${Cedula_chofer};
-          Update empleados set Estatus = 2 where Cedula =${datos.nuevaCedula} `;
-          const result = await pool.request().query(sqlQuery);
-          console.log('Registro agregado a la base de datos:', result);
-         
-      } catch (error) {
-          console.log('Error al agregar el registro:', error);
-      }
-  
-  }
-  /***************************Fin de codigo para modificar la cedula del chofer **********************/
-
-  /****************************Codigo para modificar la placa del vehículo *************************/
-  
-  const modificarPlaca = document.getElementById("modificarPlaca");
-
-  modificarPlaca.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
-        const nuevaPlaca = document.querySelector('#placaNueva').value;
-   
-        const ConsultaPlaca = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaPlaca}' 
-        and tipovehiculo not in (2,5,6)`
-
-        const consultaPlacadisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaPlaca}' 
-        and Ubicacion =1`;
-
-        // Ejecutar la consulta y obtener el resultado
-        const pool = await consultar;
-        const result = await pool.request().query(ConsultaPlaca);
-        const result2 = await pool.request().query(consultaPlacadisp)
-        // Obtener el valor de count del objeto result
-        const count = result.recordset[0].count;
-        const count2 = result2.recordset[0].count;
-        if( nuevaPlaca == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
-      
-          ipcRenderer.send('validarCampo')
-        }  
-        // Si count es igual que cero, la placa no existe
-        else if (count == 0) {
-          
-          await  ipcRenderer.send('vehiculoNoregistrado')
-        } 
-
-        else if (count2 == 0){
-
-          await ipcRenderer.send('vehículoNodisponible')
-
-        }
-
-        else{
-
-          ipcRenderer.send('modification-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('modification-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
-        
-          if (index === 1) {
-            // El usuario hizo clic en "no"
-          }
-      // Utiliza los valores en tus consultas SQL
-        await  ipcRenderer.send('datosModificados');
-        location.reload();
-        await modificarPlacafunction({nuevaPlaca});
-    
-
-  }});
-
-  
-  async function modificarPlacafunction(datos) {
-      try {
-          const pool = await consultar;
-          const sqlQuery = `Update  Viajes  set Placa_veh = '${datos.nuevaPlaca}' where Id_viaje = ${id_viaje};
-          Update Vehiculos set Ubicacion = 1 where Placa ='${placa}';
-          Update Vehiculos set Ubicacion = 2 where Placa ='${datos.nuevaPlaca}' `;
-          const result = await pool.request().query(sqlQuery);
-          console.log('Registro agregado a la base de datos:', result);
-         
-      } catch (error) {
-          console.log('Error al agregar el registro:', error);
-      }
-  
-  }
-
-  /*******************************Fin de codigo para modificar la placa del vehiculo *********************************/
-
-/***************************************Codigo para modificar la cava******************************************************* */
-  const modificarCava = document.getElementById("modificarCava");
-
-  modificarCava.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
-        const nuevaCava = document.querySelector('#cavaNueva').value;
-   
-        const ConsultaCava = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaCava}' 
-        and tipovehiculo in (2,4)`
-
-        const consultaCavadisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevaCava}'
-         and Ubicacion =1 and tipovehiculo in (2,4)`;
-
-        // Ejecutar la consulta y obtener el resultado
-        const pool = await consultar;
-        const result = await pool.request().query(ConsultaCava);
-        const result2 = await pool.request().query(consultaCavadisp)
-
-
-        // Obtener el valor de count del objeto result
-        const count = result.recordset[0].count;  
-        const count2 = result2.recordset[0].count;
-        if( nuevaCava == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
-      
-          ipcRenderer.send('validarCampo')
-        }  
-
-        // Si count es igual que cero, la placa no existe
-        else if (count == 0) {
-          
-          await  ipcRenderer.send('vehiculoNoregistrado')
-        } 
-
-        else if (count2 == 0){
-
-          await ipcRenderer.send('vehículoNodisponible')
-
-        }
-
-        else{
-
-          ipcRenderer.send('modification-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('modification-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
-        
-          if (index === 1) {
-            // El usuario hizo clic en "no"
-          }
-      // Utiliza los valores en tus consultas SQL
-        await  ipcRenderer.send('datosModificados');
-        location.reload();
-        await modificarCavafunction({ nuevaCava});
-
-      // Limpia los campos del formulario
-  }});
-
-  
-  async function modificarCavafunction(datos) {
-      try {
-          const pool = await consultar;
-          const sqlQuery = `Update  Viajes  set Placa_Cava = '${datos.nuevaCava}' where Id_viaje = ${id_viaje};
-          Update Vehiculos set Ubicacion = 1 where Placa ='${placacava}';
-          Update Vehiculos set Ubicacion = 2 where Placa ='${datos.nuevaCava}'  `;
-          const result = await pool.request().query(sqlQuery);
-          console.log('Registro agregado a la base de datos:', result);
-         
-      } catch (error) {
-          console.log('Error al agregar el registro:', error);
-      }
-  
-  }
-  /******************Fin de codigo para modificar la cava ************************/
-
-
-  /**************************Codigo para modificar el remolque*********************** */
-  const modificarRemolque = document.getElementById("modificarRemolque");
-
-  modificarRemolque.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
-        const nuevoRemolque= document.querySelector('#remolqueNuevo').value;
-   
-        const consultaRemolque = `SELECT count(*) as count FROM Vehiculos where Placa = '${nuevoRemolque}' 
-        and tipovehiculo  in (5,6)`
-
-        const consultaRemolquedisp =`SELECT count(*) as count FROM Vehiculos where Placa = '${nuevoRemolque}'
-         and Ubicacion =1 and tipovehiculo in (5,6)`;
-
-        // Ejecutar la consulta y obtener el resultado
-        const pool = await consultar;
-        const result = await pool.request().query(consultaRemolque);
-        const result2 = await pool.request().query(consultaRemolquedisp)
-
-        // Obtener el valor de count del objeto result
-        const count = result.recordset[0].count;
-        const count2 = result2.recordset[0].count;
-
-        if( nuevoRemolque == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
-      
-          ipcRenderer.send('validarCampo')
-        }  
-        // Si count es igual que cero, la placa no existe
-        else if (count == 0) {
-          
-          await  ipcRenderer.send('vehiculoNoregistrado')
-          // console.log(`La placa ${placa} ya existe en la base de datos`);
-        } 
-
-        else if (count2 == 0){
-
-          await ipcRenderer.send('vehículoNodisponible')
-
-        }
-   
-        else{
-          ipcRenderer.send('modification-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('modification-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
-        
-          if (index === 1) {
-            // El usuario hizo clic en "no"
-          }
-      // Utiliza los valores en tus consultas SQL
-        await  ipcRenderer.send('datosModificados');
-        location.reload();
-        await modificarRemolquefunction({ nuevoRemolque});
-
-      // Limpia los campos del formulario
-  }});
-
-  
-  async function modificarRemolquefunction(datos) {
-      try {
-          const pool = await consultar;
-          const sqlQuery = `Update  Viajes  set Placa_Remolque = '${datos.nuevoRemolque}' where Id_viaje = ${id_viaje};
-          Update Vehiculos set Ubicacion = 1 where Placa ='${placaremolque}';
-          Update Vehiculos set Ubicacion = 2 where Placa ='${datos.nuevoRemolque}'  `;
-          const result = await pool.request().query(sqlQuery);
-          console.log('Registro agregado a la base de datos:', result);
-         
-      } catch (error) {
-          console.log('Error al agregar el registro:', error);
-      }
-  
-  }
-  /******************Fin de codigo para modificar el remolque ************************/
+ 
 
 
 
@@ -818,8 +568,8 @@ botonImprimir.addEventListener('click', async () => {
   const generarBitacora = require('../Reqtransporte/GenerarBitacora');
   await generarBitacora({id_viaje, Cedula_chofer})
 
-  const generarDespacho = require ('../Reqtransporte/GenerarAutorizaciondespacho')
-  await generarDespacho({id_viaje})
+  // const generarDespacho = require ('../Reqtransporte/GenerarAutorizaciondespacho')
+  // await generarDespacho({id_viaje})
 
   // Aquí puedes guardar el PDF en un archivo, enviarlo a través de una respuesta HTTP, etc.
 });
@@ -836,93 +586,65 @@ const emergenteNuevoayudante = require('./EmergenteNuevoayudante.js')
 /*****************************Fin de el codigo para cambiar el ayudante*************************************************** */
 
 
-  /***************************************Codigo para modificar bultos******************************************************* */
-  const modificarBultos = document.getElementById("modificarBultos");
-
-  modificarBultos.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
-        const nuevosBultos= document.querySelector('#bultosNuevos').value;
+/*******************Codigo para anular viajes************************* */
+const anularViaje = document.getElementById("Anular");
 
-        if( nuevosBultos == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
-      
-        ipcRenderer.send('validarCampo')
-      }  else{
-   
-        ipcRenderer.send('modification-confirm-dialog')
-        const index = await new Promise((resolve) => {
-          ipcRenderer.once('modification-dialog-result', (event, index) => {
-            resolve(index)
-          })
-        })
-      
-        if (index === 1) {
-          // El usuario hizo clic en "no"
-        }
-      // Utiliza los valores en tus consultas SQL
-        await  ipcRenderer.send('datosModificados');
-        location.reload();
-        await modificarBultosfunction({ nuevosBultos});
+ocultar(anularViaje)
 
-      // Limpia los campos del formulario
-  }});
-
-  
-  async function modificarBultosfunction(datos) {
-      try {
-          const pool = await consultar;
-          const sqlQuery = `Update  Viajes  set Bultos = '${datos.nuevosBultos}' where Id_viaje = ${id_viaje} `;
-          const result = await pool.request().query(sqlQuery);
-          console.log('Registro agregado a la base de datos:', result);
-         
-      } catch (error) {
-          console.log('Error al agregar el registro:', error);
-      }
-  
-  }
-  /******************Fin de codigo para modificar bultos ************************/
-
-  
-/***************************************Codigo para modificar la fecha de llegada******************************************************* */
-const modificarFechallegada = document.getElementById("modificarFechallegada");
-
-modificarFechallegada.addEventListener('click', async (evento) => {
+anularViaje.addEventListener('click', async (evento) => {
     evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-      const nuevaFechallegada = document.querySelector('#fechaLlegadanueva').value;
-      if( nuevaFechallegada == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
+ 
+      ipcRenderer.send('elimination-confirm-dialog',id_viaje)
+     
+      const index = await new Promise((resolve) => {
+        ipcRenderer.once('elimination-dialog-result', (event, index) => {
+          resolve(index)
+        })
+      })
       
-          ipcRenderer.send('validarCampo')
-        }  
+     
+      if (index === 1) {
+        // El usuario hizo clic en "no"
+      }
+      else{
 
-        else{
+      // Utiliza los valores en tus consultas SQL
 
-          ipcRenderer.send('modification-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('modification-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
-        
-          if (index === 1) {
-            // El usuario hizo clic en "no"
-          }
+      ipcRenderer.send('dato')
+      // console.log('golita') 
+      const arg = await new Promise((resolve) => {
+        ipcRenderer.on('user-data', (event, arg) => {               
+          resolve(arg)
+        });
+      })
+      
+      const usuario = arg.usuario
+      const descripcion =` Se ha eliminado el viaje con el id ${id_viaje}`       
 
-    // Utiliza los valores en tus consultas SQL
-      await modificarFechallegadafunction({nuevaFechallegada});
-      await  ipcRenderer.send('datosModificados');
+      track(descripcion , usuario)
+      await eliminarViajesfunction({id_viaje});
+      ipcRenderer.send('datosEliminados');
+      // Limpia los campos del formulario
+      location.reload();
 
-
-    // Limpia los campos del formulario
-  }
+      }
+    
 });
 
 
-async function modificarFechallegadafunction(datos) {
+async function eliminarViajesfunction() {
     try {
         const pool = await consultar;
-        const sqlQuery = `Update  Viajes set Fecha_llegada = '${datos.nuevaFechallegada}' where Id_viaje = ${id_viaje}`;
+        const sqlQuery = `delete  Viajes  where Id_viaje = ${id_viaje};
+     `;
         const result = await pool.request().query(sqlQuery);
+        const sqlQuery2 = `Update Empleados set estatus = 1 where Cedula = ${Cedula_chofer} or Nombre = '${Ayudante}'; Update Vehiculos set Ubicacion =1 where Placa ='${placa}' or Placa ='${placacava}' or Placa ='${placaremolque}'`;
+        const result2 = await pool.request().query(sqlQuery2);
+
+        const sqlQuery3 = `Delete comprobante_viajes where codigo_viaje = ${id_viaje}`;
+        const result3 = await pool.request().query(sqlQuery3);
+
         console.log('Registro agregado a la base de datos:', result);
        
     } catch (error) {
@@ -930,108 +652,6 @@ async function modificarFechallegadafunction(datos) {
     }
 
 }
-/******************Fin de codigo para modificar la fecha de llegada ************************/
-
-
-/***************************************Codigo para modificar la fecha de Salida******************************************************* */
-const modificarFechasalida = document.getElementById("modificarFechasalida");
-
-modificarFechasalida.addEventListener('click', async (evento) => {
-    evento.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-      const nuevaFechaSalida = document.querySelector('#fechaSalidanueva').value;
-
-      if( nuevaFechaSalida == ""){ /*Envia un mensaje que indica  que el campo esta vacio */
-      
-          ipcRenderer.send('validarCampo')
-        }  
-
-        else{
-  
-
-          ipcRenderer.send('modification-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('modification-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
-        
-          if (index === 1) {
-            // El usuario hizo clic en "no"
-          }
-    // Utiliza los valores en tus consultas SQL
-      await modificarFechasalidafunction({ nuevaFechaSalida});
-      await  ipcRenderer.send('datosModificados');
-
-    // Limpia los campos del formulario
-}});
-
-
-async function modificarFechasalidafunction(datos) {
-    try {
-        const pool = await consultar;
-        const sqlQuery = `Update  Viajes  set Fecha = '${datos.nuevaFechaSalida}' where Id_viaje = ${id_viaje}`;
-        const result = await pool.request().query(sqlQuery);
-        console.log('Registro agregado a la base de datos:', result);
-       
-    } catch (error) {
-        console.log('Error al agregar el registro:', error);
-    }
-
-}
-
-/******************Fin de codigo para modificar la fecha de llegada ************************/
-
-/*******************Codigo para anular viajes************************* */
-// const anularViaje = document.getElementById("Anular");
-
-// anularViaje.addEventListener('click', async (evento) => {
-//     evento.preventDefault(); // Evita que el formulario se envíe automáticamente
- 
-//       ipcRenderer.send('elimination-confirm-dialog',id_viaje)
-     
-//       const index = await new Promise((resolve) => {
-//         ipcRenderer.once('elimination-dialog-result', (event, index) => {
-//           resolve(index)
-//         })
-//       })
-      
-     
-//       if (index === 1) {
-//         // El usuario hizo clic en "no"
-//       }
-//       else{
-
-//       // Utiliza los valores en tus consultas SQL
-//       await eliminarViajesfunction({id_viaje});
-//       ipcRenderer.send('datosEliminados');
-//       // Limpia los campos del formulario
-//       location.reload();
-
-//       }
-    
-// });
-
-
-// async function eliminarViajesfunction() {
-//     try {
-//         const pool = await consultar;
-//         const sqlQuery = `delete  Viajes  where Id_viaje = ${id_viaje};
-//      `;
-//         const result = await pool.request().query(sqlQuery);
-//         const sqlQuery2 = `Update Empleados set estatus = 1 where Cedula = ${Cedula_chofer} or Nombre = '${Ayudante}'; Update Vehiculos set Ubicacion =1 where Placa ='${placa}' or Placa ='${placacava}' or Placa ='${placaremolque}'`;
-//         const result2 = await pool.request().query(sqlQuery2);
-
-//         const sqlQuery3 = `Delete comprobante_viajes where codigo_viaje = ${id_viaje}`;
-//         const result3 = await pool.request().query(sqlQuery3);
-
-//         console.log('Registro agregado a la base de datos:', result);
-       
-//     } catch (error) {
-//         console.log('Error al agregar el registro:', error);
-//     }
-
-// }
 /*******************Fin Codigo para anular viajes************************* */
 
   //  Delete comprobante_viajes where Codigo_viaje = ${id_viaje}
@@ -1044,12 +664,22 @@ añadirObservacion.addEventListener('click', async (evento) => {
 
     const nuevaObservacion = document.querySelector('#observacion').value;
 
-
-        
     // Utiliza los valores en tus consultas SQL
-      await añadirObservacionfunction({nuevaObservacion});
-      await ipcRenderer.send('datosModificados');
+    ipcRenderer.send('dato')
+      // console.log('golita') 
+      const arg = await new Promise((resolve) => {
+        ipcRenderer.on('user-data', (event, arg) => {               
+          resolve(arg)
+        });
+      })
+      
+      const usuario = arg.usuario
+      const descripcion =` Se ha añadido una observacion al viaje con el id ${id_viaje}`       
 
+      track(descripcion , usuario)
+      await añadirObservacionfunction({nuevaObservacion});
+
+      document.getElementById('obsP').innerHTML =`${Observacion} / ${nuevaObservacion}`
     // Limpia los campos del formulario
 });
 
@@ -1060,16 +690,14 @@ async function añadirObservacionfunction(datos) {
         const sqlQuery = `Update  Viajes set Observaciones = '${Observacion} / ${datos.nuevaObservacion}' where Id_viaje = ${id_viaje} `;
         const result = await pool.request().query(sqlQuery);
         console.log('Registro agregado a la base de datos:', result);
-       
+        await ipcRenderer.send('datosModificados');
+
     } catch (error) {
         console.log('Error al agregar el registro:', error);
     }
 
 }
 /*******************Fin Codigo para aañadir a************************* */
-
-
-
 
       const estatusEmergente = document.getElementById('estatus-emergente');
       const modificarEstatus = document.getElementById('modificarEstatus')
@@ -1079,155 +707,50 @@ async function añadirObservacionfunction(datos) {
 
         const idViaje = id_viaje; 
 
-        function llenarTablaEstados(idViaje) {
         
-          consultar.connect().then(() => {
-            const request = new sql.Request(consultar);
-            request.query(`
-            SELECT ce.Cod_estatus,
-            ev.Nombre AS Nombre_Estatus,
-            (SELECT Sede FROM Sedes s WHERE s.Codigo = ce.Sede) AS Nombre_Sede,
-            Format(ce.Fecha, 'dd/MM/yyyy') AS Fecha,
-            ce.Bultos
-            FROM Cambio_estatusviaje ce
-            JOIN EStatusviaje ev ON ce.Codigo_estado = ev.Id_estatus
-            WHERE ce.Codigo_viaje = ${idViaje}
-            ORDER BY ce.Fecha DESC, ce.Cod_estatus DESC;
-            `).then((result) => {
-              const tabla = document.querySelector('#listadoEstadosviajes tbody');
-              tabla.innerHTML = ''; // Limpiar la tabla antes de agregar datos
 
-              result.recordset.forEach((fila) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                  <td>${fila.Cod_estatus}</td>
-                  <td>${fila.Nombre_Estatus}</td>
-                  <td>${fila.Nombre_Sede}</td>
-                  <td>${fila.Fecha}</td>
-                  <td>${fila.Bultos}</td>
-                `;
-                tabla.appendChild(tr);
-              });
-
-              const fechas = result.recordset.map(fila => {
-                const [dia, mes, anio] = fila.Fecha.split('/');
-                return new Date(anio, mes - 1, dia);
-              });
-              const fechaMasReciente = fechas.reduce((a, b) => (a > b) ? a : b);
-              
-              // Formatear la fecha como una cadena en el formato 'dd/MM/yyyy'
-              const dia = fechaMasReciente.getDate().toString().padStart(2, '0');
-              const mes = (fechaMasReciente.getMonth() + 1).toString().padStart(2, '0');
-              const anio = fechaMasReciente.getFullYear();
-              const fechaFormateada = `${dia}/${mes}/${anio}`;
-              
-              document.querySelector('h4').textContent = fechaFormateada;
-              
-            }).catch((error) => {
-              console.error('Error al obtener datos desde la base de datos:', error);
-            })
-          }).catch((error) => {
-            console.error('Error al conectar a la base de datos:', error);
-          });
-
-        }
-
-        const reload = document.getElementById("Reload");
+        const reload = document.getElementById("reloadComprobante");
 
         reload.addEventListener('click', async (evento) => {
-        // location.reload()
-        const refrescar = require('./Listadoviajes.js')
-        refrescar()
-     
-        // fila.querySelector('td:nth-child(1)').click()
 
+          const tablasComprobante = require('./TablaComprobantes.js');
+          tablasComprobante(contenedor2, numeroComprobante, idViaje,Fecha_req)
 
-        var row = document.querySelector("tr td"); // Seleccionar el elemento tr con id fila
-        console.log(row)
-        var index = row.rowIndex; // Obtener el índice del elemento tr
-        // window.location.reload(); // Recargar la página
-        refrescar()
-        console.log(index)
-        var row = document.querySelector("tr:nth-child(" + index + ")"); // Seleccionar el elemento tr con el mismo índice
-        
-        row.click(); // Hacer clic en el elemento tr
       });
 
-      const reload2 = document.getElementById("Reload2");
-      // document.querySelector('td').click()
-// console.log(fila.querySelector('td:nth-child(1)'))
+      const reload2 = document.getElementById("reloadEstatus");
+     
         reload2.addEventListener('click',  (evento) => {
-        // location.reload()
-        botonCerrar.click()
-        // function click(){
-          // reload2.style.display ='none';
-        // reload2.style.display ='none';
-
-        setTimeout(() => {
-               document.querySelector(`td(:nth-child(1) , :contains(${id_viaje}))`).click();
-               console.log(fila.querySelector('td:nth-child(13)'))
-        }, 1000);
-         
-    
-            
        
           // const tablasComprobante = require('./TablaComprobantes.js');
           // tablasComprobante(contenedor2, numeroComprobante, idViaje)
-          // llenarTablaEstados(idViaje)
+          llenarTablaEstados(idViaje)
 
       });
 
-    const tablasComprobante = require('./TablaComprobantes.js');
 
-
-      const contenedor2 = document.getElementById('ventana-modificarComprobante');
+      
       let numeroComprobante;
 
-      llenarTablaEstados(idViaje);   
+  
 
-      tablasComprobante(contenedor2, numeroComprobante, idViaje)
+    
 
 
 
-      const emergenteComprobanteayudante = require('./EmergenteComprobanteayudante.js');
+    
 
       const comprobanteAyudante = document.getElementById("comprobanteAyudante")
       const comprobanteAyudanteDiv = document.getElementById("generar-comprobanteAyudante")
 
       emergenteComprobanteayudante(comprobanteAyudante, comprobanteAyudanteDiv, id_viaje, origen)
+      estadosViaje(id_viaje) 
+      llenarTablaEstados(idViaje);   
 
+      tablasComprobante(contenedor2, numeroComprobante, idViaje,Fecha_req)
+      modificarViaje(id_viaje, placa, Cedula_chofer, placaremolque , placacava)
 
-
-      // Agregar un controlador de eventos para el evento "click" en el menú de pestañas
-      // fila.addEventListener("click", function(event) {
-      //   // Obtener el índice de la pestaña seleccionada
-      //   var selectedIndex = Array.prototype.indexOf.call(fila.children, event.target);
-
-      //   // Guardar el índice de la pestaña seleccionada en localStorage
-      //   localStorage.setItem("selectedTabIndex", selectedIndex); 
-      // });
-
-      // // Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
-      // var selectedTabIndex = localStorage.getItem("selectedTabIndex");
-      // console.log(selectedTabIndex)
-      // // Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
-      // if (selectedTabIndex !== null) {
-      //   fila.children[selectedTabIndex].click();
-      // }
-
-    // const botonComprobantes = document.querySelector('#imprimirComprobantes');
-
-    //           // Añade un escuchador de eventos para el evento de clic.
-    //           botonComprobantes.addEventListener('click', async () => {
-    //             // Usa la función consultar para obtener el listado de viajes.
-    //             // Cuando el botón sea clickeado, genera el PDF.
-    //             const generarListadoComprobantes = require ('./ImprimirComprobantes')
-              
-    //             await generarListadoComprobantes()
-              
-    //             // Aquí puedes guardar el PDF en un archivo, enviarlo a través de una respuesta HTTP, etc.
-    //           });
-
+   
   });
 
 

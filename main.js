@@ -1,21 +1,26 @@
 //Importando datos necesarios para el funcionamiento
 const path = require('path');
-const { app, BrowserWindow, ipcMain, dialog, ipcRenderer, webContents, } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, webContents, globalShortcut } = require('electron');
+const log = require('electron-log');
+const { autoUpdater, AppUpdater } = require("electron-updater");
+
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+
+function sendStatusToWindow(text) {
+  log.info(text);
+  mainWindow.webContents.send('message', text);
+}
 
 
 
 
-
-// function adjustWindowSize(){
-
-// const subWindow = remote.BrowserWindow.getFocusedWindow();
-//   const height= document.body.scrollHeight;
-//   const width =document.body.scrollWidth;
-
-//   subWindow.setSize(width,height);
-// }
 let mainWindow;
 let loginWindow;
+let childWindow;
+
+
 //Creación automática de la pantalla, será la principal
 function createWindow () {
   loginWindow = new BrowserWindow({
@@ -39,32 +44,31 @@ function createWindow () {
     }
   })
 
-  // loginWindow.webContents.openDevTools()
 
   loginWindow.loadFile('Login/Login.html'); 
+
+
+
 }
-  app.whenReady().then(() => {
+  app.whenReady().then(async() => {
     createWindow()
-  
+      
+    
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         createWindow()
       }
     })
-  });
-  
-  
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
+
+    // autoUpdater.logger = log;
   })
   
 
   ipcMain.on('login', (event, arg) => {
     // Cuando recibes el evento 'login', cierra la ventana de inicio de sesión
-    // mainWindow.close();
+
     userData = arg
+    // global = arg
     // Y abre la ventana principal
     mainWindow = new BrowserWindow({
       
@@ -85,12 +89,31 @@ function createWindow () {
     });
     // mainWindow.webContents.openDevTools()
 
+    mainWindow.webContents.on('before-input-event', (event, input) => {
+      if (input.type === 'keyDown' && input.key === 'Enter') {
+        event.preventDefault()
+        console.log('xd')
+      }
+    })
+  
+
     mainWindow.loadFile('Menuprincipal/Menuprincipal.html');
     
 
     mainWindow.webContents.send('filtro', (event, arg)); 
 
+
+
     loginWindow.close();
+
+   Update()
+  });
+  
+  
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
 
   });
 
@@ -112,7 +135,24 @@ ipcMain.on('AdmVehiculos', (event, data) => {
   })
   // childWindow.webContents.openDevTools()
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
   childWindow.loadFile(path.join(__dirname, 'Admvehiculos/Admvehiculos.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+console.log("bachata es =", global)
+console.log("bachata es =", global.nivel)
+
 
   
 
@@ -134,8 +174,24 @@ ipcMain.on('Asignacion', (event, data) => {
     }
   })
 
-  childWindow.webContents.openDevTools()
+  // childWindow.webContents.openDevTools()
+
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
   childWindow.loadFile(path.join(__dirname, 'Asignacion/Asignacion.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+
 
   
 })/*Fin Asignacion*/ 
@@ -162,19 +218,26 @@ ipcMain.on('AdmMMT', (event, data) => {
     }
   })
   // childWindow.webContents.openDevTools()
+
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
   
   childWindow.loadFile(path.join(__dirname, 'AdmMMT/AdmMMT.html'))
-//   childWindow.loadURL(url.format({
-//    pathname:
-//    path.join(__dirname,'AdmMMT/AdmMMT.html'),
-//    protocol:'file:',
-//    slashes:true,
-//    Hash: 'tab1'
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
 
 
-// }))
-
-   
+console.log("bachata es =", global.userData)
+console.log("bachata es =", global)
+console.log("bachata es =", global.nivel)
 })/*Fin AdmMMT*/
 
 
@@ -195,9 +258,38 @@ ipcMain.on('Empleados', (event, data) => {
     }
   })
 
-  childWindow.webContents.openDevTools()
+  // childWindow.webContents.openDevTools()
+
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+  
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
 
   childWindow.loadFile(path.join(__dirname, 'Empleados/empleados.html'))
+
+  console.log(global)
+
+//   childWindow.webContents.on('did-finish-load', () => {
+//     childWindow.webContents.send('user-data', global.userData);
+
+// });
+
+// childWindow.loadFile(path.join(__dirname, 'CrearAutorizacion/CrearAutorizacion.html'))
+
+childWindow.webContents.on('did-finish-load', () => {
+  childWindow.webContents.send('user-data', global.userData);
+
+});
+
 
 } )/*Fin Administracion de empleados*/
 
@@ -218,7 +310,22 @@ ipcMain.on('Autorizacion', (event, data) => {
     }
   })
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
   childWindow.loadFile(path.join(__dirname, 'CrearAutorizacion/CrearAutorizacion.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 })/*Fin Administracion de empleados*/
 
 /*Inicio Administración de contenedores*/
@@ -236,8 +343,24 @@ ipcMain.on('AdmContenedores', (event, data) => {
       enableRemoteModule: true
     }
   })
+  
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
 
   childWindow.loadFile(path.join(__dirname, 'AdmContenedores/AdmContenedores.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 })/*Fin Administracion de contenedores*/
 
 /*Inicio Cuentas de usuarios*/
@@ -257,7 +380,23 @@ ipcMain.on('Usuarios', (event, data) => {
   })
   // childWindow.webContents.openDevTools()
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
   childWindow.loadFile(path.join(__dirname, 'Usuarios/usuarios.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 
   
 
@@ -271,7 +410,7 @@ ipcMain.on('Gasoil', (event, data) => {
     frame:false,
     resizable: false,
     modal: true,
-    transparent:true,
+    transparent:true, 
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -279,7 +418,26 @@ ipcMain.on('Gasoil', (event, data) => {
     }
   })
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
+
+
   childWindow.loadFile(path.join(__dirname, 'gasoil/Gasoil.html'))
+
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 })/*Fin Administracion de gasoil*/
 
 
@@ -300,7 +458,24 @@ ipcMain.on('Surtido', (event, data) => {
     }
   })
 
+
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
   childWindow.loadFile(path.join(__dirname, 'Surtido/surtlaido.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 
 })/*Fin Surtido de gasoil*/
 
@@ -308,7 +483,7 @@ ipcMain.on('Surtido', (event, data) => {
 ipcMain.on('Contenedores', (event, data) => {
   const childWindow = new BrowserWindow({
     width: 790,
-    height: 655,
+    height: 660,
     frame:false,
     transparent:true,
     resizable:false,
@@ -321,7 +496,23 @@ ipcMain.on('Contenedores', (event, data) => {
   })
   // childWindow.webContents.openDevTools()
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
   childWindow.loadFile(path.join(__dirname, 'Contenedores/Contenedores.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 
 })/*Fin Registro de contenedores*/ 
 
@@ -342,7 +533,23 @@ ipcMain.on('ReqContAlmacen', (event, data) => {
     }
   })
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
   childWindow.loadFile(path.join(__dirname, 'ReqContAlmacen/ReqContAlmacen.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 })/*Fin Requerimiento de contenedor a almacen*/
 
 
@@ -361,9 +568,25 @@ ipcMain.on('ReqCavaAlmacen', (event, data) => {
       enableRemoteModule: true
     }
   })
-  childWindow.webContents.openDevTools()
+  // childWindow.webContents.openDevTools()
+
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
 
   childWindow.loadFile(path.join(__dirname, 'ReqCavaAlmacen/ReqCavaAlmacen.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 
 })/*Fin Requerimiento de cava a almacen*/
 
@@ -371,7 +594,7 @@ ipcMain.on('ReqCavaAlmacen', (event, data) => {
 ipcMain.on('Reqtransporte', (event, data) => {
   const childWindow = new BrowserWindow({
     width: 970,
-    height: 642,
+    height: 662,
       frame:false,
     modal: true,
     transparent:true,
@@ -385,7 +608,23 @@ ipcMain.on('Reqtransporte', (event, data) => {
 
   // childWindow.webContents.openDevTools()
 
+  childWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'Enter') {
+      event.preventDefault()
+      console.log('xd')
+    }
+  })
+
+
   childWindow.loadFile(path.join(__dirname, 'Reqtransporte/Reqtransporte.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
 })
 
 
@@ -407,10 +646,22 @@ ipcMain.on('ReqtransporteConstruccion', (event, data) => {
   // childWindow.webContents.openDevTools()
 
   childWindow.loadFile(path.join(__dirname, 'ReqtransporteConstruccion/ReqtransporteConstruccion.html'))
-})
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
+}) 
+
+
 /*Inicio Listado de viajes*/
+ 
 ipcMain.on('ListadoViajes', (event, data) => {
-  const childWindow = new BrowserWindow({
+ 
+    childWindow = new BrowserWindow({
     width: 965,
     height: 638,
     transparent:true,
@@ -423,10 +674,24 @@ ipcMain.on('ListadoViajes', (event, data) => {
       enableRemoteModule: true
     }
   })
-   childWindow.webContents.openDevTools()
+  
+ childWindow.loadFile(path.join(__dirname, 'Listadoviajes/Listadoviajes.html'))
 
-  childWindow.loadFile(path.join(__dirname, 'Listadoviajes/Listadoviajes.html'))
-})/*Fin Listado de viajes*/
+ childWindow.webContents.on('did-finish-load', () => {
+  childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
+ 
+
+//  childWindow.webContents.send('filtro2', (event, arg)); 
+
+    
+})
+/*Fin Listado de viajes*/
+
 
 /*Inicio Pago por kilometraje*/
 ipcMain.on('PagoKm', (event, data) => {
@@ -445,7 +710,14 @@ ipcMain.on('PagoKm', (event, data) => {
   })
 
   childWindow.loadFile(path.join(__dirname, 'PagoKm/PagoKm.html'))
+
+  childWindow.webContents.on('did-finish-load', () => {
+    childWindow.webContents.send('user-data', global.userData);
+
+});
  
+
+console.log("bachata es =", global.userData)
 })/*Fin Pago por kilometraje*/ 
 
 
@@ -469,10 +741,22 @@ ipcMain.on('PagoKm', (event, data) => {
       }
     })
   
-childWindow.webContents.openDevTools()
+    app.on('ready', () => {
+
+      globalShortcut.register('Control+Shift+I', () => {
+    
+        childWindow.webContents.openDevTools();
+      });
+    });
       
         childWindow.loadFile(path.join(__dirname, 'admviatico/Admviatico.html'))
-        
+
+        childWindow.webContents.on('did-finish-load', () => {
+          childWindow.webContents.send('user-data', global.userData);
+      
+      });
+       
+  console.log("bachata es =", global.userData) 
     //   ipcMain.on('login', (event, arg) => {
     //   childWindow.webContents.send('filtro', (event, arg));
     //  })
@@ -502,20 +786,13 @@ childWindow.webContents.openDevTools()
 // childWindow.webContents.openDevTools()
  childWindow.loadFile(path.join(__dirname, 'ViaticosConstruccion/ViaticosConstruccion.html'))
 
- ipcMain.on('print-to-pdf', function (event) {
-  const pdfPath = path.join(__dirname, '/print.pdf')
-  const childWindow = BrowserWindow.fromWebContents(event.sender)
-  childWindow.webContents.printToPDF({printBackground: true, landscape: true}, function (error, data) {
-    if (error) throw error
-    fs.writeFile(pdfPath, data, function (error) {
-      if (error) {
-        throw error
-      }
-      shell.openExternal('file://' + pdfPath)
-      event.sender.send('wrote-pdf', pdfPath)
-    })
-  })
-})
+ childWindow.webContents.on('did-finish-load', () => {
+  childWindow.webContents.send('user-data', global.userData);
+
+});
+
+
+console.log("bachata es =", global.userData)
    
   })
 
@@ -540,13 +817,20 @@ childWindow.webContents.openDevTools()
   
     childWindow.loadFile(path.join(__dirname, 'Rutas/Rutas.html'))
 
+    childWindow.webContents.on('did-finish-load', () => {
+      childWindow.webContents.send('user-data', global.userData);
+  
+  });
+
+  console.log("bachata es =", global.userData)
+
   })/*Fin menu rutas*/ 
 
 /*Menu Administración de sedes*/
 ipcMain.on('Sedes', (event, data) => {
   const childWindow = new BrowserWindow({
     width: 860,
-    height: 635,
+    height: 640,
     frame:false,
     modal: true,
     resizable: false,
@@ -560,8 +844,22 @@ ipcMain.on('Sedes', (event, data) => {
   // childWindow.webContents.openDevTools()
 
   childWindow.loadFile(path.join(__dirname, 'sedes/sedes.html'))
+  
+  const generarSedesPDF = require('./sedes/ImprimirSedes')
 
+    ipcMain.on('imprimir-sedes', (event,data) =>  {
+      
+    console.log('hola')
+
+
+      generarSedesPDF(childWindow, app);
+
+    })
+  // const page =  pie.getPage(browser, window);
+ 
 })/*Fin menu rutas*/ 
+
+        
 
 /*Menu Rutas*/
 ipcMain.on('Peajes', (event, data) => {
@@ -627,16 +925,7 @@ ipcMain.on('cerrar', () => {
 
 //maximizar
 
-// ipcMain.on('maxi', () => {
 
-//   const maxi = BrowserWindow.getFocusedWindow()
-
-//   if (maxi) {
-//     console.log('Maximizando')
-
-//     maxi.maximize()
-//   }
-// })
 
 ipcMain.on('Dialogomodelo', async () => { await
   dialog.showMessageBox({ 
@@ -1014,12 +1303,15 @@ ipcMain.on('modification-confirm-dialog', (event) => {
      
   }
 
+
   // Mostrar la messagebox de confirmación
   dialog.showMessageBox(null, options).then((result) => {
     // Enviar el resultado de la confirmación al proceso de renderizado
     event.sender.send('modification-dialog-result', result.response)
   })
+
 })
+
 
 
 ipcMain.on('empleadoAsignado', (event, Cedula) => {
@@ -1041,7 +1333,7 @@ ipcMain.on('empleadoAsignado', (event, Cedula) => {
   })
 })
 
-ipcMain.on('vehículoAsignado', (event, Placa) => {
+ipcMain.on('vehiculoAsignado', (event, Placa) => {
   const options = {
     'type': 'question',
       'title': 'Confirmacion',
@@ -1081,11 +1373,52 @@ ipcMain.on('autorizacion-confirm-dialog', (event) => {
 })
 
 
+ipcMain.on('impresion-confirm-dialog', (event) => {
+  const options = {
+    'type': 'question',
+      'title': 'Imprimir viaje',
+      'message': '¿Desea imprimir el viaje?' ,
+      'buttons': [
+          'Si',
+          'No'
+      ],
+     
+  }
+
+  // Mostrar la messagebox de confirmación
+  dialog.showMessageBox(null, options).then((result) => {
+    // Enviar el resultado de la confirmación al proceso de renderizado
+    event.sender.send('impresion-dialog-result', result.response)
+  })
+})
+
+ipcMain.on('dato', (event) => {
+
+  // Mostrar la messagebox de confirmación
+
+    // Enviar el resultado de la confirmación al proceso de renderizado
+    event.sender.send('user-data', global.userData)
+
+})
+
+// childWindow.webContents.send('user-data', global.userData);
+
+
+
 ipcMain.on('asignacionExistente', (event, Cedula, Vehiculo) => { 
   dialog.showMessageBox({  
     type:'error',
     title: "Asignación existente",
     message: 'El empleado con la cedula '+ Cedula +' ya tiene asignado el vehículo ' + Vehiculo,
+
+})
+ })
+
+ ipcMain.on('empleadoexistente', ( Cedula) => { 
+  dialog.showMessageBox({  
+    type:'error',
+    title: "Empleado existente",
+    message: 'El empleado con la cedula '+ Cedula +' ya se encuentra registrado en el sistema ' 
 
 })
  })
@@ -1110,3 +1443,60 @@ ipcMain.on('Usuarionoencontrado', (event) => {
 
 })
  })
+
+ ipcMain.on('comprobanteAdicional', (event, diasExtra) => { 
+  dialog.showMessageBox({  
+    type:'info',
+    title: "Comprobante Adicional",
+    message: 'Se han generado ' +diasExtra + ' comprobante(s) adicional' ,
+
+})
+ })
+
+
+ function Update(){
+  autoUpdater.checkForUpdates();
+
+  autoUpdater.on('checking-for-update', () => {
+    sendStatusToWindow('Buscando actualización...');
+  })
+
+
+  /*New Update Available*/
+  autoUpdater.on("update-available", (info) => {
+
+    sendStatusToWindow(`Actualización disponible. Version actual ${app.getVersion()}`)
+
+
+  // })
+  let pth = autoUpdater.downloadUpdate();
+  mainWindow.showMessage(pth);
+  });
+
+  autoUpdater.on("update-not-available", (info) => {
+    // loginWindow.showMessage(`No update available. Current version ${app.getVersion()}`);
+    sendStatusToWindow(`Version ${app.getVersion()}`)
+
+
+  });
+
+
+  autoUpdater.on("update-downloaded", (info) => {
+    sendStatusToWindow(`Actualización descargada. Reinicie la aplicación para visualizar los cambios`)
+  });
+
+  autoUpdater.on('download-progress', (progressObj) => {
+   let log_message = 'Velocidad de descarga: ' + (progressObj.bytesPerSecond / 1000000).toFixed(2) + "MB/s"
+       log_message = log_message + ' - Total descargado ' + progressObj.percent.toFixed(2) + '%'
+    // log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+    sendStatusToWindow(log_message)
+
+  })
+  
+    autoUpdater.on("error", (info) => {
+      sendStatusToWindow("Error al descargar", info);
+
+    
+    });
+ }
+

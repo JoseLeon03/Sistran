@@ -823,6 +823,7 @@ font-weight: bold
 ;
 }
 
+
 #ventana-modificarComprobante{
 display: none; 
 background-color:  #aaa;
@@ -999,8 +1000,39 @@ margin-left:auto;
 
 }
 
+
+#esttus{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ref {
+  position: absolute;
+  /* top: 25; */
+  top: 35px;
+  float: right;
+}
+#ventana-actualizarcont {
+  /* display: none; */
+  background-color:  #aaa;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 350px;
+   height: 300px; 
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  border: 1px solid black;
+  padding: 0px 20px 20px 20px;
+  }
+
+#ventana-actualizarcont fieldset+ fieldset{
+
+  margin-top:15px;
+
+}
+
 #separar{
   display: flex;
   justify-content: space-between;
-
 }

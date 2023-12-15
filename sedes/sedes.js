@@ -1,6 +1,8 @@
 const sql = require('mssql')
 const {consultar, config} = require ('../Promise')
-
+const camposVacios = require('./camposVacios')
+const refrescarTab = require('../Utility/refrescarTab')
+const track = require('../Utility/Track')
 
 /**********************************Obtener sedes***************************************** */ 
 
@@ -247,6 +249,18 @@ consultar.connect().then(() => {
                   }
                    else {
                     // El us
+                    ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha creado la sede ${Nombre}`       
+
+                track(descripcion , usuario)
           
               // Utiliza los valores en tus consultas SQL
                 await agregarSedes({ Nombre, Tiposede});
@@ -283,7 +297,7 @@ Guardar2.addEventListener('click', async (evento) => {
         const Nombre_Tipo = document.querySelector('input[name="nombre_tipo"]').value;
 
         let nombresMostrados = {
-          'nombre_Tipo': 'Por favor, ingrese un nombre para el tipo sede ',
+          'nombre_tipo': 'Por favor, ingrese un nombre para el tipo sede ',
 
           // Agrega más mapeos según sea necesario
         };
@@ -296,30 +310,33 @@ Guardar2.addEventListener('click', async (evento) => {
         const count = result.recordset[0].count;
     
         let inputs = document.querySelectorAll('.requerido2');
-    
 
+        // camposVacios(inputs,Guardar2, nombresMostrados)
         let camposVacios = []; // Lista para almacenar los nombres de los campos vacíos
-    
-          // Itera sobre los elementos de entrada
-          for (let i = 0; i < inputs.length; i++) {
-              // Si el elemento de entrada está vacío...
-              if (inputs[i].value === '') {
-                  // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
-                  let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
-                  // Añade el nombre del campo vacío a la lista
-                  camposVacios.push(nombreMostrado);
-              }
-          }
-    
-            // Si hay campos vacíos...
-            if (camposVacios.length > 0) {
-                // Envía un mensaje al proceso principal con la lista de campos vacíos
-                ipcRenderer.send('campos-vacios', camposVacios);
-                setTimeout(() =>{ Guardar2.disabled = false }, 2500)
 
-                
-            } 
-             else if( count >0){
+        // Itera sobre los elementos de entrada
+        for (let i = 0; i < inputs.length; i++) {
+            // Si el elemento de entrada está vacío...
+            if (inputs[i].value === '') {
+                // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
+                let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
+                // Añade el nombre del campo vacío a la lista
+                camposVacios.push(nombreMostrado);
+            }
+        }
+  
+          // Si hay campos vacíos...
+          if (camposVacios.length > 0) {
+              // Envía un mensaje al proceso principal con la lista de campos vacíos
+              ipcRenderer.send('campos-vacios', camposVacios);
+              setTimeout(() =>{ Guardar2.disabled = false }, 2500)
+    
+              
+          } 
+
+      
+    
+          else if( count >0){
 
                 ipcRenderer.send('tiposedeExistente', Nombre_Tipo)
                 setTimeout(() =>{ Guardar2.disabled = false }, 2500)
@@ -341,8 +358,21 @@ Guardar2.addEventListener('click', async (evento) => {
                else {
                 // El usuario hizo clic en "si"
                 Guardar2.disabled = false
+
+                ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha creado el tipo de sede ${Nombre_Tipo}`       
+
+                track(descripcion , usuario)
               
-      // Utiliza los valores en tus consultas SQL
+           // Utiliza los valores en tus consultas SQL
             await agregarTipos({ Nombre_Tipo});
 
             // Limpia los campos del formulario
@@ -546,6 +576,18 @@ modificar.addEventListener('click', async function() {
     } catch (error) {
       console.log('Error al actualizar la sede y el tipo de sede');
     }
+    ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha modificado la sede  con el codigo ${codigo}`       
+
+                track(descripcion , usuario)
     ipcRenderer.send('datosModificados')
     location.reload();
 }}
@@ -658,6 +700,18 @@ document.getElementById('modificar2').addEventListener('click', async function()
   } catch (error) {
     console.log('Error al actualizar el tipo de vehículo');
   }
+  ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha modificado el tipo de sede con el codigo ${codigo}`       
+
+                track(descripcion , usuario)
     formulario2.reset()
     location.reload();
 }}
@@ -669,7 +723,6 @@ document.getElementById('modificar2').addEventListener('click', async function()
       evento.preventDefault(); // Evita que el formulario se envíe automáticamente
   
       const Nombre_Tipo = document.querySelector('input[name="nombre_tipo"]').value;
-      // const Tiposede = document.querySelector('#tiposede').value;
 
 
         let nombresMostrados = {
@@ -677,13 +730,7 @@ document.getElementById('modificar2').addEventListener('click', async function()
           // Agrega más mapeos según sea necesario
         };
      
-        // const ConsultaSede = `SELECT count(*) as count FROM Sedes where sede = '${Nombre}'`;
      
-
-      // const result2 = await pool.request().query(ConsultaSede);
-      // const result2 = await pool.request().query(consulta)
-      // const count2 = result2.recordset.map()
-    
         let inputs = document.querySelectorAll('.requerido2');
     
 
@@ -722,9 +769,20 @@ document.getElementById('modificar2').addEventListener('click', async function()
 
                    else {
                     // El us
-          
               // Utiliza los valores en tus consultas SQL
               await eliminarTiposede({ Nombre_Tipo});
+              ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha eliminado el tipo de sede ${Nombre_Tipo}`       
+
+                track(descripcion , usuario)
               ipcRenderer.send('datosModificados');
               // Limpia los campos del formulario
               // formulario3.reset();
@@ -816,7 +874,19 @@ document.getElementById('modificar2').addEventListener('click', async function()
                       // El us
             
                 // Utiliza los valores en tus consultas SQL
-                await eliminarTipos({ Nombre, count});
+                await anularSede({ Nombre, count});
+                ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha anulado la sede  ${Nombre}`       
+
+                track(descripcion , usuario)
                 ipcRenderer.send('datoEliminado');
                 // Limpia los campos del formulario
                 // formulario3.reset();
@@ -825,7 +895,7 @@ document.getElementById('modificar2').addEventListener('click', async function()
         });
   
     
-        async function eliminarTipos(datos) {
+        async function anularSede(datos) {
             try {
                 const pool = await consultar;
                 const sqlQuery = `update Sedes set Tiposede =${datos.count} where Sede = '${datos.Nombre}'`;
@@ -864,22 +934,6 @@ document.getElementById('modificar2').addEventListener('click', async function()
 
 
 
-var tabMenu = document.querySelector("#tab-menu");
-
-// Agregar un controlador de eventos para el evento "click" en el menú de pestañas
-tabMenu.addEventListener("click", function(event) {
-  // Obtener el índice de la pestaña seleccionada
-  var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
-  // Guardar el índice de la pestaña seleccionada en localStorage
-  localStorage.setItem("selectedTabIndex", selectedIndex);
-});
-
-// Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
-var selectedTabIndex = localStorage.getItem("selectedTabIndex");
-
-// Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
-if (selectedTabIndex !== null) {
-  tabMenu.children[selectedTabIndex].click();
-}
+  refrescarTab()
 
 module.exports = {obtenerSedes, obtenertipos}

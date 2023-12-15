@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 const { shell } = require('electron');
 
-const generarComprobante = async ({ numeroComprobante}) => {
+const generarComprobante = async (numeroComprobante , Fecha_req) => {
   const { readFileSync } = require('fs');
 
 
@@ -19,7 +19,9 @@ const generarComprobante = async ({ numeroComprobante}) => {
   const Cedula_chofer = comprobante.Cedula;
   const Viatico       = comprobante.Monto;
 
-
+//   var fecha_array = Fecha_req.split("-"); // Devuelve ["30", "08", "2023"]
+//   var fecha_iso = fecha_array.reverse().join("/"); 
+// const result1 = Fecha_req.toLocaleDateString('en-GB');
 
 
 
@@ -82,7 +84,8 @@ const generarComprobante = async ({ numeroComprobante}) => {
   <div id="textoConcepto">
   <p>${Descripcion}</p>
   <div id="fechaViaje">
-  <label for="">Fecha de viaje  </label> <span>${Fecha}</span></div>
+  <label for="">Fecha de viaje  </label> <span>${Fecha_req}</span>
+  </div>
   </div>
   
   <table>
@@ -149,7 +152,8 @@ const generarComprobante = async ({ numeroComprobante}) => {
       <div id="textoConcepto">
       <p>${Descripcion}</p>
       <div id="fechaViaje">
-      <label for="">Fecha de viaje </label> <span>${Fecha}</span></div>
+      <label for="">Fecha de viaje  </label> <span>${Fecha_req}</span>
+      </div>
       </div>
       
       <table>

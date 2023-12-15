@@ -1,5 +1,11 @@
 const sql = require('mssql')
-const {consultar, config} = require ('../Promise')
+const {consultar, config} = require ('../Promise');
+
+const track = require('../Utility/Track')
+
+
+
+
 
 const obtenerEmpleados = (conexion) => {
     const request = new sql.Request(conexion)
@@ -180,11 +186,13 @@ const updateFilteredListados = () => {
 
     // Agregar controladores de eventos a los inputs de fecha para actualizar el filtro cuando cambien
     fechaPosteriorInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage2").click()
       fechaPosteriorValue = new Date(event.target.value);
       updateFilteredListados();
     });
 
     fechaAnteriorInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage2").click()
       fechaAnteriorValue = new Date(event.target.value);
       updateFilteredListados();
     });
@@ -197,36 +205,42 @@ const updateFilteredListados = () => {
      
      const edadilterInput = document.querySelector('#edadfilter');
      edadilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage2").click()
        edadFilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const apellidoFilterInput = document.querySelector('#apellidofilter');
      apellidoFilterInput.addEventListener('input', (event) => {
+       document.getElementById("firstPage2").click()
        apellidoFilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const nombreFilterInput = document.querySelector('#nombrefilter');
      nombreFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage2").click()
        nombreFilterValue = event.target.value.toLowerCase();
        updateFilteredListados();
      });
      
      const cedulaFilterInput = document.querySelector('#cedulafilter');
      cedulaFilterInput.addEventListener('input', (event) => {
+      document.getElementById("firstPage2").click()
        cedulaFilterValue = event.target.value;
        updateFilteredListados();
      });
 
      const templeadoFilterInput = document.querySelector('#templeadofilter');
      templeadoFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage2").click()
        templeadoFilterValue = event.target.value;
        updateFilteredListados();
      });
 
      const estatusEmpleadoFilterInput = document.querySelector('#estatusEmpleado');
      estatusEmpleadoFilterInput.addEventListener('change', (event) => {
+      document.getElementById("firstPage2").click()
        estatusEmpleadoFilterValue = event.target.value;
        updateFilteredListados();
      });
@@ -409,8 +423,20 @@ const updateFilteredListados = () => {
             element.disabled = false
           }
           else{
-
             element.disabled = false
+
+            ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha agregado el empleado con la cedula ${Cedula}`       
+
+                track(descripcion , usuario)
         // Utiliza los valores en tus consultas SQL
         await agregarEmpleado({ nombre, Cedula,  apellido, f_nacimiento, edad, f_ingreso, direccion, telefono, Celular, templeado});
         // Limpia los campos del formulario
@@ -510,9 +536,7 @@ Anular.addEventListener('click', async (evento) => {
     const count = result.recordset[0].count;
     const count2 = result2.recordset[0].counts;
 
-
-
-    
+  
        if (count === 0) {
           
           await  ipcRenderer.send('empleadoNoexistente', Cedula)
@@ -526,17 +550,17 @@ Anular.addEventListener('click', async (evento) => {
 
           else{
 
-            ipcRenderer.send('show-confirm-dialog')
-            const index = await new Promise((resolve) => {
-              ipcRenderer.once('modification-dialog-result', (event, index) => {
-                resolve(index)
-              })
-            })
+            // ipcRenderer.send('show-confirm-dialog')
+            // const index = await new Promise((resolve) => {
+            //   ipcRenderer.once('modification-dialog-result', (event, index) => {
+            //     resolve(index)
+            //   })
+            // })
         
-            if (index === 1) {
-              // El usuario hizo clic en "no"
-            }
-            else{
+            // if (index === 1) {
+            //   // El usuario hizo clic en "no"
+            // }
+            // else{
 
 
               ipcRenderer.send('anular-confirm-dialog')
@@ -549,23 +573,36 @@ Anular.addEventListener('click', async (evento) => {
               if (index === 1) {
                 // El usuario hizo clic en "no"
               }
-              else{   
+              else{ 
+                ipcRenderer.send('dato')
+                // console.log('golita') 
+                const arg = await new Promise((resolve) => {
+                  ipcRenderer.on('user-data', (event, arg) => {               
+                    resolve(arg)
+                  });
+                })
+                
+                const usuario = arg.usuario
+                const descripcion =` Se ha anulado el empleado con la cedula ${Cedula}`
 
-          // Utiliza los valores en tus consultas SQL
+                track(descripcion , usuario)
+
+           // Utiliza los valores en tus consultas SQL
             await anularEmpleado({ Cedula});
-            ipcRenderer.send('datosModificados');
+            
           // Limpia los campos del formulario
 
-    location.reload()
-  }}
+    // location.reload()
+  }
 }});
 
 async function anularEmpleado(datos) {
     try {
         const pool = await consultar;
-        const sqlQuery = `Update Empleados set Activo = 0 where Cedula = ${datos.Cedula} `;
+        const sqlQuery = `Update Empleados set Activo = '2' where Cedula = ${datos.Cedula} `;
         const result = await pool.request().query(sqlQuery);
         console.log('Registro agregado a la base de datos:', result);
+        ipcRenderer.send('datosModificados');
     } catch (error) {
       ipcRenderer.send('error', error);
       console.log(error)
@@ -741,12 +778,20 @@ modificar.addEventListener('click', async (evento) => {
 
       try {
         await sql.connect(config);
-        const query = `UPDATE Empleados SET Cedula = ${cedulaNuevecita}, Nombre = '${nombre}', Apellido = '${apellido}', Fechanacimiento = '${f_nacimiento}', Edad = ${edad}, Telefono = ${telefono}, Celular = ${Celular}, Fechaingreso = '${f_ingreso}', Tipoempleado = ${templeado}, Direccion = '${direccion}' WHERE Cedula = '${cedulaOriginal}'`;
+        const query = `UPDATE Empleados SET Cedula = ${cedulaNuevecita}, Nombre = '${nombre}', Apellido = '${apellido}', Fechanacimiento = '${f_nacimiento}', Edad = ${edad}, Telefono = ${telefono}, Celular = ${Celular}, Fechaingreso = '${f_ingreso}', Tipoempleado = ${templeado}, Direccion = '${direccion}', Activo = 1 WHERE Cedula = '${cedulaOriginal}'`;
         await sql.query(query);
-        if (cedulaOriginal !== cedulaNuevecita) {
-          console.log('Cédula nueva tiene el valor de ' + cedulaNuevecita)
-          ipcRenderer.send('datosModificados');
-        }
+        ipcRenderer.send('dato')
+        // console.log('golita') 
+        const arg = await new Promise((resolve) => {
+          ipcRenderer.on('user-data', (event, arg) => {               
+            resolve(arg)
+          });
+        })
+        
+        const usuario = arg.usuario
+        const descripcion = `Se ha modificado el empleado con la cedula ${cedulaOriginal}`
+
+        track(descripcion , usuario)
       } catch (error) {
         console.error('Error al actualizar los datos:', error);
         throw error;
@@ -780,4 +825,8 @@ inputFechaNacimiento.addEventListener('change', () => {
 
   inputEdad.value = edad;
 });
+
+
+
+
 

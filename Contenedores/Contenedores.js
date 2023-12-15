@@ -1,7 +1,8 @@
 const sql = require('mssql')
 const {consultar, config} = require ('../Promise')
 const Emergentes = require ('./EmergenteContenedores')
-
+const refrescarTab = require('../Utility/refrescarTab')
+const track = require('../Utility/Track')
 
 const obtenerContenedores = (conexion) => {
     const request = new sql.Request(conexion)
@@ -116,156 +117,172 @@ consultar.connect().then(() => {
   obtenerContenedores(consultar).then((contenedor) => {
     renderContenedoresTable(contenedor);
 
-     // Agregar controladores de eventos al botón de siguiente página
-     const nextPageButton = document.querySelector('#nextPage');
-     nextPageButton.addEventListener('click', () => {
-       const maxPages = Math.ceil(contenedor.length / rowsPerPage);
-       if (currentPage < maxPages - 1) {
-         currentPage++;
-         renderContenedoresTable(contenedor);
-       }
-     });
+    // Agregar controladores de eventos al botón de siguiente página
+    const nextPageButton = document.querySelector('#nextPage');
+    nextPageButton.addEventListener('click', () => {
+      const maxPages = Math.ceil(contenedor.length / rowsPerPage);
+      if (currentPage < maxPages - 1) {
+        currentPage++;
+        renderContenedoresTable(contenedor);
+      }
+    });
 
-     // Agregar controladores de eventos al botón de página anterior
-     const previousPageButton = document.querySelector('#previousPage');
-     previousPageButton.addEventListener('click', () => {
-       if (currentPage > 0) {
-         currentPage--;
-         renderContenedoresTable(contenedor);
-       }
-     });
+    // Agregar controladores de eventos al botón de página anterior
+    const previousPageButton = document.querySelector('#previousPage');
+    previousPageButton.addEventListener('click', () => {
+      if (currentPage > 0) {
+        currentPage--;
+        renderContenedoresTable(contenedor);
+      }
+    });
 
-     // Agregar controladores de eventos al botón de primera página
-     const firstPageButton = document.querySelector('#firstPage');
-     firstPageButton.addEventListener('click', () => {
-       currentPage = 0;
-       renderContenedoresTable(contenedor);
-     });
+    // Agregar controladores de eventos al botón de primera página
+    const firstPageButton = document.querySelector('#firstPage');
+    firstPageButton.addEventListener('click', () => {
+      currentPage = 0;
+      renderContenedoresTable(contenedor);
+    });
 
-     // Agregar controladores de eventos al botón de última página
-     const lastPageButton = document.querySelector('#lastPage');
-     lastPageButton.addEventListener('click', () => {
-       currentPage = Math.floor(contenedor.length / rowsPerPage);
-       renderContenedoresTable(contenedor);
-     });
+    // Agregar controladores de eventos al botón de última página
+    const lastPageButton = document.querySelector('#lastPage');
+    lastPageButton.addEventListener('click', () => {
+      currentPage = Math.floor(contenedor.length / rowsPerPage);
+      renderContenedoresTable(contenedor);
+    });
 
-    
 
 
 
 
   /*Crear Contenedores */
   const Guardar_cont = document.getElementById("Guardar_cont");
-const formulario3 = document.querySelector('#Registro_Cont');
+  const formulario3 = document.querySelector('#Registro_Cont');
 
-Guardar_cont.addEventListener('click', async (evento) => {
-      evento.preventDefault(); // Evita que el formulario se envíe automáticamente
+  Guardar_cont.addEventListener('click', async (evento) => {
+    evento.preventDefault(); // Evita que el formulario se envíe automáticamente
 
-      Guardar_cont.disabled = true
+    Guardar_cont.disabled = true
 
-
-        const Fecha = document.querySelector('input[name="registro"]').value;
-        const Expediente = document.querySelector('input[name="expediente"]').value;
-        const Mercancia = document.querySelector('input[name="mercancia"]').value;
-        const Puerto = document.querySelector('#Puertos').value;
-        const Naviera = document.querySelector('#navieras').value;
-        const Embarque = document.querySelector('#embarques').value;
-        const Tienda = document.querySelector('#tienda').value;
-        const Chofer = document.querySelector('#chofer').value;
-        const ChoferEntrega = document.querySelector('#choferEntrega').value;
-        const Recepcion = document.querySelector('input[name="Recepcion"]').value;
-        const Contenedor = document.querySelector('input[name="Contenedor"]').value;
-        const Capacidad = document.querySelector('input[name="Capacidad"]').value;
-        const Bultos = document.querySelector('input[name="Bultos"]').value;
-        const Destino = document.querySelector('#destinos').value;
-        const Importadora = document.querySelector('#importadoras').value;
-        const Observacion = document.querySelector('textarea[name="Observacion"]').value;
-        const Sidunea = document.querySelector('input[name="Sidunea"]').value;
+    if(navigator.onLine){}
+    else{Guardar_cont.disabled = false
+      Guardar_cont.disabled = true}
 
 
-
-        let nombresMostrados = {
-          'expediente': 'Por favor, ingrese el número de expediente ',
-          'Contenedor': 'Por favor, ingrese el identificador del contenedor',
-          'puerto': 'Por favor, seleccione un puerto',
-          'naviera': 'Por favor, seleccione una naviera',
-          'embarque': 'Por favor, seleccione el embarque',
-          'destino': 'Por favor, ingrese un destino',
-          // 'Sidunea': 'Por favor, introduzca sidunea',
-          'registro': 'Por favor, introduzca la fecha de registro',
-          'Recepcion': 'Por favor, introduzca la fecha de recepción',
-          'Bultos': 'Por favor, ingrese la cantidad de bultos',
-          'importadora': 'Por favor, ingrese la importadora',
-
-
-          // Agrega más mapeos según sea necesario
-        };
-
-
-        const ConsultaContenedor= `SELECT count(*) as count FROM Contenedores where Contenedor = '${Contenedor}'`;
-        const pool = await consultar;
-        const result = await pool.request().query(ConsultaContenedor);
-
-        const count = result.recordset[0].count;
-
-        let inputs = document.querySelectorAll('.requerido');
+    const Fecha = document.querySelector('input[name="registro"]').value;
+    const Expediente = document.querySelector('input[name="expediente"]').value;
+    const Mercancia = document.querySelector('input[name="mercancia"]').value;
+    const Puerto = document.querySelector('#Puertos').value;
+    const Naviera = document.querySelector('#navieras').value;
+    const Embarque = document.querySelector('#embarques').value;
+    const Tienda = document.querySelector('#tienda').value;
+    const Chofer = document.querySelector('#chofer').value;
+    const ChoferEntrega = document.querySelector('#choferEntrega').value;
+    const Recepcion = document.querySelector('input[name="Recepcion"]').value;
+    const Contenedor = document.querySelector('input[name="Contenedor"]').value;
+    const Capacidad = document.querySelector('input[name="Capacidad"]').value;
+    const Bultos = document.querySelector('input[name="Bultos"]').value;
+    const Destino = document.querySelector('#destinos').value;
+    const Importadora = document.querySelector('#importadoras').value;
+    const Observacion = document.querySelector('textarea[name="Observacion"]').value;
+    const Sidunea = document.querySelector('input[name="Sidunea"]').value;
 
 
-        let camposVacios = []; // Lista para almacenar los nombres de los campos vacíos
 
-          // Itera sobre los elementos de entrada
-          for (let i = 0; i < inputs.length; i++) {
-              // Si el elemento de entrada está vacío...
-              if (inputs[i].value === '') {
-                  // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
-                  let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
-                  // Añade el nombre del campo vacío a la lista
-                  camposVacios.push(nombreMostrado);
-              }
-          }
+    let nombresMostrados = {
+      'expediente': 'Por favor, ingrese el número de expediente ',
+      'Contenedor': 'Por favor, ingrese el identificador del contenedor',
+      'puerto': 'Por favor, seleccione un puerto',
+      'naviera': 'Por favor, seleccione una naviera',
+      'embarque': 'Por favor, seleccione el embarque',
+      'destino': 'Por favor, ingrese un destino',
+      // 'Sidunea': 'Por favor, introduzca sidunea',
+      'registro': 'Por favor, introduzca la fecha de registro',
+      'Recepcion': 'Por favor, introduzca la fecha de recepción',
+      'Bultos': 'Por favor, ingrese la cantidad de bultos',
+      'importadora': 'Por favor, ingrese la importadora',
 
-            // Si hay campos vacíos...
-            if (camposVacios.length > 0) {
-                // Envía un mensaje al proceso principal con la lista de campos vacíos
-                ipcRenderer.send('campos-vacios', camposVacios);
-                setTimeout(() =>{
-                  Guardar_cont.disabled = false
-                     }, 2500)
-            }
-          else if( count >0){
 
-                ipcRenderer.send('contenedorExistente', Contenedor)
-                setTimeout(() =>{
-                  Guardar_cont.disabled = false
-                     }, 2500)
-            }
+      // Agrega más mapeos según sea necesario
+    };
 
-            else{
 
-              ipcRenderer.send('show-confirm-dialog')
-          const index = await new Promise((resolve) => {
-            ipcRenderer.once('confirm-dialog-result', (event, index) => {
-              resolve(index)
-            })
-          })
+    const ConsultaContenedor= `SELECT count(*) as count FROM Contenedores where Contenedor = '${Contenedor}'`;
+    const pool = await consultar;
+    const result = await pool.request().query(ConsultaContenedor);
 
-            if (index === 1) {
-              // El usuario hizo clic en "no"
-              Guardar_cont.disabled = false
-            }
-            else{
-              Guardar_cont.disabled = false
+    const count = result.recordset[0].count;
+
+    let inputs = document.querySelectorAll('.requerido');
+
+
+    let camposVacios = []; // Lista para almacenar los nombres de los campos vacíos
+
+    // Itera sobre los elementos de entrada
+    for (let i = 0; i < inputs.length; i++) {
+      // Si el elemento de entrada está vacío...
+      if (inputs[i].value === '') {
+        // Obtiene el nombre mostrado del objeto, si existe, o usa el nombre del campo de entrada
+        let nombreMostrado = nombresMostrados[inputs[i].name] || inputs[i].name;
+        // Añade el nombre del campo vacío a la lista
+        camposVacios.push(nombreMostrado);
+      }
+    }
+
+    // Si hay campos vacíos...
+    if (camposVacios.length > 0) {
+      // Envía un mensaje al proceso principal con la lista de campos vacíos
+      ipcRenderer.send('campos-vacios', camposVacios);
+      setTimeout(() =>{
+        Guardar_cont.disabled = false
+      }, 2500)
+    }
+  else if( count >0){
+
+      ipcRenderer.send('contenedorExistente', Contenedor)
+      setTimeout(() =>{
+        Guardar_cont.disabled = false
+      }, 2500)
+    }
+
+    else{
+
+    ipcRenderer.send('show-confirm-dialog')
+    const index = await new Promise((resolve) => {
+    ipcRenderer.once('confirm-dialog-result', (event, index) => {
+      resolve(index)
+    })
+  })
+
+    if (index === 1) {
+      // El usuario hizo clic en "no"
+      Guardar_cont.disabled = false
+    }
+    else{
+      Guardar_cont.disabled = false
+
+      ipcRenderer.send('dato')
+      // console.log('golita') 
+      const arg = await new Promise((resolve) => {
+        ipcRenderer.on('user-data', (event, arg) => {               
+          resolve(arg)
+        });
+      })
+      
+      const usuario = arg.usuario
+      const descripcion =` Se ha creado el contenedor  ${Contenedor}`       
+
+      track(descripcion , usuario)
       // Utiliza los valores en tus consultas SQL
       await agregarContenedores({Fecha, Expediente, Mercancia, Contenedor, Recepcion, Capacidad, Bultos, Sidunea, Puerto, Naviera, Embarque, Tienda, Chofer, Destino, Importadora, Observacion, ChoferEntrega});
-              ipcRenderer.send('registroExitoso')
+      ipcRenderer.send('registroExitoso')
       // Limpia los campos del formulario
 
       setTimeout(() =>{
         location.reload();
-           }, 1000)
+      }, 1000)
 
-  }}
-});
+    }}
+  });
 
   async function agregarContenedores(datos) {
       try {
@@ -382,7 +399,7 @@ generarSelectpuertos()
    let filteredListados = contenedor;
    let expedienteFilterValue = '';
    let contenedorFilterValue = '';
-   let estadosFilterValue = 'Todos';
+   let estadosFilterValue = 'Pendiente';
 
 
 
@@ -410,111 +427,119 @@ generarSelectpuertos()
 
   const expedienteFiltro = document.querySelector('#expediente');
   expedienteFiltro.addEventListener('input', (event) => {
+    document.getElementById("firstPage").click()
   expedienteFilterValue = event.target.value.toLowerCase();
     updateFilteredListados();
   });
 
-   const contenedorFiltro = document.querySelector('#contenedor');
-   contenedorFiltro.addEventListener('input', (event) => {
-     contenedorFilterValue = event.target.value.toLowerCase();
-     updateFilteredListados();
-   });
-   
-   const estadosFiltro = document.querySelector('#selectEstatus');
-   estadosFiltro.addEventListener('change', (event) => {
-   estadosFilterValue = event.target.value;
-   console.log(estadosFilterValue)
-     updateFilteredListados();
-   });
+  const contenedorFiltro = document.querySelector('#contenedor');
+  contenedorFiltro.addEventListener('input', (event) => {
+  document.getElementById("firstPage").click()
+    contenedorFilterValue = event.target.value.toLowerCase();
+    updateFilteredListados();
+  });
+  
+  const estadosFiltro = document.querySelector('#selectEstatus');
+  estadosFiltro.addEventListener('change', (event) => {
+  document.getElementById("firstPage").click()
+  estadosFilterValue = event.target.value;
+  console.log(estadosFilterValue)
+    updateFilteredListados();
+  });
 
-   async function obtenerEstado() {
-     try {
-   
-       await sql.connect(config);
-   
-       const result = await sql.query('SELECT  Estatusvehiculo from Estatusvehiculo where Id in (5,7)');
-   
-   
-       return result.recordset;
-     } catch (error) {
-       console.error('Error al obtener los datos:', error);
-       throw error;
-     }
-   }
+  async function obtenerEstado() {
+    try {
+  
+      await sql.connect(config);
+  
+      const result = await sql.query('SELECT  Estatusvehiculo from Estatusvehiculo where Id in (5,7)');
+  
+  
+      return result.recordset;
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+      throw error;
+    }
+  }
    
    
    async function GenerarEstado() {
-     try {
-       const destino = await obtenerEstado();
-   
-       let selectOptions = '<option value="Todos" selected>Todos</option>';
- 
-       destino.forEach((row) => {
-         // Establecer el valor de las opciones como el id del estatus
-         selectOptions += `<option value="${row.Estatusvehiculo}">${row.Estatusvehiculo}</option>`;
-       });
-   
-       const selectHtml = `<select id="selectEstados">${selectOptions}</select>`;
-       document.getElementById('selectEstatus').innerHTML = selectHtml;
-   
-       // Agregar evento change al select
-   
-       return selectHtml;
-     } catch (error) {
-       console.error('Error al generar el select:', error);
-       throw error;
-     }
-   }
+      try {
+        const destino = await obtenerEstado();
+    
+        let selectOptions = '<option value="Todos">Todos</option>';
+    
+        // Crear una variable con el valor de la opción seleccionada por defecto
+        let opcionSeleccionada = "Pendiente";
+    
+        // Crear una variable para almacenar el índice de la opción seleccionada
+        let indiceSeleccionado = -1;
+    
+        // Recorrer el array de destino con un bucle for
+        for (let i = 0; i < destino.length; i++) {
+          // Establecer el valor de las opciones como el id del estatus
+          selectOptions += `<option value="${destino[i].Estatusvehiculo}">${destino[i].Estatusvehiculo}</option>`;
+    
+          // Si el valor de la opción es igual al valor de la opción seleccionada
+          // Guardar el índice de la opción en la variable indiceSeleccionado
+          if (destino[i].Estatusvehiculo == opcionSeleccionada) {
+            indiceSeleccionado = i;
+          }
+        }
+    
+        const selectHtml = `<select id="selectEstatus">${selectOptions}</select>`;
+        document.getElementById("selectEstatus").innerHTML = selectHtml;
+    
+        // Si se encontró el índice de la opción seleccionada
+        if (indiceSeleccionado != -1) {
+          // Obtener el elemento option correspondiente al índice
+          // Usando la propiedad options del select y el índice
+          let optionSeleccionada = document
+          .getElementById("selectEstatus")
+          .options[indiceSeleccionado + 1]; // Sumar 1 porque la primera opción es "Todos"
+    
+          // Agregar el atributo selected al elemento option
+          optionSeleccionada.setAttribute("selected", "selected");
+        }
+    
+        // Agregar evento change al select
+    
+        return selectHtml;
+      } catch (error) {
+        console.error("Error al generar el select:", error);
+        throw error;
+      }
+    }
    
    GenerarEstado()
-     .then((selectHtml) => {
-       console.log('Select HTML generado:', selectHtml);
-     })
-     .catch((error) => {
-       console.error('Error en la generación del select:', error);
-     });
-
-
-     const printButton = document.querySelector('#Imprimir');
-     
-     printButton.addEventListener('click',async () => {
-      const generarContenedoresPDF = require ('./ImprimirContenedores')
-
-       // Llamar a la función generarPDF con la matriz de viajes filtrados
-         generarContenedoresPDF(filteredListados);
+    .then((selectHtml) => {
       
-          if (estadosFilterValue === 'Pendiente') { 
-
-              const pool = await consultar;
-              const sqlQuery = `Update Contenedores set Estatus  = 5 where Estatus = 7`;
-              const result = await pool.request().query(sqlQuery);
-        }
-     });
-   });
+    })
+    .catch((error) => {
+      console.error('Error en la generación del select:', error);
+    });
 
 
+    const printButton = document.querySelector('#Imprimir');
+    
+    printButton.addEventListener('click',async () => {
+    const generarContenedoresPDF = require ('./ImprimirContenedores')
+
+      // Llamar a la función generarPDF con la matriz de viajes filtrados
+      generarContenedoresPDF(filteredListados);
+    
+      if (estadosFilterValue === 'Pendiente') { 
+
+        const pool = await consultar;
+        const sqlQuery = `Update Contenedores set Estatus  = 5 where Estatus = 7`;
+        const result = await pool.request().query(sqlQuery);
+      }
+    });
+  });
 
 });
 
-var tabMenu = document.querySelector("#tab-menu");
-
-// Agregar un controlador de eventos para el evento "click" en el menú de pestañas
-tabMenu.addEventListener("click", function(event) {
-  // Obtener el índice de la pestaña seleccionada
-  var selectedIndex = Array.prototype.indexOf.call(tabMenu.children, event.target);
-
-  // Guardar el índice de la pestaña seleccionada en localStorage
-  localStorage.setItem("selectedTabIndex", selectedIndex);
-});
-
-// Cuando se carga la página, recuperar el índice de la pestaña seleccionada de localStorage
-var selectedTabIndex = localStorage.getItem("selectedTabIndex");
-
-// Si se encontró un índice de pestaña seleccionado en localStorage, seleccionar esa pestaña
-if (selectedTabIndex !== null) {
-  tabMenu.children[selectedTabIndex].click();
-}
-
+refrescarTab()
 
 
 module.exports = obtenerContenedores

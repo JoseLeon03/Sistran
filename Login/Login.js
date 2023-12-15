@@ -17,33 +17,13 @@ const {consultar, config} = require ('../Promise');
   
       if (result.recordset.length > 0) {
         let user = result.recordset[0];
-        // let nivel = 2
-        // nivel = user.Nivel
-        // module.exports = {nivel}
-
+  
         // Verificar la contraseña
         if (clave === user.Clave) {
-          //  const userData = require('../Menuprincipal/Menuprincipal');
-          //   userData(nivel)
-          //     console.log(user.Nivel)
-
-
-          ipcRenderer.send('login', { usuario, clave, nivel: user.Nivel }); 
+       
+          ipcRenderer.send('login',  { usuario, clave, nivel: user.Nivel }); 
+          // ipcRenderer.send('login2', { usuario, clave, nivel: user.Nivel }); 
           // const filtro = user.Nivel
-
-          // let variable = 0
-          // // let filtro = user.Nivel
-          // ipcRenderer.send('filtrando', { usuario, clave, filtro}); 
-          //   if(filtro ===1 ){
-
-          //    variable = 1
-          //     module.exports.variable = this.variable;
-
-          //   }
-
-         
-            // await filtrar({nivel});     
-                 // Aquí puedes redirigir al usuario a otra página o hacer algo más
         }   
         
         else {

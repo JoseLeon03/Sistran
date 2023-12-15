@@ -1,13 +1,9 @@
 const { ipcRenderer } = require('electron');
-
-
-
+const obtenerTasa = require('../Utility/obtenerTasa');
 
 
 function modificarEstatusfunc(estatusEmergente,modificarEstatus, estatus, id_viaje, fila, Cedula_chofer){
     modificarEstatus.addEventListener('click', () => {  
-
-
 
       const contenidoEmergente = ` 
       
@@ -356,18 +352,9 @@ const nombreEmpleado = empleadoData.Nombre;
 const apellidoEmpleado = empleadoData.Apellido;
 console.log(nombreEmpleado, apellidoEmpleado);
 
-async function obtenerUltimatasa(){
-  const pool = await consultar.connect();
- const sqlQuery2 = `SELECT Top 1(Tasa) AS Tasa FROM Historial_tasa order by id desc`;
-const result2 = await pool.request().query(sqlQuery2)
-const Tasa = result2.recordset[0].Tasa;
 
-
-console.log ('Ultima tasa ', Tasa)
-return Tasa;
- }obtenerUltimatasa()
-
- const Tasa =   await obtenerUltimatasa({});  
+    obtenerTasa()
+ const Tasa =   await obtenerTasa({});  
  const resultado = 15 * Tasa;
 
 
@@ -391,7 +378,7 @@ if (nuevoEstatus == 6 && diasExtra > 0 && Number.isInteger(diasExtra)) {
       .input('Monto', sql.Float, montoComprobanteAdicionales) 
       .input('Beneficiario', sql.NVarChar, `${nombreEmpleado} ${apellidoEmpleado}`)
       .input('Monto_Usd', sql.Float, montoUsd)
-      .query(`INSERT INTO Comprobante_viajes (Codigo_viaje, Fecha, Origen, Descripcion, Monto, Beneficiario, Cedula, Tipocomprobante, Monto_Usd) VALUES (@Codigo_viaje, @Fecha, @Origen, CONCAT('Pago por complemento de gasto por adicional a', (SELECT Sede FROM Sedes WHERE Codigo = @Origen)), @Monto, @Beneficiario, @Cedula, '1', @Monto_Usd)`);
+      .query(`INSERT INTO Comprobante_viajes (Codigo_viaje, Fecha, Origen, Descripcion, Monto, Beneficiario, Cedula, Tipocomprobante, Monto_Usd) VALUES (@Codigo_viaje, @Fecha, @Origen, CONCAT('Pago por complemento de gasto por adicional a ', (SELECT Sede FROM Sedes WHERE Codigo = @Origen)), @Monto, @Beneficiario, @Cedula, '2', @Monto_Usd)`);
     console.log('insert');
     }
   } 

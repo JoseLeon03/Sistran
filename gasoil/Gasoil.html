@@ -15,13 +15,13 @@
 
         <div id="menu-bar">
             <div class="left" role="menu">
-              <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+        
               
             </div>
             <div class="right">
-              <button class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
-              <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
-              <button class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
+              <button type="button" class="menubar-btn" id="minimizar" onclick="min"><i class="fas fa-window-minimize"></i></button>
+              <button type="button" class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+              <button type="button" class="menubar-btn" id="cerrar"><i class="fas fa-times"></i></button>
             </div>
           </div>
     
@@ -57,11 +57,11 @@
                                               
                     </table>
                     <div class="btn-group">
-                        <button>|<<</button>
-                        <button><<</button>
-                        <button>Refrescar</button>
-                        <button>>></button>
-                        <button>>>|</button>
+                        <button type="button">|<<</button>
+                        <button type="button"><<</button>
+                        <button >Refrescar</button>
+                        <button type="button">>></button>
+                        <button type="button">>>|</button>
                         </div>
                         </div>
                    
@@ -69,7 +69,7 @@
                 <fieldset>   
 
                     <legend><h2>Registro</h2></legend>
-                    <table>
+                    <table >
                         <tr>
                             <th>  </th>
                             <th>  </th>
@@ -145,11 +145,11 @@
             </table>
 
             <div class="btn-group">
-                <button>|<<</button>
-                <button><<</button>
-                <button>Refrescar</button>
-                <button>>></button>
-                <button>>>|</button>
+                <button type="button">|<<</button>
+                <button type="button"><<</button>
+                <button type="button">Refrescar</button>
+                <button type="button">>></button>
+                <button type="button">>>|</button>
                 </div>
             </div>
         
@@ -196,7 +196,7 @@
                         
                         <label for="dineroimg">Subir imagen:</label>
                         
-                        <td><input type="file" id="dineroimg" required></td>
+                        <td><input type="file" id="dineroimg" ></td>
                     <button type="submit" id="enviar">Guardar</button>   
                 </fieldset>
              </div>
@@ -211,7 +211,7 @@
 
             <h3>Historial de compras (Gasoil)</h3>
          
-            <table class="tablalistado">
+            <table  id="tablalistado">
  
              <thead>
            <tr>
@@ -220,8 +220,8 @@
            <th>Chofer</th>   
            <th>Cedula</th>   
            <th>Placa</th>   
-           <th>Cantidad</th>
-           <th>Costo</th>
+           <th>Cantidad (L)</th>
+           <th>Costo ($)</th>
            <th>Sitio de entrega</th>
            <th>Fecha</th>
            <th>Tipo de compra</th>
@@ -233,11 +233,11 @@
                 <tbody></tbody>
            </table>
            <div class="btn-group">
-            <button>|<<</button>
-            <button><<</button>
-            <button>Refrescar</button>
-            <button>>></button>
-            <button>>>|</button>
+            <button type="button">|<<</button>
+            <button type="button"><<</button>
+            <button type="button">Refrescar</button>
+            <button type="button">>></button>
+            <button type="button">>>|</button>
             </div>
              </div>
             <div class="registro2">
@@ -328,33 +328,33 @@
 <!-- Script para tabs -->
 <script >
     const tabs = document.querySelectorAll('.tab');
-const tabContents = document.querySelectorAll('.tab-content')
+    const tabContents = document.querySelectorAll('.tab-content')
 
 tabs.forEach(tab => {
-tab.addEventListener('click', () => {
+    tab.addEventListener('click', () => {
 
-    const tabId = tab.dataset.tab;
+        const tabId = tab.dataset.tab;
 
 
-    tabContents.forEach(content => {
-    content.classList.remove('active');
+        tabContents.forEach(content => {
+        content.classList.remove('active');
+        });
+
+
+        tabs.forEach(tab => {
+        tab.classList.remove('active');
+        });
+
+
+        const tabContent = document.getElementById(tabId);
+        tabContent.classList.add('active');
+        tab.classList.add('active');
     });
-
-
-    tabs.forEach(tab => {
-    tab.classList.remove('active');
-    });
-
-
-    const tabContent = document.getElementById(tabId);
-    tabContent.classList.add('active');
-    tab.classList.add('active');
-});
 });
 //Fin script
 
 //    script para tablas emergentes
-const celdas = document.querySelectorAll('.tabla tbody td');
+        const celdas = document.querySelectorAll('.tabla tbody td');
             celdas.forEach(celda => {
                 celda.addEventListener('click', () => {
                 
@@ -363,43 +363,20 @@ const celdas = document.querySelectorAll('.tabla tbody td');
                 });
             });
 
-            const cancelar = document.getElementById('cancelar');
-            cancelar.addEventListener('click', () => {
-                const emergentehd = document.getElementById('emergentehd');
-                emergentehd.style.display = 'none';
-            });
-
-            const guardar = document.getElementById('guardar');
-            guardar.addEventListener('click', () => {
-            
-                const emergentehd = document.getElementById('emergentehd');
-                emergentehd.style.display = 'none';
-            });
-
-
       /*Fin script*/      
-
 
          function mostrarImagen() {
        
-
-  
-        const urlImagen = 'dolar.png'; 
-        
- 
-        const imagen = document.getElementById('imagen');
-        const emergente2 = document.getElementById('emergente2');
-        
-    
-        imagen.src = urlImagen;
-        
-        
-        emergente.style.display = 'block';
-      }
-</script><script>
-function close() {
-    window.close();
-  }</script>
+            const urlImagen = 'dolar.png'; 
+            
+            const imagen = document.getElementById('imagen');
+            const emergente2 = document.getElementById('emergente2');
+            
+            imagen.src = urlImagen;
+            
+            emergente.style.display = 'block';
+        }
+</script>
 <script src="../menu-functions.js"></script>
 <script src="Gasoil.js"></script>
 </body>
